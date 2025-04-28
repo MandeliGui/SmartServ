@@ -16,7 +16,6 @@ new class extends Component {
 
     public function save(): void
     {
-        dd($this->all());
         if ($this->persistence == Persistence::UPDATE) {
 
             $cliente = $this->form->update();
