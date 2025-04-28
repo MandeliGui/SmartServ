@@ -103,13 +103,13 @@ new class extends Component {
 <div>
 
 
+    <flux:button href="{{ route('clientes.novo') }}" class="mb-4" tooltip="teste" variant="primary"
+                 wire:navigate>+ Novo Cliente
+    </flux:button>
     {{-- INICIO TABELA --}}
     @if($clientes->count() > 0)
 
 
-        <flux:button href="{{ route('clientes.novo') }}" class="mb-4" tooltip="teste" variant="primary"
-                     wire:navigate>+ Novo Cliente
-        </flux:button>
 
 
         <div class="bg-neutral-800 p-4 rounded-2xl">
