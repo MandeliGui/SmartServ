@@ -14,7 +14,7 @@ new #[Layout('layouts.app')] class extends Component {
 
     <flux:card class="space-y-6">
         <div class="mb-4">
-            <flux:heading size="lg">Servicos</flux:heading>
+            <flux:heading size="xl">Servicos</flux:heading>
             <flux:separator/>
         </div>
         <livewire:forms.servicos.search/>
