@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
+use App\Helpers\Helper;
 use App\Http\Requests\Tenant\ServicosRequest;
 use App\Services\Tenant\ServicosService;
 use Livewire\Form;
@@ -79,10 +80,18 @@ class ServicosForm extends Form
     {
         $servico = (new ServicosService())->findOne($id);
 
-        $this->id        = $servico->id;
-        $this->codigo    = $servico->codigo;
-        $this->nome      = $servico->nome;
-        $this->descricao = $servico->descricao;
-        $this->valor     = $servico->valor;
+        if ($servico) {
+            $this->id        = $servico->id;
+            $this->codigo    = $servico->codigo;
+            $this->nome      = $servico->nome;
+            $this->descricao = $servico->descricao;
+            $this->valor     = Helper::formatarValorMonetarioPtBr((float)$servico->valor);
+        } else {
+            $this->id        = null;
+            $this->codigo    = null;
+            $this->nome      = null;
+            $this->descricao = null;
+            $this->valor     = null;
+        }
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Tenant\Servicos;
 
+use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 use Illuminate\Validation\Rule;
 use Validator;
@@ -19,12 +20,13 @@ class EditarServicoRequest extends BaseValidationRequest
 
     public function prepareForValidation(): void
     {
+
         $this->data = [
             'id'        => $this->data['id'],
             'codigo'    => $this->data['codigo'],
             'nome'      => $this->data['nome'],
             'descricao' => $this->data['descricao'],
-            'valor'     => $this->data['valor'],
+            'valor'     => Helper::formatarValorMonetarioDB((float)$this->data['valor']),
         ];
     }
 

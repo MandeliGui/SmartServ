@@ -3,6 +3,7 @@
 use App\Enums\Persistence;
 use App\Helpers\Helper;
 use App\Livewire\Forms\ServicosForm;
+use App\Models\ServicosModel;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -22,39 +23,46 @@ new class extends Component {
         if ($this->persistence == Persistence::UPDATE) {
 
             $servico = $this->form->update();
-
             $this->dispatch(ServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servico: $servico);
-            $this->dispatch('close-modal', ServicosForm::MODAL_NAME_UPDATE);
+
+
+            Flux::modal(ServicosForm::MODAL_NAME_UPDATE)->close();
+
+
+            Flux::toast('Serviço editado com sucesso!', variant: 'success');
+
+
         } else {
 
             $servico = $this->form->create();
 
 
             $this->dispatch(ServicosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servico: $servico);
-            $this->dispatch('close-modal', ServicosForm::MODAL_NAME_CREATE);
+            $this->form->reset();
+            Flux::modal(ServicosForm::MODAL_NAME_CREATE)->close();
+            Flux::toast('Serviço criado com sucesso!', variant: 'success');
         }
 
+    }
+
+    public function updatedFormValor($value)
+    {
+        $this->form->valor = str_replace(['.', ','], ['', '.'], $value);
     }
 
     #[On(ServicosForm::EVENT_NAME_SHOW_MODAL_CREATE)]
     public function openModalCreate(string $modalName)
     {
         $this->form->reset();
-
-
-        $this->dispatch('open-modal', $modalName);
+        Flux::modal($modalName)->show();
     }
 
     #[On(ServicosForm::EVENT_NAME_SHOW_MODAL_UPDATE)]
     public function openModalUpdate(string $modalName, int $id)
     {
-        $this->form->reset();
-
-
         $this->form->setServico($id);
+        Flux::modal($modalName)->show();
 
-
-        $this->dispatch('open-modal', $modalName);
     }
 
 
@@ -75,49 +83,38 @@ new class extends Component {
 
 <div x-data>
     <form wire:submit.prevent="save">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Codigo') }}
-                </x-input-label>
-                <x-text-input placeholder="" x-mask="" wire:model="form.codigo"
-                />
-                <x-input-error :messages="$errors->get('codigo')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-6 md:col-span-6">
-                <x-input-label>
-                    {{ __('Nome') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o nome" x-mask="" wire:model="form.nome"
-                />
-                <x-input-error :messages="$errors->get('nome')" class="mt-2 text-wrap"/>
 
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Valor*') }}
-                </x-input-label>
-                <x-text-input placeholder="" x-mask="" wire:model="form.valor"
-                />
-                <x-input-error :messages="$errors->get('valor')" class="mt-2 text-wrap"/>
-
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
+            <flux:input label="Nome*" placeholder="Digite o nome"
+                        wire:model="form.nome"
+                        name="nome"
+            />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-12 md:col-span-12">
-                <x-input-label>
-                    {{ __('Descriçao') }}
-                </x-input-label>
-                <x-textarea placeholder="" x-mask="" wire:model="form.descricao"
-                ></x-textarea>
-                <x-input-error :messages="$errors->get('descricao')" class="mt-2 text-wrap"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <flux:input label="Codigo*" placeholder="Digite o codigo"
+                        wire:model="form.codigo"
+                        name="codigo"/>
 
-            </div>
+            <flux:input label="Valor*" placeholder="Digite o valor"
+                        x-mask:dynamic="$money($input, ',', '.', 2)"
+                        wire:model="form.valor"
+                        name="valor"
+            />
+        </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
+            <flux:textarea
+                label="Descricao"
+                wire:model="form.descricao"
+                name="descricao"
+            />
 
         </div>
 
 
-        <x-save-button/>
+        <flux:button type="submit" variant="primary" class="mt-2">Salvar</flux:button>
+
     </form>
 </div>
 

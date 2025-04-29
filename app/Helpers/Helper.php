@@ -101,9 +101,9 @@ class Helper
         return (float)number_format(Str::replace([".", ","], ["", "."], $val), 2, ".", "");
     }
 
-    public static function formatarValorMonetarioDB(string $val): float
+    public static function formatarValorMonetarioDB(mixed $val): float
     {
-        return number_format($val, 2, ".", "");
+        return (float)number_format($val, 2, ".", "");
     }
 
     public static function calcularHorasExtra($salario, $totalHoras, $porcentagem): float

@@ -15,16 +15,14 @@ new class extends Component {
 
     public function remove(): void
     {
-        
+
         $this->form->remove();
 
         $this->dispatch(ClientesForm::EVENT_PERSISTED, persistence: Persistence::REMOVE->value);
 
-        $this->dispatch('close-modal', ClientesForm::MODAL_NAME_REMOVE);
-
         Flux::toast('Cliente removido com sucesso!', variant: 'success');
 
-        Flux::modal('delete-cliente')->close();
+        Flux::modal(ClientesForm::MODAL_NAME_REMOVE)->close();
     }
 
     #[On(ClientesForm::EVENT_NAME_SHOW_MODAL_REMOVE)]
@@ -32,7 +30,7 @@ new class extends Component {
     {
 
         $this->form->setCliente($id);
-        Flux::modal('delete-cliente')->show();
+        Flux::modal($modalName)->show();
     }
 
 
