@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Cliente;
 
@@ -28,7 +28,7 @@ class EditarClienteRequest extends BaseValidationRequest
             "cpfCnpj"         => empty($this->data['cpfCnpj']) ? null : str()->replaceMatches('/[^0-9]/', '', data_get($this->data, "cpfCnpj")),
             "email"           => empty($this->data['email']) ? null : str(data_get($this->data, "email"))->lower()->trim()->toString(),
             "dataNascimento"  => data_get($this->data, "dataNascimento"),
-            "tipoPessoa"      => data_get($this->data, 'cpfCnpj') ? (strlen((string) preg_replace('/[^0-9]/', '', (string) data_get($this->data, "cpfCnpj"))) == 11 ? "PF" : "PJ") : null,
+            "tipoPessoa"      => data_get($this->data, 'cpfCnpj') ? (strlen((string)preg_replace('/[^0-9]/', '', (string)data_get($this->data, "cpfCnpj"))) == 11 ? "PF" : "PJ") : null,
 
             "idGrupo" => Helper::getIdByRequest($this->data, 'idGrupo'),
 
@@ -53,7 +53,7 @@ class EditarClienteRequest extends BaseValidationRequest
             'telefone'             => ['required', 'string', 'max:20'],
             'email'                => ['nullable', 'email', 'max:200'],
             'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11'],
-            'dataNascimento'       => ['required', 'date'],
+            'dataNascimento'       => ['nullable', 'date'],
             'idGrupo'              => ['nullable', 'integer', 'exists:tb_grupo_cliente,id_grupo'],
             'endereco.cep'         => ['required', 'string', 'max:8'],
             'endereco.rua'         => ['required', 'string', 'max:200'],
@@ -84,7 +84,6 @@ class EditarClienteRequest extends BaseValidationRequest
             'cpfCnpj.string'              => 'O campo :attribute deve ser uma string.',
             'cpfCnpj.max'                 => 'O campo :attribute deve ter no máximo 14 caracteres.',
             'cpfCnpj.min'                 => 'O campo :attribute deve ter no mínimo 11 caracteres.',
-            'dataNascimento.required'     => 'O campo :attribute é obrigatório.',
             'dataNascimento.date'         => 'O campo :attribute deve ser uma data válida.',
             'idGrupo.integer'             => 'O campo :attribute deve ser um número inteiro.',
             'idGrupo.exists'              => 'O :attribute informado não existe.',

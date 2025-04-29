@@ -16,17 +16,30 @@ new class extends Component {
 
     public function save(): void
     {
-        if ($this->persistence == Persistence::UPDATE) {
 
-            $cliente = $this->form->update();
+        try {
 
-            $this->dispatch(ClientesForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, cliente: $cliente);
-        } else {
+            if ($this->persistence == Persistence::UPDATE) {
 
-            $cliente = $this->form->create();
+                $cliente = $this->form->update();
 
 
-            $this->dispatch(ClientesForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, cliente: $cliente);
+                Flux::toast('Cliente atualizado com sucesso!', variant: 'success');
+                $this->redirect(route('clientes'), navigate: true);
+
+            } else {
+
+                $cliente = $this->form->create();
+
+
+                Flux::toast('Cliente cadastrado com sucesso!', variant: 'success');
+
+                $this->redirect(route('clientes'), navigate: true);
+
+            }
+        } catch (Throwable $e) {
+            Flux::toast('Erro ao cadastrar cliente!', variant: 'danger');
+            throw $e;
         }
 
     }
@@ -74,63 +87,97 @@ new class extends Component {
     <form wire:submit.prevent="save">
         <flux:text>Informações pessoais</flux:text>
 
-
         <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-            <flux:input x-mask:dynamic="$input.length <= 14 ? '999.999.999-99' : '99.999.999/9999-99'"
-                        label="Cpf/Cnpj"
-                        placeholder="Cpf/Cnpj"
-                        wire:model="form.cpfCnpj"
-            wire:blur="buscarCnpj"/>
+            {{--      ESSE IF SERVE PARA A MASCARA FUNCIONAR NA TELA DE EDICAO, SE NAO ELE NAO RECONHECE O INPUT LENGTH      --}}
+            @if($persistence->value === Persistence::CREATE->value)
+
+                <flux:input x-mask:dynamic="$input.length <= 14 ? '999.999.999-99' : '99.999.999/9999-99'"
+                            label="Cpf/Cnpj*"
+                            placeholder="Cpf/Cnpj"
+                            wire:model="form.cpfCnpj"
+                            name="cpfCnpj"
+                            wire:blur="buscarCnpj"/>
+
+            @else
+
+                @if(strlen($this->form->cpfCnpj) < 14)
+                    <flux:input x-mask:dynamic="'999.999.999-99'"
+                                label="Cpf*"
+                                placeholder="Cpf"
+                                wire:model="form.cpfCnpj"
+                                name="cpfCnpj"/>
+                @else
+                    <flux:input x-mask:dynamic="'99.999.999/9999-99'"
+                                label="Cnpj*"
+                                placeholder="Cnpj"
+                                wire:model="form.cpfCnpj"
+                                name="cpfCnpj"/>
+
+                @endif
+            @endif
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
             <flux:input label="Nome/Razão Social" placeholder="Digite o nome ou razão social"
-                        wire:model="form.nomeRazaoSocial"/>
-            <flux:input label="Nome Fantasia" placeholder="Digite o nome fantasia" wire:model="form.nomeFantasia"/>
+                        wire:model="form.nomeRazaoSocial" name="nomeRazaoSocial"/>
 
+            <flux:input label="Nome Fantasia" placeholder="Digite o nome fantasia"
+                        wire:model="form.nomeFantasia" name="nomeFantasia"/>
         </div>
-        <div class=" grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
-
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
             <flux:input label="Telefone*" placeholder="(00) 00000-0000"
                         mask="(99) 99999-9999"
-                        wire:model="form.telefone"/>
-            <flux:input label="Data de Nascimento" placeholder="00/00/0000"
-                        mask="99/99/9999"
-                        wire:model="form.dataNascimento"/>
-            <flux:input label="E-mail*" placeholder="exemplo@dominio.com"
-                        wire:model="form.email"/>
+                        wire:model="form.telefone" name="telefone"/>
 
 
-            <flux:select variant="listbox" label="Grupo de Clientes*" wire:model="form.grupoClientes"
-                         placeholder="Selecione" searchable>
+            <flux:date-picker wire:model="date">
+                <x-slot name="trigger">
+
+                    <flux:date-picker.input label="Data de Nascimento" placeholder="00/00/0000"
+                                            wire:model="form.dataNascimento" name="dataNascimento"/>
+                </x-slot>
+            </flux:date-picker>
+
+
+            <flux:input label="E-mail" placeholder="exemplo@dominio.com"
+                        wire:model="form.email" name="email"/>
+
+            <flux:select variant="listbox" label="Grupo de Clientes"
+                         wire:model="form.idGrupo"
+                         placeholder="Selecione" searchable
+                         name="idGrupo">
             </flux:select>
-
-
         </div>
 
-
         <flux:text>Endereço</flux:text>
-
 
         <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
             <flux:input label="CEP*" placeholder="00000-000"
                         mask="99999-999"
-                        wire:model="form.endereco.cep"/>
-            <flux:input label="Rua*" placeholder="Digite a rua" wire:model="form.endereco.rua"/>
-            <flux:input label="Número*" placeholder="Digite o número" wire:model="form.endereco.numero"/>
+                        wire:model="form.endereco.cep" name="endereco.cep"/>
 
+            <flux:input label="Rua*" placeholder="Digite a rua"
+                        wire:model="form.endereco.rua" name="endereco.rua"/>
 
-
+            <flux:input label="Número*" placeholder="Digite o número"
+                        wire:model="form.endereco.numero" name="endereco.numero"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
             <flux:input label="Complemento" placeholder="Digite o complemento"
-                        wire:model="form.endereco.complemento"/>
-            <flux:input label="Bairro*" placeholder="Digite o bairro" wire:model="form.endereco.bairro"/>
-            <flux:input label="Cidade*" placeholder="Digite a cidade" wire:model="form.endereco.cidade"/>
-            <flux:select label="UF*" variant="listbox" searchable wire:model="form.endereco.uf" placeholder="Selecione">
+                        wire:model="form.endereco.complemento" name="endereco.complemento"/>
+
+            <flux:input label="Bairro*" placeholder="Digite o bairro"
+                        wire:model="form.endereco.bairro" name="endereco.bairro"/>
+
+            <flux:input label="Cidade*" placeholder="Digite a cidade"
+                        wire:model="form.endereco.cidade" name="endereco.cidade"/>
+
+            <flux:select label="UF*" variant="listbox" searchable
+                         wire:model="form.endereco.uf"
+                         placeholder="Selecione" name="endereco.uf">
                 <flux:select.option value="AC">AC</flux:select.option>
                 <flux:select.option value="AL">AL</flux:select.option>
                 <flux:select.option value="AP">AP</flux:select.option>
@@ -158,12 +205,10 @@ new class extends Component {
                 <flux:select.option value="SP">SP</flux:select.option>
                 <flux:select.option value="SE">SE</flux:select.option>
                 <flux:select.option value="TO">TO</flux:select.option>
-
             </flux:select>
-
         </div>
 
-        <flux:button type="submit" variant="primary">Primary</flux:button>
+        <flux:button type="submit" variant="primary" class="mt-2">Salvar</flux:button>
     </form>
 </div>
 

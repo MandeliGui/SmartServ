@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
 use App\Http\Requests\Tenant\ClienteRequest;
 use App\Services\Tenant\ClienteService;
 use Carbon\Carbon;
+use Flux\Flux;
 use Livewire\Form;
 
 class ClientesForm extends Form
@@ -21,7 +22,7 @@ class ClientesForm extends Form
 
     public array $selectedsIds = [];
 
-    public ?int    $id = null;
+    public ?int $id = null;
 
     public ?string $nomeRazaoSocial = null;
 
@@ -37,7 +38,7 @@ class ClientesForm extends Form
 
     public ?string $tipoPessoa = null;
 
-    public ?int    $idGrupo = null;
+    public ?int $idGrupo = null;
 
     public array $endereco = [
         'cep'         => null,
@@ -48,7 +49,6 @@ class ClientesForm extends Form
         'cidade'      => null,
         'uf'          => null,
     ];
-
 
 
     private function attributes(): array
@@ -74,24 +74,22 @@ class ClientesForm extends Form
 
     public function create()
     {
-        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('d/m/Y', $this->dataNascimento)->format('Y-m-d') : null;
+
+        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('Y-m-d', $this->dataNascimento)->format('Y-m-d') : null;
 
         $data = ClienteRequest::create($this->all(), $this->attributes())->validated();
 
+
         $cliente = (new ClienteService())->create($data);
 
-        $this->reset();
-
-        return $cliente;
     }
 
     public function update()
     {
-        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('d/m/Y', $this->dataNascimento)->format('Y-m-d') : null;
-
+        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? $this->dataNascimento : null;
         $data = ClienteRequest::update($this->all(), $this->attributes())->validated();
 
-        return (new ClienteService())->update($data);
+        (new ClienteService())->update($data);
     }
 
     public function remove(): void
@@ -116,14 +114,14 @@ class ClientesForm extends Form
     {
         $cliente = (new ClienteService())->findOne($id);
 
-        $this->id              = $cliente->idCliente;
+        $this->id = $cliente->idCliente;
         $this->nomeRazaoSocial = $cliente->pessoa->nomeRazaoSocial;
-        $this->nomeFantasia    = $cliente->pessoa->nomeFantasia;
-        $this->telefone        = $cliente->pessoa->telefone;
-        $this->cpfCnpj         = $cliente->pessoa->cpfCnpj;
-        $this->dataNascimento  = Carbon::parse($cliente->pessoa->dataNascimento)->format('d-m-Y');
-        $this->email           = $cliente->pessoa->email;
-        $this->idGrupo         = $cliente->idGrupo;
+        $this->nomeFantasia = $cliente->pessoa->nomeFantasia;
+        $this->telefone = $cliente->pessoa->telefone;
+        $this->cpfCnpj = $cliente->pessoa->cpfCnpj;
+        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::parse($cliente->pessoa->dataNascimento)->format('Y-m-d') : null;
+        $this->email = $cliente->pessoa->email;
+        $this->idGrupo = $cliente->idGrupo;
 
         $this->endereco = [
             'cep'         => $cliente->pessoa->endereco->cep,

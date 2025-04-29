@@ -21,4 +21,8 @@ new #[Layout('layouts.app')] class extends Component {
         <livewire:forms.clientes.search/>
     </flux:card>
 
+    <flux:modal name="delete-cliente" class="min-w-[22rem]">
+        <livewire:forms.clientes.remove/>
+    </flux:modal>
+
 </div>

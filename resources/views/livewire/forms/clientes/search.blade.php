@@ -5,19 +5,21 @@ use App\Http\Requests\Tenant\FilterPaginateRequest;
 use App\Livewire\Forms\ClientesForm;
 use App\Models\ClienteModel;
 use App\Services\Tenant\ClienteService;
+use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Flux\Flux;
 
 new class extends Component {
 
     use WithPagination, WithoutUrlPagination;
 
-    public int $limit = 10;
-    public int $offset = 0;
+    public int    $limit   = 10;
+    public int    $offset  = 0;
     public string $orderBy = 'nomeFantasia';
-    public string $dir = 'asc';
-    public string $search = '';
+    public string $dir     = 'asc';
+    public string $search  = '';
 
     public ClientesForm $form;
 
@@ -93,11 +95,18 @@ new class extends Component {
 
         $count = !empty($this->search) ? $this->clientes->total() : count($this->getAllIds());
 
+
         return [
             'clientes' => $this->clientes,
-            'count' => $count,
+            'count'    => $count,
         ];
     }
+
+    public function teste($id)
+    {
+
+    }
+
 
 }; ?>
 <div>
@@ -109,15 +118,13 @@ new class extends Component {
     {{-- INICIO TABELA --}}
     @if($clientes->count() > 0)
 
-
-
-
         <div class="bg-neutral-800 p-4 rounded-2xl">
 
             <flux:table class="" :paginate="$this->clientes">
                 <flux:table.columns>
                     <flux:table.column>Nome</flux:table.column>
                     <flux:table.column>Telefone</flux:table.column>
+                    <flux:table.column>Actions</flux:table.column>
 
 
                 </flux:table.columns>
@@ -129,8 +136,28 @@ new class extends Component {
                                 {{ $cliente->nomeRazaoSocial }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="whitespace-nowrap">{{ $cliente->telefone }}</flux:table.cell>
+                            <flux:table.cell
+                                class="whitespace-nowrap">{{ Helper::formatarPhoneBR($cliente->telefone) }}
+                            </flux:table.cell>
 
+                            <flux:table.cell class="flex items-center gap-3 ">
+                                <flux:button variant="outline" icon="pencil" size="xs"
+                                             wire:navigate href="{{ route('clientes.editar', $cliente->id) }}">
+                                    Editar
+                                </flux:button>
+{{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                    <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\ClientesForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                                                                    '{{ \App\Livewire\Forms\ClientesForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\ClientesForm::MODAL_NAME_REMOVE }}',
+                                                                                        id: '{{ $cliente->id }}'
+                                                                                    }
+                                                                                )">
+                                        Excluir
+                                    </flux:button>
+{{--                                </flux:modal.trigger>--}}
+                            </flux:table.cell>
 
                         </flux:table.row>
                     @endforeach
@@ -144,8 +171,8 @@ new class extends Component {
     @else
 
         <div
-            class="w-full text-center py-3 bg-smartserv-color-primary-500 dark:bg-smartserv-color-dark-700 rounded-lg border-2 border-smartserv-color-primary-1000 dark:border-smartserv-color-primary-dark-1000">
-            <p class="font-semibold font-smartserv-font-title text-smartserv-color-primary-1000 dark:text-smartserv-color-neutral-100">
+            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+            <p class="font-semibold text-accent">
                 Nenhum registro encontrado.
             </p>
         </div>
