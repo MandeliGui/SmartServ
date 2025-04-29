@@ -50,15 +50,24 @@ new class extends Component {
         $dadosEmpresa = Helper::obterDadosEmpresaPorCnpj($this->form->cpfCnpj);
 
         if ($dadosEmpresa) {
-            $this->form->nomeRazaoSocial = $dadosEmpresa->company->name;
-            $this->form->nomeFantasia = $dadosEmpresa->alias;
-            $this->form->endereco['cep'] = $dadosEmpresa->address->zip;
-            $this->form->endereco['rua'] = $dadosEmpresa->address->street;
-            $this->form->endereco['numero'] = $dadosEmpresa->address->number;
+            $this->form->nomeRazaoSocial         = $dadosEmpresa->company->name;
+            $this->form->nomeFantasia            = $dadosEmpresa->alias;
+            $this->form->endereco['cep']         = $dadosEmpresa->address->zip;
+            $this->form->endereco['rua']         = $dadosEmpresa->address->street;
+            $this->form->endereco['numero']      = $dadosEmpresa->address->number;
             $this->form->endereco['complemento'] = $dadosEmpresa->address->details;
-            $this->form->endereco['bairro'] = $dadosEmpresa->address->district;
-            $this->form->endereco['cidade'] = $dadosEmpresa->address->city;
-            $this->form->endereco['uf'] = $dadosEmpresa->address->state;
+            $this->form->endereco['bairro']      = $dadosEmpresa->address->district;
+            $this->form->endereco['cidade']      = $dadosEmpresa->address->city;
+            $this->form->endereco['uf']          = $dadosEmpresa->address->state;
+        } else {
+            $this->form->nomeRazaoSocial         = null;
+            $this->form->nomeFantasia            = null;
+            $this->form->endereco['rua']         = null;
+            $this->form->endereco['numero']      = null;
+            $this->form->endereco['complemento'] = null;
+            $this->form->endereco['bairro']      = null;
+            $this->form->endereco['cidade']      = null;
+            $this->form->endereco['uf']          = null;
         }
     }
 
@@ -107,46 +116,65 @@ new class extends Component {
                                 label="Cpf*"
                                 placeholder="Cpf"
                                 wire:model="form.cpfCnpj"
-                                name="cpfCnpj"/>
+                                name="cpfCnpj"
+                                disabled
+                    />
                 @else
                     <flux:input x-mask:dynamic="'99.999.999/9999-99'"
                                 label="Cnpj*"
                                 placeholder="Cnpj"
                                 wire:model="form.cpfCnpj"
-                                name="cpfCnpj"/>
+                                name="cpfCnpj"
+                                disabled
+                    />
 
                 @endif
             @endif
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
             <flux:input label="Nome/Razão Social" placeholder="Digite o nome ou razão social"
-                        wire:model="form.nomeRazaoSocial" name="nomeRazaoSocial"/>
+                        wire:model="form.nomeRazaoSocial"
+                        name="nomeRazaoSocial"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:input label="Nome Fantasia" placeholder="Digite o nome fantasia"
-                        wire:model="form.nomeFantasia" name="nomeFantasia"/>
+                        wire:model="form.nomeFantasia"
+                        name="nomeFantasia"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
             <flux:input label="Telefone*" placeholder="(00) 00000-0000"
                         mask="(99) 99999-9999"
-                        wire:model="form.telefone" name="telefone"/>
-
+                        wire:model="form.telefone"
+                        name="telefone"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:date-picker wire:model="date">
                 <x-slot name="trigger">
-
                     <flux:date-picker.input label="Data de Nascimento" placeholder="00/00/0000"
-                                            wire:model="form.dataNascimento" name="dataNascimento"/>
+                                            wire:model="form.dataNascimento"
+                                            name="dataNascimento"
+                                            wire:loading.attr="disabled"
+                                            wire:target="buscarCnpj"/>
                 </x-slot>
             </flux:date-picker>
 
-
             <flux:input label="E-mail" placeholder="exemplo@dominio.com"
-                        wire:model="form.email" name="email"/>
+                        wire:model="form.email"
+                        name="email"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:select variant="listbox" label="Grupo de Clientes"
                          wire:model="form.idGrupo"
-                         placeholder="Selecione" searchable
-                         name="idGrupo">
+                         placeholder="Selecione"
+                         searchable
+                         name="idGrupo"
+                         wire:loading.attr="disabled"
+                         wire:target="buscarCnpj">
             </flux:select>
         </div>
 
@@ -157,27 +185,48 @@ new class extends Component {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
             <flux:input label="CEP*" placeholder="00000-000"
                         mask="99999-999"
-                        wire:model="form.endereco.cep" name="endereco.cep"/>
+                        wire:model="form.endereco.cep"
+                        name="endereco.cep"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:input label="Rua*" placeholder="Digite a rua"
-                        wire:model="form.endereco.rua" name="endereco.rua"/>
+                        wire:model="form.endereco.rua"
+                        name="endereco.rua"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:input label="Número*" placeholder="Digite o número"
-                        wire:model="form.endereco.numero" name="endereco.numero"/>
+                        wire:model="form.endereco.numero"
+                        name="endereco.numero"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
             <flux:input label="Complemento" placeholder="Digite o complemento"
-                        wire:model="form.endereco.complemento" name="endereco.complemento"/>
+                        wire:model="form.endereco.complemento"
+                        name="endereco.complemento"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:input label="Bairro*" placeholder="Digite o bairro"
-                        wire:model="form.endereco.bairro" name="endereco.bairro"/>
+                        wire:model="form.endereco.bairro"
+                        name="endereco.bairro"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:input label="Cidade*" placeholder="Digite a cidade"
-                        wire:model="form.endereco.cidade" name="endereco.cidade"/>
+                        wire:model="form.endereco.cidade"
+                        name="endereco.cidade"
+                        wire:loading.attr="disabled"
+                        wire:target="buscarCnpj"/>
 
             <flux:select label="UF*" variant="listbox" searchable
                          wire:model="form.endereco.uf"
-                         placeholder="Selecione" name="endereco.uf">
+                         placeholder="Selecione"
+                         name="endereco.uf"
+                         wire:loading.attr="disabled"
+                         wire:target="buscarCnpj">
                 <flux:select.option value="AC">AC</flux:select.option>
                 <flux:select.option value="AL">AL</flux:select.option>
                 <flux:select.option value="AP">AP</flux:select.option>
