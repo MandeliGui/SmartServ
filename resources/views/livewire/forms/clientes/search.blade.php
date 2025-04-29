@@ -118,7 +118,7 @@ new class extends Component {
     {{-- INICIO TABELA --}}
     @if($clientes->count() > 0)
 
-        <div class="bg-neutral-800 p-4 rounded-2xl">
+        <div class="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl">
 
             <flux:table class="" :paginate="$this->clientes">
                 <flux:table.columns>

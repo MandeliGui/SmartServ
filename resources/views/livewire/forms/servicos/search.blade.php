@@ -99,7 +99,7 @@ new class extends Component {
     {{-- INICIO TABELA --}}
     @if($servicos->count() > 0)
 
-        <div class="bg-neutral-800 p-4 rounded-2xl">
+        <div class="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl">
 
             <flux:table class="" :paginate="$this->servicos">
                 <flux:table.columns>
