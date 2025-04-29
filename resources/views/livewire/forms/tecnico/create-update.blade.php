@@ -22,12 +22,15 @@ new class extends Component {
             $cliente = $this->form->update();
 
             $this->dispatch(TecnicoForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, cliente: $cliente);
+
+            $this->redirect(route('tecnico'), navigate: true);
         } else {
 
             $cliente = $this->form->create();
 
 
             $this->dispatch(TecnicoForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, cliente: $cliente);
+            $this->redirect(route('tecnico'), navigate: true);
         }
 
     }
@@ -44,136 +47,142 @@ new class extends Component {
         }
     }
 
+    public function buscarCEP()
+    {
+        $cep                            = Helper::obterEnderecoPorCep($this->form->endereco['cep']);
+        $this->form->endereco['rua']    = $cep->logradouro ?? null;
+        $this->form->endereco['bairro'] = $cep->bairro ?? null;
+        $this->form->endereco['cidade'] = $cep->localidade ?? null;
+        $this->form->endereco['uf']     = $cep->uf ?? null;
+
+
+    }
+
 
 };
 ?>
 
 <div x-data>
     <form wire:submit.prevent="save">
-        <h3 class="text-smartserv-font-main font-semibold text-smartserv-color-primary-1000 dark:text-smartserv-color-primary-dark-1000 text-base">
-            Informações pessoais
-        </h3>
+        <flux:text>Informações pessoais</flux:text>
 
-        <hr class="w-full h-px bg-smartserv-color-primary-1000 border-0 dark:bg-smartserv-color-primary-dark-1000">
+        <hr class="w-full h-px bg-accent">
 
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-6 md:col-span-6">
-                <x-input-label>
-                    {{ __('Nome*') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o nome" x-mask="" wire:model="form.nome"/>
-                <x-input-error :messages="$errors->get('nome')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-6 md:col-span-6">
-                <x-input-label>
-                    {{ __('Telefone*') }}
-                </x-input-label>
-                <x-text-input placeholder="(00) 00000-0000" x-mask="(99) 99999-9999" wire:model="form.telefone"
-                />
-                <x-input-error :messages="$errors->get('telefone')" class="mt-2 text-wrap"/>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+
+
+            <flux:input label="Nome" placeholder="Digite o nome"
+                        wire:model="form.nome"
+                        name="nome"
+            />
+
+            <flux:input label="Telefone*" placeholder="(00) 00000-0000"
+                        mask="(99) 99999-9999"
+                        wire:model="form.telefone"
+                        name="telefone"
+            />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-4 md:col-span-4">
-                <x-input-label>
-                    {{ __('Cpf') }}
-                </x-input-label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+            <flux:input x-mask:dynamic="'999.999.999-99'"
+                        label="Cpf*"
+                        placeholder="Cpf"
+                        wire:model="form.cpf"
+                        name="cpf"
 
-                <x-text-input placeholder="insira aqui o cpf"
-                              x-mask="999.999.999-99"
-                              wire:model="form.cpf"/>
+            />
+            <flux:date-picker wire:model="date">
+                <x-slot name="trigger">
+                    <flux:date-picker.input label="Data de Nascimento" placeholder="00/00/0000"
+                                            wire:model="form.dataNascimento"
+                                            name="dataNascimento"
+                                            />
+                </x-slot>
+            </flux:date-picker>
+
+            <flux:input label="E-mail" placeholder="exemplo@dominio.com"
+                        wire:model="form.email"
+                        name="email"
+            />
 
 
-                <x-input-error :messages="$errors->get('cpf')" class="mt-2 text-wrap"/>
-
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-4 md:col-span-4">
-                <x-input-label>
-                    {{ __('Data de Nascimento') }}
-                </x-input-label>
-                <x-text-input placeholder="00/00/0000" x-mask="99/99/9999" wire:model="form.dataNascimento"
-                />
-                <x-input-error :messages="$errors->get('dataNascimento')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-4 md:col-span-4">
-                <x-input-label>
-                    {{ __('E-mail') }}
-                </x-input-label>
-                <x-text-input placeholder="exemplo@dominio.com" wire:model="form.email"/>
-                <x-input-error :messages="$errors->get('email')" class="mt-2 text-wrap"/>
-            </div>
         </div>
 
-        <h3 class="text-smartserv-font-main font-semibold text-smartserv-color-primary-1000 dark:text-smartserv-color-primary-dark-1000 text-base">
-            Endereço
-        </h3>
+        <flux:text>Endereço</flux:text>
 
-        <hr class="w-full h-px bg-smartserv-color-primary-1000 border-0 dark:bg-smartserv-color-primary-dark-1000">
+        <hr class="w-full h-px bg-accent">
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('CEP') }}
-                </x-input-label>
-                <x-text-input placeholder="00000-000" x-mask="99999-999" wire:model="form.endereco.cep"
-                />
-                <x-input-error :messages="$errors->get('endereco.cep')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-6 md:col-span-6">
-                <x-input-label>
-                    {{ __('Rua') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite a rua" wire:model="form.endereco.rua"/>
-                <x-input-error :messages="$errors->get('endereco.rua')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Número') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o número" wire:model="form.endereco.numero"
-                />
-                <x-input-error :messages="$errors->get('endereco.numero')" class="mt-2 text-wrap"/>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+            <flux:input label="CEP*" placeholder="00000-000"
+                        mask="99999-999"
+                        wire:model="form.endereco.cep"
+                        name="endereco.cep"
+                        wire:blur="buscarCEP"
+            />
+
+            <flux:input label="Rua*" placeholder="Digite a rua"
+                        wire:model="form.endereco.rua"
+                        name="endereco.rua"
+            />
+
+            <flux:input label="Número*" placeholder="Digite o número"
+                        wire:model="form.endereco.numero"
+                        name="endereco.numero"
+            />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Complemento') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o complemento" wire:model="form.endereco.complemento"
-                />
-                <x-input-error :messages="$errors->get('endereco.complemento')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Bairro') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o bairro" wire:model="form.endereco.bairro"
-                />
-                <x-input-error :messages="$errors->get('endereco.bairro')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('Cidade') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite a cidade" wire:model="form.endereco.cidade"
-                />
-                <x-input-error :messages="$errors->get('endereco.cidade')" class="mt-2 text-wrap"/>
-            </div>
-            <div class="flex flex-col whitespace-nowrap col-span-3 md:col-span-3">
-                <x-input-label>
-                    {{ __('UF') }}
-                </x-input-label>
-                <x-select wire:model="form.endereco.uf">
-                    <option value="">Selecione</option>
-                    <option value="PR">PR</option>
-                </x-select>
-                <x-input-error :messages="$errors->get('endereco.uf')" class="mt-2 text-wrap"/>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+            <flux:input label="Complemento" placeholder="Digite o complemento"
+                        wire:model="form.endereco.complemento"
+                        name="endereco.complemento"
+            />
+
+            <flux:input label="Bairro*" placeholder="Digite o bairro"
+                        wire:model="form.endereco.bairro"
+                        name="endereco.bairro"
+            />
+
+            <flux:input label="Cidade*" placeholder="Digite a cidade"
+                        wire:model="form.endereco.cidade"
+                        name="endereco.cidade"
+            />
+
+            <flux:select label="UF*" variant="listbox" searchable
+                         wire:model="form.endereco.uf"
+                         placeholder="Selecione"
+                         name="endereco.uf"
+                         wire:loading.attr="disabled"
+                         wire:target="buscarCnpj">
+                <flux:select.option value="AC">AC</flux:select.option>
+                <flux:select.option value="AL">AL</flux:select.option>
+                <flux:select.option value="AP">AP</flux:select.option>
+                <flux:select.option value="AM">AM</flux:select.option>
+                <flux:select.option value="BA">BA</flux:select.option>
+                <flux:select.option value="CE">CE</flux:select.option>
+                <flux:select.option value="DF">DF</flux:select.option>
+                <flux:select.option value="ES">ES</flux:select.option>
+                <flux:select.option value="GO">GO</flux:select.option>
+                <flux:select.option value="MA">MA</flux:select.option>
+                <flux:select.option value="MT">MT</flux:select.option>
+                <flux:select.option value="MS">MS</flux:select.option>
+                <flux:select.option value="MG">MG</flux:select.option>
+                <flux:select.option value="PA">PA</flux:select.option>
+                <flux:select.option value="PB">PB</flux:select.option>
+                <flux:select.option value="PR">PR</flux:select.option>
+                <flux:select.option value="PE">PE</flux:select.option>
+                <flux:select.option value="PI">PI</flux:select.option>
+                <flux:select.option value="RJ">RJ</flux:select.option>
+                <flux:select.option value="RN">RN</flux:select.option>
+                <flux:select.option value="RS">RS</flux:select.option>
+                <flux:select.option value="RO">RO</flux:select.option>
+                <flux:select.option value="RR">RR</flux:select.option>
+                <flux:select.option value="SC">SC</flux:select.option>
+                <flux:select.option value="SP">SP</flux:select.option>
+                <flux:select.option value="SE">SE</flux:select.option>
+                <flux:select.option value="TO">TO</flux:select.option>
+            </flux:select>
         </div>
 
-        <x-save-button/>
+        <flux:button type="submit" variant="primary" class="mt-2">Salvar</flux:button>
     </form>
 </div>
 

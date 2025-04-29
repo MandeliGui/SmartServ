@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
 use App\Http\Requests\Tenant\TecnicoRequest;
 use App\Services\Tenant\TecnicoService;
 use Carbon\Carbon;
+use Flux\Flux;
 use Livewire\Form;
 
 class TecnicoForm extends Form
@@ -21,7 +22,7 @@ class TecnicoForm extends Form
 
     public array $selectedsIds = [];
 
-    public ?int    $id = null;
+    public ?int $id = null;
 
     public ?string $nome = null;
 
@@ -63,18 +64,20 @@ class TecnicoForm extends Form
 
     public function create(): void
     {
-        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('d/m/Y', $this->dataNascimento)->format('Y-m-d') : null;
-        $data                 = TecnicoRequest::create($this->all(), $this->attributes())->validated();
+        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('Y-m-d', $this->dataNascimento)->format('Y-m-d') : null;
+
+        $data = TecnicoRequest::create($this->all(), $this->attributes())->validated();
         (new TecnicoService())->create($data);
-        redirect(route('tecnico'));
+        Flux::toast('Tecnico criado com sucesso!', variant: 'success');
     }
 
     public function update(): void
     {
-        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('d/m/Y', $this->dataNascimento)->format('Y-m-d') : null;
-        $data                 = TecnicoRequest::update($this->all(), $this->attributes())->validated();
+        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::createFromFormat('Y-m-d', $this->dataNascimento)->format('Y-m-d') : null;
+
+        $data = TecnicoRequest::update($this->all(), $this->attributes())->validated();
         (new TecnicoService())->update($data);
-        redirect(route('tecnico'));
+        Flux::toast('Tecnico atualizado com sucesso!', variant: 'success');
     }
 
     public function remove(): void
@@ -94,11 +97,12 @@ class TecnicoForm extends Form
     {
         $tecnico = (new TecnicoService())->findOne($id);
 
+
         $this->id             = $tecnico->idTecnico;
         $this->nome           = $tecnico->pessoa->nomeRazaoSocial;
         $this->telefone       = $tecnico->pessoa->telefone;
         $this->cpf            = $tecnico->pessoa->cpfCnpj;
-        $this->dataNascimento = $tecnico->pessoa->dataNascimento ? Carbon::parse($tecnico->pessoa->dataNascimento)->format('d-m-Y') : null;
+        $this->dataNascimento = $tecnico->pessoa->dataNascimento ?? null;
         $this->email          = $tecnico->pessoa->email;
 
         $this->endereco = [

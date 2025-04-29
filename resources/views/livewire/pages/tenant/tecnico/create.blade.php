@@ -12,21 +12,12 @@ new #[Layout('layouts.app')] class extends Component {
 
 <div>
 
-    <x-slot name="header">
-
-        <h2 class="font-smartserv-font-title font-medium text-2xl text-smartserv-color-primary-1000 dark:text-smartserv-color-primary-dark-1000 leading-tight">
-            {{ __('Tecnicos') }}
-        </h2>
-
-    </x-slot>
-
-    <x-card>
-
+    <flux:card class="space-y-6">
+        <div class="mb-4">
+            <flux:heading class="text-accent" size="xl">Novo Cliente</flux:heading>
+            <flux:separator/>
+        </div>
         <livewire:forms.tecnico.create-update/>
-
-
-    </x-card>
-
-    <div class="pt-6"></div>
+    </flux:card>
 
 </div>

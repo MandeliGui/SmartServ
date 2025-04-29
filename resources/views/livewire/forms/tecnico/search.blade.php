@@ -99,112 +99,79 @@ new class extends Component {
 
         return [
             'tecnicos' => $this->tecnicos,
-            'count'   => $count,
+            'count'    => $count,
         ];
     }
 
 }; ?>
 <div>
 
-    <x-button-redirect
-        class="mb-4"
-        href="{{route('tecnico.novo')}}">
-        {{ __('+ Novo tecnico') }}
-    </x-button-redirect>
+    <flux:button class="mb-4" tooltip="teste" variant="primary" href="{{route('tecnico.novo')}}" wire:navigate>
+        + Novo Tecnico
+    </flux:button>
+    {{-- INICIO TABELA --}}
+    @if($tecnicos->count() > 0)
 
-        @if($tecnicos->count() > 0)
-{{--             INICIO TABELA --}}
-            <section class=" mt-4
-        ">
+        <div class="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl">
 
-                <div class="bg-white dark:bg-smartserv-color-dark-800 relative shadow-md rounded overflow-hidden">
-
-                    <div class="overflow-x-auto">
-
-                        <table
-                            class="w-full text-sm text-left text-smartserv-color-dark-800 dark:text-smartserv-color-cinza-light-800">
-
-                            <thead
-                                class="font-smartserv-font-main text-xs text-smartserv-color-azul-medio-1000 uppercase bg-gray-100 dark:bg-smartserv-color-dark-900 "
-                            >
-
-                            <tr>
-
-                                <th scope="col" class="px-4 py-3 whitespace-nowrap">Nome</th>
-                                <th scope="col" class="px-4 py-3 whitespace-nowrap">Telefone</th>
-                                <th scope="col" class="px-4 py-3 whitespace-nowrap">Ação</th>
-                            </tr>
-
-                            </thead>
-
-                            <tbody>
+            <flux:table class="" :paginate="$this->tecnicos">
+                <flux:table.columns>
+                    <flux:table.column>Codigo</flux:table.column>
+                    <flux:table.column>Nome</flux:table.column>
+                    <flux:table.column>Valor</flux:table.column>
+                    <flux:table.column>Acoes</flux:table.column>
 
 
-                            @foreach($tecnicos as $tecnico)
+                </flux:table.columns>
 
-                                <tr
-                                    wire:key="{{ $tecnico->id }}"
-                                    class="border-b border-smartserv-color-azul-medio-500 dark:border-smartserv-color-verde-limao-500"
-                                >
+                <flux:table.rows>
+                    @foreach ($this->tecnicos as $tecnico)
+                        <flux:table.row :key="$tecnico->id">
+                            <flux:table.cell class="flex items-center gap-3">
+                                {{ $tecnico->codigo }}
+                            </flux:table.cell>
 
-                                    <td class="px-4 py-3">{{ $tecnico->nomeRazaoSocial }}</td>
-                                    <td class="px-4 py-3">{{ Helper::formatarPhoneBR($tecnico->telefone) }}</td>
+                            <flux:table.cell
+                                class="whitespace-nowrap">{{ $tecnico->nome }}
+                            </flux:table.cell>
 
-                                    <td class="px-4 py-3 whitespace-nowrap">
 
 
-                                        <x-edit-button-table
-                                            :data-tooltip-target="'tooltip-alterar-tecnico' . $tecnico->id"
-                                            x-data
-                                            href="{{ route('tecnico.editar', ['id' => $tecnico->id]) }}"
-                                            wire:navigate
-                                        />
-                                        <x-tooltip
-                                            :id_tooltip="'tooltip-alterar-tecnico' . $tecnico->id"
-                                            :text="__('Editar')"/>
-
-                                        <x-delete-button-table
-                                            :data-tooltip-target="'tooltip-remover-tecnico' . $tecnico->id"
-                                            x-data
-                                            wire:click="$dispatchTo(
+                            <flux:table.cell class="flex items-center gap-3 ">
+                                <flux:button variant="outline" icon="pencil" size="xs"
+                                             href="{{route('tecnico.editar', $tecnico->id)}}" wire:navigate>
+                                    Editar
+                                </flux:button>
+                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\TecnicoForm::PATH_COMPONENT_FORM_REMOVE }}',
                                                                                     '{{ \App\Livewire\Forms\TecnicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\TecnicoForm::MODAL_NAME_REMOVE }}',
                                                                                         id: '{{ $tecnico->id }}'
                                                                                     }
-                                                                                )"
-                                        />
-                                        <x-tooltip
-                                            :id_tooltip="'tooltip-remover-tecnico' . $tecnico->id"
-                                            :text="__('Remover')"/>
+                                                                                )">
+                                    Excluir
+                                </flux:button>
+                                {{--                                </flux:modal.trigger>--}}
+                            </flux:table.cell>
+
+                        </flux:table.row>
+                    @endforeach
+                </flux:table.rows>
+            </flux:table>
+        </div>
 
 
-                                    </td>
 
-                                </tr>
+        {{-- FIM TABELA --}}
+    @else
 
-                            @endforeach
-
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-{{--             FIM TABELA --}}
-        @else
-
-    <div
-        class="w-full text-center py-3 bg-smartserv-color-primary-500 dark:bg-smartserv-color-dark-700 rounded-lg border-2 border-smartserv-color-primary-1000 dark:border-smartserv-color-primary-dark-1000">
-        <p class="font-semibold font-smartserv-font-title text-smartserv-color-primary-1000 dark:text-smartserv-color-neutral-100">
-            Nenhum registro encontrado.
-        </p>
-    </div>
-        @endif
-
+        <div
+            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+            <p class="font-semibold text-accent">
+                Nenhum registro encontrado.
+            </p>
+        </div>
+    @endif
 </div>
