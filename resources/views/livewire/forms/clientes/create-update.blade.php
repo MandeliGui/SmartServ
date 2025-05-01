@@ -98,11 +98,12 @@ new class extends Component {
 
         <hr class="w-full h-px bg-accent">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
             {{--      ESSE IF SERVE PARA A MASCARA FUNCIONAR NA TELA DE EDICAO, SE NAO ELE NAO RECONHECE O INPUT LENGTH      --}}
             @if($persistence->value === Persistence::CREATE->value)
 
                 <flux:input x-mask:dynamic="$input.length <= 14 ? '999.999.999-99' : '99.999.999/9999-99'"
+                            description="*Preencha com um cnpj para buscar dados automaticamente"
                             label="Cpf/Cnpj*"
                             placeholder="Cpf/Cnpj"
                             wire:model="form.cpfCnpj"
@@ -130,6 +131,7 @@ new class extends Component {
 
                 @endif
             @endif
+
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
             <flux:input label="Nome/Razão Social" placeholder="Digite o nome ou razão social"

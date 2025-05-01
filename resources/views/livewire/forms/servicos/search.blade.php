@@ -94,7 +94,7 @@ new class extends Component {
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\ServicosForm::MODAL_NAME_CREATE }}'
                                                                                     })">
-        + Novo Cliente
+        + Novo Servico
     </flux:button>
     {{-- INICIO TABELA --}}
     @if($servicos->count() > 0)
