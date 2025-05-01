@@ -6,6 +6,7 @@ namespace App\Http\Requests\Tenant\Cliente;
 
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
+use App\Rules\UniqueRule;
 use Validator;
 
 class EditarClienteRequest extends BaseValidationRequest
@@ -46,13 +47,14 @@ class EditarClienteRequest extends BaseValidationRequest
 
     public function rules(): array
     {
+
         return [
             "id"                   => ["required", "integer", "exists:tb_cliente,idCliente"],
             'nomeRazaoSocial'      => ['required', 'string', 'max:200'],
             'nomeFantasia'         => ['nullable', 'string', 'max:200'],
             'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200'],
-            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11'],
+            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email', $this->data['id'])],
+            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj', $this->data['id'])],
             'dataNascimento'       => ['nullable', 'date'],
             'idGrupo'              => ['nullable', 'integer', 'exists:tb_grupo_cliente,id_grupo'],
             'endereco.cep'         => ['required', 'string', 'max:8'],
@@ -81,9 +83,11 @@ class EditarClienteRequest extends BaseValidationRequest
             'telefone.max'                => 'O campo :attribute deve ter no máximo 20 caracteres.',
             'email.email'                 => 'O campo :attribute deve ser um email válido.',
             'email.max'                   => 'O campo :attribute deve ter no máximo 200 caracteres.',
+            'email.unique'                => 'O :attribute informado já está cadastrado.',
             'cpfCnpj.string'              => 'O campo :attribute deve ser uma string.',
             'cpfCnpj.max'                 => 'O campo :attribute deve ter no máximo 14 caracteres.',
             'cpfCnpj.min'                 => 'O campo :attribute deve ter no mínimo 11 caracteres.',
+            'cpfCnpj.unique'              => 'O :attribute informado já está cadastrado.',
             'dataNascimento.date'         => 'O campo :attribute deve ser uma data válida.',
             'idGrupo.integer'             => 'O campo :attribute deve ser um número inteiro.',
             'idGrupo.exists'              => 'O :attribute informado não existe.',

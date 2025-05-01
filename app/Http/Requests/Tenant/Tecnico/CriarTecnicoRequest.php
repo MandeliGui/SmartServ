@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Tecnico;
 
 use App\Http\Requests\BaseValidationRequest;
+use App\Rules\UniqueRule;
 use Validator;
 
 class CriarTecnicoRequest extends BaseValidationRequest
@@ -43,8 +44,8 @@ class CriarTecnicoRequest extends BaseValidationRequest
 
             'nome'                 => ['required', 'string', 'max:200'],
             'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200'],
-            'cpf'                  => ['required', 'string', 'max:11', 'min:11'],
+            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email')],
+            'cpf'                  => ['required', 'string', 'max:11', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj')],
             'dataNascimento'       => ['nullable', 'date'],
             'endereco.cep'         => ['nullable', 'string', 'max:8'],
             'endereco.rua'         => ['nullable', 'string', 'max:200'],

@@ -56,7 +56,9 @@ class ClienteService
     {
         $existePessoa = $this->pessoa::query()->where("cpfCnpj", $data["cpfCnpj"])->first();
 
+
         if (! $existePessoa) {
+
             $endereco = $this->endereco::query()->create([
                 "cep"         => $data['endereco']["cep"],
                 "rua"         => $data['endereco']["rua"],

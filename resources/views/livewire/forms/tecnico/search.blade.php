@@ -116,9 +116,9 @@ new class extends Component {
 
             <flux:table class="" :paginate="$this->tecnicos">
                 <flux:table.columns>
-                    <flux:table.column>Codigo</flux:table.column>
+
                     <flux:table.column>Nome</flux:table.column>
-                    <flux:table.column>Valor</flux:table.column>
+                    <flux:table.column>Telefone</flux:table.column>
                     <flux:table.column>Acoes</flux:table.column>
 
 
@@ -128,13 +128,12 @@ new class extends Component {
                     @foreach ($this->tecnicos as $tecnico)
                         <flux:table.row :key="$tecnico->id">
                             <flux:table.cell class="flex items-center gap-3">
-                                {{ $tecnico->codigo }}
+                                {{ $tecnico->nomeRazaoSocial }}
                             </flux:table.cell>
 
                             <flux:table.cell
-                                class="whitespace-nowrap">{{ $tecnico->nome }}
+                                    class="whitespace-nowrap">{{ Helper::formatarPhoneBR($tecnico->telefone) }}
                             </flux:table.cell>
-
 
 
                             <flux:table.cell class="flex items-center gap-3 ">
@@ -168,7 +167,7 @@ new class extends Component {
     @else
 
         <div
-            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                class="w-full text-center py-3 rounded-lg border-2 border-accent">
             <p class="font-semibold text-accent">
                 Nenhum registro encontrado.
             </p>

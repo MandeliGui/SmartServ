@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Cliente;
 
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 use Validator;
+use App\Rules\UniqueRule;
 
 class CriarClienteRequest extends BaseValidationRequest
 {
@@ -28,7 +29,7 @@ class CriarClienteRequest extends BaseValidationRequest
             "cpfCnpj"         => empty($this->data['cpfCnpj']) ? null : str()->replaceMatches('/[^0-9]/', '', data_get($this->data, "cpfCnpj")),
             "email"           => empty($this->data['email']) ? null : str(data_get($this->data, "email"))->lower()->trim()->toString(),
             "dataNascimento"  => data_get($this->data, "dataNascimento"),
-            "tipoPessoa"      => data_get($this->data, 'cpfCnpj') ? (strlen((string) preg_replace('/[^0-9]/', '', (string) data_get($this->data, "cpfCnpj"))) == 11 ? "PF" : "PJ") : null,
+            "tipoPessoa"      => data_get($this->data, 'cpfCnpj') ? (strlen((string)preg_replace('/[^0-9]/', '', (string)data_get($this->data, "cpfCnpj"))) == 11 ? "PF" : "PJ") : null,
 
             "idGrupo" => Helper::getIdByRequest($this->data, 'idGrupo'),
 
@@ -50,8 +51,8 @@ class CriarClienteRequest extends BaseValidationRequest
             'nomeRazaoSocial'      => ['required', 'string', 'max:200'],
             'nomeFantasia'         => ['nullable', 'string', 'max:200'],
             'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200'],
-            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11'],
+            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email')],
+            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj')],
             'dataNascimento'       => ['nullable', 'date'],
             'idGrupo'              => ['nullable', 'integer', 'exists:tb_grupo_cliente,id_grupo'],
             'endereco.cep'         => ['required', 'string', 'max:8'],
@@ -77,9 +78,11 @@ class CriarClienteRequest extends BaseValidationRequest
             'telefone.max'                => 'O campo :attribute deve ter no máximo 20 caracteres.',
             'email.email'                 => 'O campo :attribute deve ser um email válido.',
             'email.max'                   => 'O campo :attribute deve ter no máximo 200 caracteres.',
+            'email.unique'                => 'O :attribute informado já está cadastrado.',
             'cpfCnpj.string'              => 'O campo :attribute deve ser uma string.',
             'cpfCnpj.max'                 => 'O campo :attribute deve ter no máximo 14 caracteres.',
             'cpfCnpj.min'                 => 'O campo :attribute deve ter no mínimo 11 caracteres.',
+            'cpfCnpj.unique'              => 'O :attribute informado já está cadastrado.',
             'dataNascimento.date'         => 'O campo :attribute deve ser uma data válida.',
             'idGrupo.integer'             => 'O campo :attribute deve ser um número inteiro.',
             'idGrupo.exists'              => 'O :attribute informado não existe.',

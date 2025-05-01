@@ -18,8 +18,8 @@ return new class () extends Migration
             $table->string("nomeRazaoSocial");
             $table->string("nomeFantasia")->nullable();
             $table->string("telefone");
-            $table->string("cpfCnpj")->unique();
-            $table->string("email")->nullable()->unique();
+            $table->string("cpfCnpj");
+            $table->string("email")->nullable();
             $table->date("dataNascimento")->nullable();
             $table->enum("tipoPessoa", ["PF", "PJ"]);
             $table->integer("idEndereco");
