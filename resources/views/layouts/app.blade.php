@@ -26,7 +26,6 @@
 
 
     <flux:input as="button" variant="filled" placeholder="Search..." icon="magnifying-glass"/>
-
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" wire:navigate>Home</flux:navlist.item>
         <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes
@@ -36,18 +35,9 @@
         <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}">Usuarios</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
-    <flux:navlist variant="outline">
-        <flux:button x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon" variant="subtle"
-                     aria-label="Toggle dark mode"/>
-        <flux:navlist.item icon="cog-6-tooth" href="#">Configuracoes</flux:navlist.item>
-        <flux:navlist.item icon="information-circle" href="#">FAQ</flux:navlist.item>
-    </flux:navlist>
-    <flux:dropdown position="top" align="start" class="max-lg:hidden">
-        <flux:profile name="{{ auth()->user()->nome }}"/>
-        <flux:menu>
-            <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
-        </flux:menu>
-    </flux:dropdown>
+
+
+    <livewire:layout.navigation/>
 </flux:sidebar>
 
 <flux:header class="lg:hidden">
