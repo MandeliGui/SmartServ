@@ -108,7 +108,9 @@ new class extends Component {
                             placeholder="Cpf/Cnpj"
                             wire:model="form.cpfCnpj"
                             name="cpfCnpj"
-                            wire:blur="buscarCnpj"/>
+                            wire:blur="buscarCnpj"
+                            wire:keydown.enter.prevent="buscarCnpj"
+                />
 
             @else
 
