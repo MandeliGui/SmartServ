@@ -13,14 +13,6 @@ new #[Layout('layouts.app')] class extends Component {
 
 <div>
 
-    <x-slot name="header">
-
-        <h2 class="font-smartserv-font-title font-medium text-2xl text-smartserv-color-primary-1000 dark:text-smartserv-color-primary-dark-1000 leading-tight">
-            {{ __('Grupos Clientes') }}
-        </h2>
-
-    </x-slot>
-
     <x-card>
 
         <livewire:forms.grupo-cliente.create-update/>

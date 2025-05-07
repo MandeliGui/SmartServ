@@ -88,6 +88,13 @@ new class extends Component {
         }
     }
 
+    public function with()
+    {
+        return [
+            'grupoClientes' => \App\Models\GrupoClienteModel::query()->whereRemovido(false)->get()
+        ];
+    }
+
 
 };
 ?>
@@ -179,6 +186,11 @@ new class extends Component {
                          name="idGrupo"
                          wire:loading.attr="disabled"
                          wire:target="buscarCnpj">
+                <flux:select.option value="">Selecione</flux:select.option>
+                @foreach($grupoClientes as $grupoCliente)
+                    <flux:select.option value="{{ $grupoCliente->id }}">{{ $grupoCliente->nome }}</flux:select.option>
+
+                @endforeach
             </flux:select>
         </div>
 

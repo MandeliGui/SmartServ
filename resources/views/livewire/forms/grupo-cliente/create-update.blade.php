@@ -21,17 +21,25 @@ new class extends Component {
 
         if ($this->persistence == Persistence::UPDATE) {
 
-            $grupo = $this->form->update();
+            $servico = $this->form->update();
+            $this->dispatch(GrupoClientesForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servico: $servico);
 
-            $this->dispatch(GrupoClientesForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, grupo: $grupo);
-            $this->dispatch('close-modal', GrupoClientesForm::MODAL_NAME_UPDATE);
+
+            Flux::modal(GrupoClientesForm::MODAL_NAME_UPDATE)->close();
+
+
+            Flux::toast('Grupo de clientes editado com sucesso!', variant: 'success');
+
+
         } else {
 
-            $grupo = $this->form->create();
+            $servico = $this->form->create();
 
 
-            $this->dispatch(GrupoClientesForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, grupo: $grupo);
-            $this->dispatch('close-modal', GrupoClientesForm::MODAL_NAME_CREATE);
+            $this->dispatch(GrupoClientesForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servico: $servico);
+            $this->form->reset();
+            Flux::modal(GrupoClientesForm::MODAL_NAME_CREATE)->close();
+            Flux::toast('Grupo de clientes criado com sucesso!', variant: 'success');
         }
 
     }
@@ -40,21 +48,15 @@ new class extends Component {
     public function openModalCreate(string $modalName)
     {
         $this->form->reset();
-
-
-        $this->dispatch('open-modal', $modalName);
+        Flux::modal($modalName)->show();
     }
 
     #[On(GrupoClientesForm::EVENT_NAME_SHOW_MODAL_UPDATE)]
     public function openModalUpdate(string $modalName, int $id)
     {
-        $this->form->reset();
-
-
         $this->form->setGrupo($id);
+        Flux::modal($modalName)->show();
 
-
-        $this->dispatch('open-modal', $modalName);
     }
 
 
@@ -75,20 +77,17 @@ new class extends Component {
 
 <div x-data>
     <form wire:submit.prevent="save">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-            <div class="flex flex-col whitespace-nowrap col-span-12 md:col-span-12">
-                <x-input-label>
-                    {{ __('Nome') }}
-                </x-input-label>
-                <x-text-input placeholder="Digite o nome" x-mask="" wire:model="form.nome"
-                />
-                <x-input-error :messages="$errors->get('nome')" class="mt-2 text-wrap"/>
 
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
+            <flux:input label="Nome*" placeholder="Digite o nome"
+                        wire:model="form.nome"
+                        name="nome"
+            />
         </div>
 
 
-        <x-save-button/>
+        <flux:button type="submit" variant="primary" class="mt-2">Salvar</flux:button>
+
     </form>
 </div>
 

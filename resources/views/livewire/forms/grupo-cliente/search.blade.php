@@ -82,119 +82,83 @@ new class extends Component {
 
         return [
             'grupos' => $this->grupos,
-            'count'    => $count,
+            'count'  => $count,
         ];
     }
 
 }; ?>
 <div>
-    <div class="mb-4">
-
-        <x-primary-button
-            x-data
-            wire:click="$dispatchTo(
-                        '{{ GrupoClientesForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
-                        '{{ GrupoClientesForm::EVENT_NAME_SHOW_MODAL_CREATE }}',
-                        { modalName: '{{ GrupoClientesForm::MODAL_NAME_CREATE }}'}
-                    )"
-            :disabled="count($selectedsIds) > 0"
-        >
-            {{ __('+ Novo Grupo Cliente') }}
-        </x-primary-button>
-    </div>
+    <flux:button class="mb-4" tooltip="teste" variant="primary" wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::EVENT_NAME_SHOW_MODAL_CREATE }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\GrupoClientesForm::MODAL_NAME_CREATE }}'
+                                                                                    })">
+        + Novo Grupo
+    </flux:button>
+    {{-- INICIO TABELA --}}
     @if($grupos->count() > 0)
-        {{-- INICIO TABELA --}}
-        <section class=" mt-4
-    ">
 
-            <div class="bg-white dark:bg-smartserv-color-dark-800 relative shadow-md rounded overflow-hidden">
+        <div class="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl">
 
-                <div class="overflow-x-auto">
+            <flux:table class="" :paginate="$this->grupos">
+                <flux:table.columns>
 
-                    <table
-                        class="w-full text-sm text-left text-smartserv-color-dark-800 dark:text-smartserv-color-cinza-light-800">
+                    <flux:table.column>Nome</flux:table.column>
 
-                        <thead
-                            class="font-smartserv-font-main text-xs text-smartserv-color-azul-medio-1000 uppercase bg-gray-100 dark:bg-smartserv-color-dark-900 "
-                        >
-
-                        <tr>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Nome</th>
-                            <th scope="col" class="px-4 py-3 whitespace-nowrap">Ação</th>
-                        </tr>
-
-                        </thead>
-
-                        <tbody>
+                    <flux:table.column>Acoes</flux:table.column>
 
 
-                        @foreach($grupos as $grupo)
+                </flux:table.columns>
 
-                            <tr
-                                wire:key="{{ $grupo->id }}"
-                                class="border-b border-smartserv-color-azul-medio-500 dark:border-smartserv-color-verde-limao-500"
-                            >
+                <flux:table.rows>
+                    @foreach ($this->grupos as $grupo)
+                        <flux:table.row :key="$grupo->id">
 
-                                <td class="px-4 py-3">{{ $grupo->nome }}</td>
+                            <flux:table.cell
+                                class="whitespace-nowrap">{{ $grupo->nome }}
+                            </flux:table.cell>
 
-                                <td class="px-4 py-3 whitespace-nowrap">
+                            <flux:table.cell
+                                class="whitespace-nowrap">
+                                <flux:button variant="outline" icon="pencil" size="xs"
+                                             wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\GrupoClientesForm::MODAL_NAME_UPDATE }}',
+                                                                                        id: '{{ $grupo->id }}'
+                                                                                    }
+                                                                                )">
+                                    Editar
+                                </flux:button>
+                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                                                                    '{{ \App\Livewire\Forms\GrupoClientesForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\GrupoClientesForm::MODAL_NAME_REMOVE }}',
+                                                                                        id: '{{ $grupo->id }}'
+                                                                                    }
+                                                                                )">
+                                    Excluir
+                                </flux:button>
+                            </flux:table.cell>
 
-
-                                    <x-edit-button-table
-                                        :data-tooltip-target="'tooltip-alterar-servico' . $grupo->id"
-                                        x-data
-                                        wire:click="$dispatchTo(
-                                                                                '{{ GrupoClientesForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
-                                                                                '{{ GrupoClientesForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
-                                                                                {
-                                                                                    modalName: '{{ GrupoClientesForm::MODAL_NAME_UPDATE }}',
-                                                                                    id: '{{ $grupo->id }}'
-                                                                                }
-                                                                            )"
-                                    />
-                                    <x-tooltip
-                                        :id_tooltip="'tooltip-alterar-servico' . $grupo->id"
-                                        :text="__('Editar')"/>
-
-                                    <x-delete-button-table
-                                        :data-tooltip-target="'tooltip-remover-servico' . $grupo->id"
-                                        x-data
-                                        wire:click="$dispatchTo(
-                                                                                '{{ GrupoClientesForm::PATH_COMPONENT_FORM_REMOVE }}',
-                                                                                '{{ GrupoClientesForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
-                                                                                {
-                                                                                    modalName: '{{ GrupoClientesForm::MODAL_NAME_REMOVE }}',
-                                                                                    id: '{{ $grupo->id }}'
-                                                                                }
-                                                                            )"
-                                    />
-                                    <x-tooltip
-                                        :id_tooltip="'tooltip-remover-servico' . $grupo->id"
-                                        :text="__('Remover')"/>
+                        </flux:table.row>
+                    @endforeach
+                </flux:table.rows>
+            </flux:table>
+        </div>
 
 
-                                </td>
 
-                            </tr>
-
-                        @endforeach
-
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
         {{-- FIM TABELA --}}
     @else
 
         <div
-            class="w-full text-center py-3 bg-smartserv-color-primary-500 dark:bg-smartserv-color-dark-700 rounded-lg border-2 border-smartserv-color-primary-1000 dark:border-smartserv-color-primary-dark-1000">
-            <p class="font-semibold font-smartserv-font-title text-smartserv-color-primary-1000 dark:text-smartserv-color-neutral-100">
+            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+            <p class="font-semibold text-accent">
                 Nenhum registro encontrado.
             </p>
         </div>

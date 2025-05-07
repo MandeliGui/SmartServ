@@ -87,7 +87,7 @@ class ClientesForm extends Form
     public function update()
     {
         $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? $this->dataNascimento : null;
-        $data = ClienteRequest::update($this->all(), $this->attributes())->validated();
+        $data                 = ClienteRequest::update($this->all(), $this->attributes())->validated();
 
         (new ClienteService())->update($data);
     }
@@ -114,14 +114,14 @@ class ClientesForm extends Form
     {
         $cliente = (new ClienteService())->findOne($id);
 
-        $this->id = $cliente->idCliente;
+        $this->id              = $cliente->idCliente;
         $this->nomeRazaoSocial = $cliente->pessoa->nomeRazaoSocial;
-        $this->nomeFantasia = $cliente->pessoa->nomeFantasia;
-        $this->telefone = $cliente->pessoa->telefone;
-        $this->cpfCnpj = $cliente->pessoa->cpfCnpj;
-        $this->dataNascimento = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::parse($cliente->pessoa->dataNascimento)->format('Y-m-d') : null;
-        $this->email = $cliente->pessoa->email;
-        $this->idGrupo = $cliente->idGrupo;
+        $this->nomeFantasia    = $cliente->pessoa->nomeFantasia;
+        $this->telefone        = $cliente->pessoa->telefone;
+        $this->cpfCnpj         = $cliente->pessoa->cpfCnpj;
+        $this->dataNascimento  = $this->dataNascimento !== null && $this->dataNascimento !== '' && $this->dataNascimento !== '0' ? Carbon::parse($cliente->pessoa->dataNascimento)->format('Y-m-d') : null;
+        $this->email           = $cliente->pessoa->email;
+        $this->idGrupo         = $cliente->idGrupo;
 
         $this->endereco = [
             'cep'         => $cliente->pessoa->endereco->cep,

@@ -33,6 +33,7 @@
         <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}">Servicos</flux:navlist.item>
         <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}">Tecnicos</flux:navlist.item>
         <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}">Formas Pagamento</flux:navlist.item>
+        <flux:navlist.item icon="tag" href="{{ route('grupo-cliente') }}">Grupo Clientes</flux:navlist.item>
         <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}">Usuarios</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
@@ -67,7 +68,7 @@
 </flux:main>
 
 @persist('toast')
-<flux:toast />
+<flux:toast/>
 @endpersist
 
 @fluxScripts

@@ -54,9 +54,9 @@ new class extends Component {
             <div class="flex gap-2">
                 <flux:spacer/>
                 <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
+                    <flux:button variant="ghost">Cancelar</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="danger">Delete project</flux:button>
+                <flux:button type="submit" variant="danger">Remover</flux:button>
             </div>
         </div>
 

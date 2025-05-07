@@ -42,9 +42,9 @@ new class extends Component {
     <form wire:submit.prevent="remove">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">Remover cliente?</flux:heading>
+                <flux:heading size="lg">Remover forma de pagamento?</flux:heading>
                 <flux:text class="mt-2">
-                    <p>Tem certeza que deseja remover o servico:</p>
+                    <p>Tem certeza que deseja remover a forma de pagamento:</p>
                     <strong>{{$this->form->nome ?? null}} </strong> ?
 
                 </flux:text>
@@ -52,9 +52,9 @@ new class extends Component {
             <div class="flex gap-2">
                 <flux:spacer/>
                 <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
+                    <flux:button variant="ghost">Cancelar</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="danger">Delete project</flux:button>
+                <flux:button type="submit" variant="danger">Remover</flux:button>
             </div>
         </div>
     </form>
