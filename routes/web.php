@@ -41,12 +41,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('servicos')->group(function (): void {
         Volt::route('/', 'pages.tenant.servicos.search')
             ->name('servicos');
-
-        Volt::route('/novo', 'pages.tenant.servicos.create')
-            ->name('servicos.novo');
-
-        Volt::route('/editar/{id}', 'pages.tenant.servicos.create')
-            ->name('servicos.editar');
+//
+//        Volt::route('/novo', 'pages.tenant.servicos.create')
+//            ->name('servicos.novo');
+//
+//        Volt::route('/editar/{id}', 'pages.tenant.servicos.create')
+//            ->name('servicos.editar');
     });
 
     Route::prefix('tecnico')->group(function (): void {
@@ -69,6 +69,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Volt::route('/editar/{id}', 'pages.tenant.usuarios.create')
             ->name('usuarios.editar');
+    });
+
+    Route::prefix('formas-pagamento')->group(function (): void {
+        Volt::route('/', 'pages.tenant.forma-pagamento.search')
+            ->name('formas-pagamento');
+
     });
 });
 
