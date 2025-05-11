@@ -50,25 +50,46 @@ new class extends Component {
         $dadosEmpresa = Helper::obterDadosEmpresaPorCnpj($this->form->cpfCnpj);
 
         if ($dadosEmpresa) {
-            $this->form->nomeRazaoSocial         = $dadosEmpresa->company->name;
-            $this->form->nomeFantasia            = $dadosEmpresa->alias;
-            $this->form->endereco['cep']         = $dadosEmpresa->address->zip;
-            $this->form->endereco['rua']         = $dadosEmpresa->address->street;
-            $this->form->endereco['numero']      = $dadosEmpresa->address->number;
-            $this->form->endereco['complemento'] = $dadosEmpresa->address->details;
-            $this->form->endereco['bairro']      = $dadosEmpresa->address->district;
-            $this->form->endereco['cidade']      = $dadosEmpresa->address->city;
-            $this->form->endereco['uf']          = $dadosEmpresa->address->state;
+            $this->form->nomeRazaoSocial    = $dadosEmpresa->company->name;
+            $this->form->nomeFantasia       = $dadosEmpresa->alias;
+            $this->form->endereco['cep']    = $dadosEmpresa->address->zip;
+            $this->form->endereco['rua']    = $dadosEmpresa->address->street;
+            $this->form->endereco['numero'] = $dadosEmpresa->address->number;
+            $this->form->endereco['bairro'] = $dadosEmpresa->address->district;
+            $this->form->endereco['cidade'] = $dadosEmpresa->address->city;
+            $this->form->endereco['uf']     = $dadosEmpresa->address->state;
         } else {
-            $this->form->nomeRazaoSocial         = null;
-            $this->form->nomeFantasia            = null;
+            $this->form->nomeRazaoSocial    = null;
+            $this->form->nomeFantasia       = null;
+            $this->form->endereco['rua']    = null;
+            $this->form->endereco['numero'] = null;
+            $this->form->endereco['bairro'] = null;
+            $this->form->endereco['cidade'] = null;
+            $this->form->endereco['uf']     = null;
+        }
+    }
+
+    public function buscarCep()
+    {
+
+        $endereco = Helper::obterEnderecoPorCep($this->form->endereco['cep']);
+
+
+        if ($endereco) {
+            $this->form->endereco['rua']         = $endereco->logradouro ?? null;
+            $this->form->endereco['complemento'] = $endereco->complemento ?? null;
+            $this->form->endereco['bairro']      = $endereco->bairro ?? null;
+            $this->form->endereco['cidade']      = $endereco->localidade ?? null;
+            $this->form->endereco['uf']          = $endereco->uf ?? null;
+        } else {
             $this->form->endereco['rua']         = null;
-            $this->form->endereco['numero']      = null;
             $this->form->endereco['complemento'] = null;
             $this->form->endereco['bairro']      = null;
             $this->form->endereco['cidade']      = null;
             $this->form->endereco['uf']          = null;
         }
+
+
     }
 
 //    public function with()
@@ -203,46 +224,48 @@ new class extends Component {
                         mask="99999-999"
                         wire:model="form.endereco.cep"
                         name="endereco.cep"
+                        wire:blur="buscarCep"
+                        wire:keydown.enter.prevent="buscarCep"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
 
             <flux:input label="Rua*" placeholder="Digite a rua"
                         wire:model="form.endereco.rua"
                         name="endereco.rua"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
 
             <flux:input label="Número*" placeholder="Digite o número"
                         wire:model="form.endereco.numero"
                         name="endereco.numero"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
             <flux:input label="Complemento" placeholder="Digite o complemento"
                         wire:model="form.endereco.complemento"
                         name="endereco.complemento"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
 
             <flux:input label="Bairro*" placeholder="Digite o bairro"
                         wire:model="form.endereco.bairro"
                         name="endereco.bairro"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
 
             <flux:input label="Cidade*" placeholder="Digite a cidade"
                         wire:model="form.endereco.cidade"
                         name="endereco.cidade"
                         wire:loading.attr="disabled"
-                        wire:target="buscarCnpj"/>
+                        wire:target="buscarCnpj,buscarCep"/>
 
             <flux:select label="UF*" variant="listbox" searchable
                          wire:model="form.endereco.uf"
                          placeholder="Selecione"
                          name="endereco.uf"
                          wire:loading.attr="disabled"
-                         wire:target="buscarCnpj">
+                         wire:target="buscarCnpj,buscarCep">
                 <flux:select.option value="AC">AC</flux:select.option>
                 <flux:select.option value="AL">AL</flux:select.option>
                 <flux:select.option value="AP">AP</flux:select.option>
