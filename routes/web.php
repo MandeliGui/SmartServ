@@ -76,6 +76,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->name('formas-pagamento');
 
     });
+
+    Route::prefix('materiais')->group(function (): void {
+        Volt::route('/', 'pages.tenant.materiais.search')
+            ->name('materiais');
+
+
+    });
 });
 
 require __DIR__ . '/auth.php';
