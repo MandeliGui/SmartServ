@@ -1,27 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Services\Tenant;
 
 use App\Http\Requests\Tenant\FilterPaginateRequest;
 use App\Models\EnderecoModel;
 use App\Models\PessoaModel;
-use App\Models\TecnicoModel;
+use App\Models\AtendenteModel;
 
-class TecnicoService
+class AtendenteService
 {
     private readonly PessoaModel $pessoa;
 
     private readonly EnderecoModel $endereco;
 
-    private readonly TecnicoModel $tecnico;
+    private readonly AtendenteModel $atendente;
 
     public function __construct()
     {
-        $this->pessoa   = new PessoaModel();
-        $this->endereco = new EnderecoModel();
-        $this->tecnico  = new TecnicoModel();
+        $this->pessoa    = new PessoaModel();
+        $this->endereco  = new EnderecoModel();
+        $this->atendente = new AtendenteModel();
     }
 
     public function findAll(FilterPaginateRequest $request, array $filters = [])
@@ -43,13 +41,13 @@ class TecnicoService
             ->when(!is_null($request->orderBy), function ($query) use ($request): void {
                 $query->orderBy($request->orderBy, $request->dir);
             })
-            ->whereHas('tecnico')
+            ->whereHas('atendente')
             ->paginate(perPage: $request->limit, page: $request->offset);
     }
 
     public function findOne(mixed $id)
     {
-        return $this->tecnico::query()->where('idTecnico', $id)->first();
+        return $this->atendente::query()->where('idAtendente', $id)->first();
     }
 
     public function create(array $data)
@@ -83,24 +81,24 @@ class TecnicoService
             $pessoa = $existePessoa;
         }
 
-        $existeTecnico = $this->tecnico::query()->where("idTecnico", $pessoa->id)->first();
+        $existeAtendente = $this->atendente::query()->where("idAtendente", $pessoa->id)->first();
 
-        if ($existeTecnico) {
+        if ($existeAtendente) {
             return null;
         }
 
-        return $this->tecnico::query()->create([
-            "idTecnico" => $pessoa->id,
-            "user_id"   => auth()->user()->id,
+        return $this->atendente::query()->create([
+            "idAtendente" => $pessoa->id,
+            "user_id"     => auth()->user()->id,
 
         ]);
     }
 
     public function update(array $data)
     {
-        $tecnico = $this->tecnico::query()->where("idTecnico", $data["id"])->first();
+        $atendente = $this->atendente::query()->where("idAtendente", $data["id"])->first();
 
-        $endereco = $this->endereco::query()->where("id", $tecnico->pessoa->idEndereco)->first();
+        $endereco = $this->endereco::query()->where("id", $atendente->pessoa->idEndereco)->first();
 
         $endereco->update([
             "cep"         => $data['endereco']["cep"],
@@ -115,7 +113,7 @@ class TecnicoService
 
         $endereco->refresh();
 
-        $tecnico->pessoa->update([
+        $atendente->pessoa->update([
             "nomeRazaoSocial" => $data["nome"],
             "telefone"        => $data['telefone'],
             "cpfCnpj"         => $data['cpf'],
@@ -125,7 +123,7 @@ class TecnicoService
             "user_id"         => auth()->user()->id,
         ]);
 
-        return $tecnico;
+        return $atendente;
     }
 
     public function remove(mixed $id)
@@ -135,7 +133,7 @@ class TecnicoService
         //TODO: VERIFICAR ONDE OS CLIENTES VAO ESTAR VINCULADOS E REMOVER LOGICAMENTE!
 
         if (false) {
-            $pessoa->tecnico->update([
+            $pessoa->atendente->update([
                 "removido" => true,
                 "user_id"  => auth()->user()->id,
             ]);
@@ -148,7 +146,7 @@ class TecnicoService
                 "user_id"  => auth()->user()->id,
             ]);
         } else {
-            $pessoa->tecnico->delete();
+            $pessoa->atendente->delete();
             $pessoa->delete();
             $pessoa->endereco->delete();
         }

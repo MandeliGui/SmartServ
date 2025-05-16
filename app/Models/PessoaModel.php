@@ -1,8 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Models;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PessoaModel extends BaseModel
 {
@@ -23,18 +26,23 @@ class PessoaModel extends BaseModel
         'user_id',
     ];
 
-    public function endereco()
+    public function endereco(): BelongsTo
     {
         return $this->belongsTo(EnderecoModel::class, 'idEndereco', 'id');
     }
 
-    public function cliente()
+    public function cliente(): HasOne|PessoaModel
     {
         return $this->hasOne(ClienteModel::class, 'idCliente', 'id');
     }
 
-    public function tecnico()
+    public function tecnico(): HasOne|PessoaModel
     {
         return $this->hasOne(TecnicoModel::class, 'idTecnico', 'id');
+    }
+
+    public function atendente(): HasOne|PessoaModel
+    {
+        return $this->hasOne(AtendenteModel::class, 'idAtendente', 'id');
     }
 }

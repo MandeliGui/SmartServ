@@ -83,6 +83,17 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
 
     });
+
+    Route::prefix('atendentes')->group(function (): void {
+        Volt::route('/', 'pages.tenant.atendentes.search')
+            ->name('atendentes');
+
+        Volt::route('/novo', 'pages.tenant.atendentes.create')
+            ->name('atendentes.novo');
+
+        Volt::route('/editar/{id}', 'pages.tenant.atendentes.create')
+            ->name('atendentes.editar');
+    });
 });
 
 require __DIR__ . '/auth.php';
