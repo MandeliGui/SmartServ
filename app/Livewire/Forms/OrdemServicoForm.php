@@ -81,6 +81,7 @@ class OrdemServicoForm extends Form
     {
         $data = OrdemServicoRequest::create($this->all(), $this->attributes())->validated();
 
+
         $ordemServico = (new OrdemServicoService())->create($data);
 
         $this->reset();

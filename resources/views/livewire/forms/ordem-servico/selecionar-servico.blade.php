@@ -38,12 +38,12 @@ new class extends Component {
 
 
         $this->servicosAdicionados[] = [
-            'id'             => $this->form->id_servico,
+            'idServico'      => $this->form->id_servico,
             'codigo'         => $servico->codigo,
             'quantidade'     => $this->form->quantidade,
             'nome'           => $servico->nome,
-            'valor_unitario' => $servico->valor,
-            'valor_total'    => $servico->valor * $this->form->quantidade,
+            'valorUnitario' => $servico->valor,
+            'valorTotal'    => $servico->valor * $this->form->quantidade,
         ];
 
 
@@ -153,8 +153,8 @@ new class extends Component {
                         <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
                         <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
                         <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valor_unitario'])}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valor_total'])}}</flux:table.cell>
+                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
+                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
                     </flux:table.row>
                 @endforeach
             </flux:table.rows>

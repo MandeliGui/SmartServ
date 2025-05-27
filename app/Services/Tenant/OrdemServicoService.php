@@ -36,7 +36,6 @@ class OrdemServicoService
     public function create(array $data)
     {
 
-   
         $ordemServico = OrdemServicoModel::query()->create([
             'codigo'       => $data['codigo'],
             'tipo'         => $data['tipo'],

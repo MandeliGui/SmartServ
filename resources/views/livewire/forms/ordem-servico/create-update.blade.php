@@ -138,7 +138,7 @@ new class extends Component {
                 @foreach($this->form->clientes as $cliente)
 
                     <flux:select.option
-                        value="{{$cliente->idCliente}}">{{$cliente->pessoa->nomeFantasia ?? $cliente->pessoa->nomeRazaoSocial}}</flux:select.option>
+                            value="{{$cliente->idCliente}}">{{$cliente->pessoa->nomeFantasia ?? $cliente->pessoa->nomeRazaoSocial}}</flux:select.option>
                 @endforeach
 
 
@@ -192,7 +192,6 @@ new class extends Component {
                                 <flux:table.rows>
                                     @foreach($form->materiais as $material)
 
-
                                         <flux:table.row>
                                             <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
                                             <flux:table.cell>{{$material['nome']}}</flux:table.cell>
@@ -200,11 +199,11 @@ new class extends Component {
                                             <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
                                             <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
                                         </flux:table.row>
-                                        @php
-                                            $this->valorMateriais += $material['valorTotal'];
-                                        @endphp
                                     @endforeach
                                 </flux:table.rows>
+                                @php
+                                    $valorMateriais = collect($form->materiais)->sum('valorTotal');
+                                @endphp
 
 
                             </flux:table>
@@ -217,7 +216,7 @@ new class extends Component {
                             <flux:heading class="mt-4">Valor total de materiais</flux:heading>
                             <flux:heading size="xl"
                                           class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                R$ {{ Helper::formatarValorMonetarioPtBr($this->valorMateriais)}}</flux:heading>
+                                R$ {{ Helper::formatarValorMonetarioPtBr($valorMateriais)}}</flux:heading>
                         </div>
                     </flux:card>
                 </flux:accordion.content>
@@ -259,14 +258,14 @@ new class extends Component {
                                             <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
                                             <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
                                             <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valor_unitario'])}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valor_total'])}}</flux:table.cell>
+                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
+                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
                                         </flux:table.row>
-                                        @php
-                                            $this->valorServicos += $servico['valor_total'];
-                                        @endphp
                                     @endforeach
                                 </flux:table.rows>
+                                @php
+                                    $valorServicos = collect($form->servicos)->sum('valorTotal');
+                                @endphp
 
 
                             </flux:table>
@@ -278,7 +277,7 @@ new class extends Component {
                             <flux:heading class="mt-4">Valor total de servicos</flux:heading>
                             <flux:heading size="xl"
                                           class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                R$ {{ Helper::formatarValorMonetarioPtBr($this->valorServicos)}}</flux:heading>
+                                R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
                         </div>
 
                     </flux:card>
@@ -294,7 +293,7 @@ new class extends Component {
             <flux:heading class="mt-4">Valor total ordem de serviço</flux:heading>
             <flux:heading size="xl"
                           class=" inline-block strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                R$ {{ Helper::formatarValorMonetarioPtBr($form->valorTotal = $this->valorServicos + $this->valorMateriais)}}
+                R$ {{ Helper::formatarValorMonetarioPtBr($form->valorTotal = $valorServicos + $valorMateriais)}}
             </flux:heading>
         </div>
 

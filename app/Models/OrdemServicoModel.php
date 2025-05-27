@@ -44,14 +44,14 @@ class OrdemServicoModel extends Model
     public function materiais()
     {
         return $this->belongsToMany(MaterialModel::class, 'tb_ordem_servico_material', 'idOrdemServico', 'idMaterial')
-            ->withPivot('idMaterial','quantidade', 'valorUnitario', 'valorTotal')
+            ->withPivot('idMaterial', 'quantidade', 'valorUnitario', 'valorTotal')
             ->withTimestamps();
     }
 
     public function servicos()
     {
         return $this->belongsToMany(ServicosModel::class, 'tb_ordem_servico_servico', 'idOrdemServico', 'idServico')
-            ->withPivot('quantidade', 'valorUnitario', 'valorTotal')
+            ->withPivot('idServico', 'quantidade', 'valorUnitario', 'valorTotal')
             ->withTimestamps();
     }
 

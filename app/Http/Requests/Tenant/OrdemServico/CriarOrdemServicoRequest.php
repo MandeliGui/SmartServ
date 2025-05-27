@@ -44,12 +44,14 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
             'idCliente'                 => ['required', 'integer', 'exists:tb_cliente,idCliente'],
             'idTecnico'                 => ['nullable', 'integer', 'exists:tb_tecnicos,idTecnico'],
             'idAtendente'               => ['nullable', 'integer', 'exists:tb_atendentes,idAtendente'],
-            "materiais.*.idMaterial"    => ['required', 'integer', 'exists:tb_materiais,id'],
-            "materiais.*.quantidade"    => ['required', 'integer', 'min:1'],
-            "materiais.*.valorUnitario" => ['required'],
-            "materiais.*.valorTotal"    => ['required'],
-            "servicos.*.id"             => ['required', 'integer', 'exists:tb_servicos,id'],
-            "servicos.*.quantidade"     => ['required', 'integer', 'min:1'],
+            "materiais.*.idMaterial"    => ['nullable', 'integer', 'exists:tb_materiais,id'],
+            "materiais.*.quantidade"    => ['nullable', 'integer', 'min:1'],
+            "materiais.*.valorUnitario" => ['nullable'],
+            "materiais.*.valorTotal"    => ['nullable'],
+            "servicos.*.idServico"      => ['nullable', 'integer', 'exists:tb_servicos,id'],
+            "servicos.*.quantidade"     => ['nullable', 'integer', 'min:1'],
+            "servicos.*.valorUnitario"  => ['nullable'],
+            "servicos.*.valorTotal"     => ['nullable'],
         ];
     }
 
@@ -71,10 +73,12 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
             'materiais.*.quantidade.min'         => ':attribute deve ser maior que 0',
             'materiais.*.valorUnitario.required' => ':attribute é obrigatório',
             'materiais.*.valorTotal.required'    => ':attribute é obrigatório',
-            'servicos.*.id.required'             => ':attribute é obrigatório',
-            'servicos.*.id.exists'               => ':attribute informado não existe',
+            'servicos.*.idServico.required'      => ':attribute é obrigatório',
+            'servicos.*.idServico.exists'        => ':attribute informado não existe',
             'servicos.*.quantidade.required'     => ':attribute é obrigatório',
             'servicos.*.quantidade.min'          => ':attribute deve ser maior que 0',
+            'servicos.*.valorUnitario.required'  => ':attribute é obrigatório',
+            'servicos.*.valorTotal.required'     => ':attribute é obrigatório',
 
 
         ];
@@ -82,6 +86,7 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
 
     public function validated(): array
     {
+
         return \Validator::make($this->data, $this->rules(), $this->messages(), $this->attributes())->validated();
     }
 }
