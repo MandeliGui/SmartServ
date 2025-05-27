@@ -38,10 +38,10 @@ new class extends Component {
 
 
         $this->servicosAdicionados[] = [
-            'idServico'      => $this->form->id_servico,
-            'codigo'         => $servico->codigo,
-            'quantidade'     => $this->form->quantidade,
-            'nome'           => $servico->nome,
+            'idServico'     => $this->form->id_servico,
+            'codigo'        => $servico->codigo,
+            'quantidade'    => $this->form->quantidade,
+            'nome'          => $servico->nome,
             'valorUnitario' => $servico->valor,
             'valorTotal'    => $servico->valor * $this->form->quantidade,
         ];
@@ -68,6 +68,17 @@ new class extends Component {
     public function mount()
     {
 
+    }
+
+    public function removeServico(int $index): void
+    {
+
+
+        if (isset($this->servicosAdicionados[$index])) {
+
+            unset($this->servicosAdicionados[$index]);
+            $this->servicosAdicionados = array_values($this->servicosAdicionados);
+        }
     }
 
     #[On(AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO)]
@@ -155,6 +166,11 @@ new class extends Component {
                         <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
                         <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
                         <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
+                        <flux:table.cell>
+                            <flux:button wire:click="removeServico({{$loop->index}})" variant="danger" class="mt-2">
+                                <flux:icon icon="trash"/>
+                            </flux:button>
+                        </flux:table.cell>
                     </flux:table.row>
                 @endforeach
             </flux:table.rows>

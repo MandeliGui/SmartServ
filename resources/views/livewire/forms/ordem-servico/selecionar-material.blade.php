@@ -48,7 +48,6 @@ new class extends Component {
         ];
 
 
-
         $this->form->id_material = null;
         $this->form->quantidade  = null;
 
@@ -69,6 +68,14 @@ new class extends Component {
     public function mount()
     {
 
+    }
+
+    public function removeMaterial(int $index)
+    {
+        if (isset($this->materiaisAdicionados[$index])) {
+            unset($this->materiaisAdicionados[$index]);
+            $this->materiaisAdicionados = array_values($this->materiaisAdicionados); // Reindexa o array
+        }
     }
 
     #[On(AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL)]
@@ -116,7 +123,7 @@ new class extends Component {
                 @foreach($materiais as $material)
 
                     <flux:select.option
-                            value="{{$material->id}}">{{$material->nome}}</flux:select.option>
+                        value="{{$material->id}}">{{$material->nome}}</flux:select.option>
                 @endforeach
 
 
@@ -145,6 +152,7 @@ new class extends Component {
                 <flux:table.column>Quantidade</flux:table.column>
                 <flux:table.column>Valor Unitario</flux:table.column>
                 <flux:table.column>Valor Total</flux:table.column>
+                <flux:table.column></flux:table.column>
 
 
             </flux:table.columns>
@@ -157,6 +165,11 @@ new class extends Component {
                         <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
                         <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
                         <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+                        <flux:table.cell>
+                            <flux:button wire:click="removeMaterial({{$loop->index}})" variant="danger" class="mt-2">
+                                <flux:icon icon="trash"/>
+                            </flux:button>
+                        </flux:table.cell>
                     </flux:table.row>
                 @endforeach
             </flux:table.rows>
