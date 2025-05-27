@@ -85,4 +85,56 @@ class OrdemServicoService
 
         return $servicos;
     }
+
+    public function removeMaterial(mixed $id)
+    {
+
+        $ordemServico = OrdemServicoModel::query()
+            ->whereHas('materiais', function ($query) use ($id) {
+                $query->where('tb_ordem_servico_material.id', $id);
+            })
+            ->first();
+
+
+        if ($ordemServico) {
+
+            $ordemServico->materiais()
+                ->wherePivot('id', $id)
+                ->detach();
+
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
+                return $material->pivot;
+            });
+            $ordemServico->valorTotal = $materiais->sum('valorTotal');
+            $ordemServico->save();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function removeServico(mixed $id)
+    {
+        $ordemServico = OrdemServicoModel::query()
+            ->whereHas('servicos', function (Builder $query) use ($id) {
+                $query->where('tb_ordem_servico_servico.id', $id);
+            })
+            ->first();
+
+        if ($ordemServico) {
+
+            $ordemServico->servicos()
+                ->wherePivot('id', $id)
+                ->detach();
+
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
+                return $servico->pivot;
+            });
+            $ordemServico->valorTotal = $servicos->sum('valorTotal');
+            $ordemServico->save();
+            return true;
+        }
+
+        return false;
+    }
 }

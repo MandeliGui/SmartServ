@@ -38,6 +38,7 @@ new class extends Component {
 
 
         $this->servicosAdicionados[] = [
+            'id'            => null,
             'idServico'     => $this->form->id_servico,
             'codigo'        => $servico->codigo,
             'quantidade'    => $this->form->quantidade,

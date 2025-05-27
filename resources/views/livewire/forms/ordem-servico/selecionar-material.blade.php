@@ -38,6 +38,7 @@ new class extends Component {
 
 
         $this->materiaisAdicionados[] = [
+            'id'            => null,
             'idMaterial'    => $this->form->id_material,
             'codigo'        => $material->codigo,
             'quantidade'    => $this->form->quantidade,

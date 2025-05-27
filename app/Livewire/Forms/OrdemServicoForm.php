@@ -111,6 +111,32 @@ class OrdemServicoForm extends Form
         return $ordemServico;
     }
 
+    public function removeMaterial(mixed $id)
+    {
+
+
+        $data = OrdemServicoRequest::removeMaterial($id, $this->attributes())->validated();
+
+        $ordemServico = (new OrdemServicoService())->removeMaterial($data);
+
+        $this->setOrdemServico($this->id);
+
+        return $ordemServico;
+    }
+
+    public function removeServico(mixed $id)
+    {
+
+
+        $data = OrdemServicoRequest::removeServico($id, $this->attributes())->validated();
+
+        $ordemServico = (new OrdemServicoService())->removeServico($data);
+
+        $this->setOrdemServico($this->id);
+
+        return $ordemServico;
+    }
+
     public function setOrdemServico(mixed $id): void
     {
 
@@ -132,7 +158,7 @@ class OrdemServicoForm extends Form
         $this->materiais = $ordemServico->materiais()->get()->map(function ($material) {
 
             return [
-                'id'            => $material->id,
+                'id'            => $material->pivot->id,
                 'codigo'        => $material->codigo,
                 'nome'          => $material->nome,
                 'valorUnitario' => $material->pivot->valorUnitario,
@@ -143,7 +169,7 @@ class OrdemServicoForm extends Form
 
         $this->servicos = $ordemServico->servicos->map(function ($servico) {
             return [
-                'id'            => $servico->id,
+                'id'            => $servico->pivot->id,
                 'codigo'        => $servico->codigo,
                 'nome'          => $servico->nome,
                 'valorUnitario' => $servico->pivot->valorUnitario,
