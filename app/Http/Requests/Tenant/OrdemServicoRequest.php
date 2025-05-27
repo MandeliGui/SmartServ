@@ -9,6 +9,9 @@ use App\Http\Requests\BaseValidationRequest;
 use App\Http\Requests\Tenant\Cliente\CriarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\EditarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\RemoverClienteRequest;
+use App\Http\Requests\Tenant\OrdemServico\CriarOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\EditarOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\RemoverOrdemServicoRequest;
 
 class OrdemServicoRequest
 {
@@ -20,20 +23,15 @@ class OrdemServicoRequest
         private readonly array       $attributes = []
     ) {
         $this->validationRequest = match ($this->persistence) {
-            Persistence::CREATE => new CriarClienteRequest($this->data, $this->attributes),
-            Persistence::UPDATE => new EditarClienteRequest($this->data, $this->attributes),
-            Persistence::REMOVE => new RemoverClienteRequest($this->data, $this->attributes),
+            Persistence::CREATE => new CriarOrdemServicoRequest($this->data, $this->attributes),
+            Persistence::UPDATE => new EditarOrdemServicoRequest($this->data, $this->attributes),
+            Persistence::REMOVE => new RemoverOrdemServicoRequest($this->data, $this->attributes),
         };
     }
 
     public static function create(array $data, array $attributes = []): self
     {
         return new self($data, Persistence::CREATE, $attributes);
-    }
-
-    public static function findOneById(mixed $id): self
-    {
-        return new self(["id" => $id], Persistence::FIND_ONE_BY_ID);
     }
 
     public static function update(array $data, array $attributes = []): self

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -24,5 +24,10 @@ class ClienteModel extends BaseModel
     public function pessoa()
     {
         return $this->belongsTo(PessoaModel::class, 'idCliente', 'id');
+    }
+
+    public function ordemServico()
+    {
+        return $this->hasMany(OrdemServicoModel::class, 'idCliente', 'idCliente');
     }
 }

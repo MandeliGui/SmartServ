@@ -112,7 +112,7 @@ new class extends Component {
 <div>
 
 
-    <flux:button href="{{ route('clientes.novo') }}" class="mb-4" tooltip="teste" variant="primary"
+    <flux:button href="{{ route('clientes.novo') }}" class="mb-4"  variant="primary"
                  wire:navigate>+ Novo Cliente
     </flux:button>
     {{-- INICIO TABELA --}}

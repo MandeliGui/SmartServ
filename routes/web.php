@@ -94,6 +94,17 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Volt::route('/editar/{id}', 'pages.tenant.atendentes.create')
             ->name('atendentes.editar');
     });
+
+    Route::prefix('ordem-servico')->group(function (): void {
+        Volt::route('/', 'pages.tenant.ordem-servico.search')
+            ->name('ordem-servico');
+
+        Volt::route('/novo', 'pages.tenant.ordem-servico.create')
+            ->name('ordem-servico.novo');
+
+        Volt::route('/editar/{id}', 'pages.tenant.ordem-servico.create')
+            ->name('ordem-servico.editar');
+    });
 });
 
 require __DIR__ . '/auth.php';

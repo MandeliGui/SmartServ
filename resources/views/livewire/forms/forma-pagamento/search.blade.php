@@ -88,7 +88,7 @@ new class extends Component {
 
 }; ?>
 <div>
-    <flux:button class="mb-4" tooltip="teste" variant="primary" wire:click="$dispatchTo(
+    <flux:button class="mb-4"  variant="primary" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\FormaPagamentoForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
                                                                                     '{{ \App\Livewire\Forms\FormaPagamentoForm::EVENT_NAME_SHOW_MODAL_CREATE }}',
                                                                                     {

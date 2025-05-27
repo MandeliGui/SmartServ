@@ -2,9 +2,9 @@
 
 use App\Helpers\Helper;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
-use App\Livewire\Forms\TecnicoForm;
-use App\Models\TecnicoModel;
-use App\Services\Tenant\TecnicoService;
+use App\Livewire\Forms\OrdemServicoForm;
+use App\Models\OrdemServicoModel;
+use App\Services\Tenant\OrdemServicoService;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -16,11 +16,11 @@ new class extends Component {
 
     public int    $limit   = 10;
     public int    $offset  = 0;
-    public string $orderBy = 'nomeRazaoSocial';
+    public string $orderBy = 'codigo';
     public string $dir     = 'asc';
     public string $search  = '';
 
-    public TecnicoForm $form;
+    public OrdemServicoForm $form;
 
     public array $selectedsIds = [];
 
@@ -45,10 +45,10 @@ new class extends Component {
 
     public function updatedSelectPage($value): void
     {
-        $this->selectedsIds = $value ? $this->tecnicos->pluck('id')->toArray() : [];
+        $this->selectedsIds = $value ? $this->ordensServico->pluck('id')->toArray() : [];
     }
 
-    public function getTecnicosProperty()
+    public function getOrdensServicoProperty()
     {
 
         $filters = [];
@@ -57,7 +57,7 @@ new class extends Component {
             $this->only('limit', 'offset', 'orderBy', 'dir', 'search')
         );
 
-        return (new TecnicoService())->findAll($filterPaginateRequest, $filters);
+        return (new OrdemServicoService())->findAll($filterPaginateRequest, $filters);
     }
 
     public function updatedSelectAll($value): void
@@ -66,7 +66,7 @@ new class extends Component {
 
             $this->selectPage = true;
 
-            $this->selectedsIds = TecnicoModel::query()->where("removido", "=", false)->select("idTecnico")->pluck('idTecnico')->toArray();
+            $this->selectedsIds = OrdemServicoModel::query()->where("removido", "=", false)->select("id")->pluck('id')->toArray();
 
         } else {
 
@@ -78,11 +78,11 @@ new class extends Component {
 
     public function getAllIds(): array
     {
-        return TecnicoModel::query()->where("removido", "=", false)->select("idTecnico")->pluck('idTecnico')->toArray();
+        return OrdemServicoModel::query()->where("removido", "=", false)->select("id")->pluck('id')->toArray();
     }
 
-    #[On(TecnicoForm::EVENT_PERSISTED)]
-    public function with(?string $persistence = null, ?array $tecnico = null): array
+    #[On(OrdemServicoForm::EVENT_PERSISTED)]
+    public function with(?string $persistence = null, ?array $ordemServico = null): array
     {
         if (!empty($persistence)) {
 
@@ -93,61 +93,72 @@ new class extends Component {
             $this->selectAll = false;
         }
 
-        $count = !empty($this->search) ? $this->tecnico->total() : count($this->getAllIds());
+        $count = !empty($this->search) ? $this->atendente->total() : count($this->getAllIds());
 
-//        dd($this->tecnicos)
 
         return [
-            'tecnicos' => $this->tecnicos,
-            'count'    => $count,
+            'ordensServico' => $this->ordensServico,
+            'count'         => $count,
         ];
     }
 
 }; ?>
 <div>
 
-    <flux:button class="mb-4"  variant="primary" href="{{route('tecnico.novo')}}" wire:navigate>
-        + Novo Tecnico
+    <flux:button class="mb-4"  variant="primary" href="{{route('ordem-servico.novo')}}" wire:navigate>
+        + Nova Ordem de Servico
     </flux:button>
     {{-- INICIO TABELA --}}
-    @if($tecnicos->count() > 0)
+
+    @if($ordensServico->count() > 0)
 
         <div class="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl">
 
-            <flux:table class="" :paginate="$this->tecnicos">
+            <flux:table class="" :paginate="$this->ordensServico">
                 <flux:table.columns>
 
-                    <flux:table.column>Nome</flux:table.column>
+                    <flux:table.column>Numero</flux:table.column>
+                    <flux:table.column>Cliente</flux:table.column>
                     <flux:table.column>Telefone</flux:table.column>
+                    <flux:table.column>Valor Total</flux:table.column>
                     <flux:table.column>Acoes</flux:table.column>
 
 
                 </flux:table.columns>
 
                 <flux:table.rows>
-                    @foreach ($this->tecnicos as $tecnico)
-                        <flux:table.row :key="$tecnico->id">
-                            <flux:table.cell class="flex items-center gap-3">
-                                {{ $tecnico->nomeRazaoSocial }}
+                    @foreach ($this->ordensServico as $ordemServico)
+
+                        <flux:table.row :key="$ordemServico->id">
+                            <flux:table.cell class="">
+                                {{ $ordemServico->codigo }}
+                            </flux:table.cell>
+
+                            <flux:table.cell class="">
+                                {{ $ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial }}
                             </flux:table.cell>
 
                             <flux:table.cell
-                                    class="whitespace-nowrap">{{ Helper::formatarPhoneBR($tecnico->telefone) }}
+                                class="whitespace-nowrap">{{ Helper::formatarPhoneBR($ordemServico->cliente->pessoa->telefone) }}
+                            </flux:table.cell>
+
+                            <flux:table.cell class="">
+                                R$ {{ Helper::formatarValorMonetarioPtBr($ordemServico->valorTotal ?? 0) }}
                             </flux:table.cell>
 
 
-                            <flux:table.cell class="flex items-center gap-3 ">
+                            <flux:table.cell class=" ">
                                 <flux:button variant="outline" icon="pencil" size="xs"
-                                             href="{{route('tecnico.editar', $tecnico->id)}}" wire:navigate>
+                                             href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate>
                                     Editar
                                 </flux:button>
                                 {{--                                <flux:modal.trigger name="delete-cliente" >--}}
                                 <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\TecnicoForm::PATH_COMPONENT_FORM_REMOVE }}',
-                                                                                    '{{ \App\Livewire\Forms\TecnicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
                                                                                     {
-                                                                                        modalName: '{{ \App\Livewire\Forms\TecnicoForm::MODAL_NAME_REMOVE }}',
-                                                                                        id: '{{ $tecnico->id }}'
+                                                                                        modalName: '{{ \App\Livewire\Forms\OrdemServicoForm::MODAL_NAME_REMOVE }}',
+                                                                                        id: '{{ $ordemServico->id }}'
                                                                                     }
                                                                                 )">
                                     Excluir
@@ -167,7 +178,7 @@ new class extends Component {
     @else
 
         <div
-                class="w-full text-center py-3 rounded-lg border-2 border-accent">
+            class="w-full text-center py-3 rounded-lg border-2 border-accent">
             <p class="font-semibold text-accent">
                 Nenhum registro encontrado.
             </p>
