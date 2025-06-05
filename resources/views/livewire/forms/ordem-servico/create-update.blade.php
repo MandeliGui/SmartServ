@@ -28,9 +28,9 @@ new class extends Component {
 
         if ($this->persistence == Persistence::UPDATE) {
 
-            $cliente = $this->form->update();
+            $ordemServico = $this->form->update();
 
-            $this->dispatch(OrdemServicoForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, cliente: $cliente);
+            $this->dispatch(OrdemServicoForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, ordemServico: $ordemServico);
 
             $this->redirect(route('ordem-servico'), navigate: true);
 
@@ -38,10 +38,10 @@ new class extends Component {
 
             try {
 
-                $cliente = $this->form->create();
+                $ordemServico = $this->form->create();
 
 
-                $this->dispatch(OrdemServicoForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, cliente: $cliente);
+                $this->dispatch(OrdemServicoForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, ordemServico: $ordemServico);
                 $this->redirect(route('ordem-servico'), navigate: true);
             } catch (Throwable $e) {
                 throw $e;
@@ -157,10 +157,13 @@ new class extends Component {
                          name="idCliente"
             >
 
-                @foreach($this->form->clientes as $cliente)
 
-                    <flux:select.option
-                            value="{{$cliente->idCliente}}">{{$cliente->pessoa->nomeFantasia ?? $cliente->pessoa->nomeRazaoSocial}}</flux:select.option>
+                @foreach($form->clientes as $cliente)
+
+                    <flux:select.option value="{{$cliente->idCliente}}">
+                        {{$cliente->pessoa->nomeFantasia ?: $cliente->pessoa->nomeRazaoSocial}}
+                    </flux:select.option>
+
                 @endforeach
 
 

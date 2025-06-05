@@ -23,15 +23,17 @@ new class extends Component {
     {
 
 
-        Validator::make($this->form->only('id_material', 'quantidade'),
+        Validator::make($this->form->only('id_material', 'quantidade', 'valorUnitario'),
             rules: [
-                'id_material' => 'required',
-                'quantidade'  => 'required|numeric',
+                'id_material'   => 'required',
+                'quantidade'    => 'required|numeric',
+                'valorUnitario' => 'required',
             ],
             messages: [
-                'id_material.required' => 'O campo materiais é obrigatório.',
-                'quantidade.required'  => 'O campo quantidade é obrigatório.',
-                'quantidade.numeric'   => 'O campo quantidade deve ser numérico.',
+                'id_material.required'   => 'O campo materiais é obrigatório.',
+                'quantidade.required'    => 'O campo quantidade é obrigatório.',
+                'quantidade.numeric'     => 'O campo quantidade deve ser numérico.',
+                'valorUnitario.required' => 'O campo valor é obrigatório.',
             ])->validate();
 
         $material = $this->form->getMaterialById($this->form->id_material);
@@ -43,15 +45,27 @@ new class extends Component {
             'codigo'        => $material->codigo,
             'quantidade'    => $this->form->quantidade,
             'nome'          => $material->nome,
-            'valorUnitario' => $material->valor,
-            'valorTotal'    => $material->valor * $this->form->quantidade,
+            'valorUnitario' => $this->form->valorUnitario,
+            'valorTotal'    => $this->form->valorUnitario * $this->form->quantidade,
 
         ];
 
 
         $this->form->id_material = null;
         $this->form->quantidade  = null;
+        $this->form->valorUnitario = null;
 
+    }
+
+    public function atualizarValorUnitario()
+    {
+        if ($this->form->id_material) {
+            $material                    = \App\Models\MaterialModel::find($this->form->id_material);
+
+            $this->form->valorUnitario = $material->valor;
+        }else{
+            $this->form->valorUnitario = null;
+        }
     }
 
     public function save(): void
@@ -118,6 +132,7 @@ new class extends Component {
                          wire:model="form.id_material"
                          placeholder="Selecione"
                          name="material.codigo"
+                         wire:change="atualizarValorUnitario"
             >
 
                 <flux:select.option value="">Selecione</flux:select.option>
@@ -135,6 +150,10 @@ new class extends Component {
             <flux:input label="Quantidade*" placeholder="Digite a quantidade"
                         wire:model="form.quantidade"
                         name="quantidade"
+            />
+            <flux:input label="Valor Unitario*" placeholder="Digite a quantidade"
+                        wire:model="form.valorUnitario"
+                        name="valorUnitario"
             />
         </div>
 

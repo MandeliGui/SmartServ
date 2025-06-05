@@ -135,7 +135,7 @@ new class extends Component {
                             </flux:table.cell>
 
                             <flux:table.cell class="">
-                                {{ $ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial }}
+                                {{ $ordemServico->cliente->pessoa->nomeFantasia ?: $ordemServico->cliente->pessoa->nomeRazaoSocial }}
                             </flux:table.cell>
 
                             <flux:table.cell

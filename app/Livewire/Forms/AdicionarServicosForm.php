@@ -17,6 +17,7 @@ class AdicionarServicosForm extends Form
     public ?int    $id_servico = null;
     public ?string $codigo     = null;
     public ?string $quantidade = null;
+    public ?string $valorUnitario = null;
 
     private function attributes(): array
     {
@@ -24,6 +25,7 @@ class AdicionarServicosForm extends Form
             "id_servico" => "Id",
             "codigo"     => "Servico",
             "quantidade" => "Quantidade",
+            "valorUnitario" => "Valor Unitário",
         ];
     }
 

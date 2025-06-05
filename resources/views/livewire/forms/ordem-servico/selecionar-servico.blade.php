@@ -23,15 +23,17 @@ new class extends Component {
     {
 
 
-        Validator::make($this->form->only('id_servico', 'quantidade'),
+        Validator::make($this->form->only('id_servico', 'quantidade', 'valorUnitario'),
             rules: [
-                'id_servico' => 'required',
-                'quantidade' => 'required|numeric',
+                'id_servico'    => 'required',
+                'quantidade'    => 'required|numeric',
+                'valorUnitario' => 'required',
             ],
             messages: [
-                'id_servico.required' => 'O campo servico é obrigatório.',
-                'quantidade.required' => 'O campo quantidade é obrigatório.',
-                'quantidade.numeric'  => 'O campo quantidade deve ser numérico.',
+                'id_servico.required'    => 'O campo servico é obrigatório.',
+                'quantidade.required'    => 'O campo quantidade é obrigatório.',
+                'quantidade.numeric'     => 'O campo quantidade deve ser numérico.',
+                'valorUnitario.required' => 'O campo valor é obrigatório.',
             ])->validate();
 
         $servico = $this->form->getServicoById($this->form->id_servico);
@@ -43,14 +45,24 @@ new class extends Component {
             'codigo'        => $servico->codigo,
             'quantidade'    => $this->form->quantidade,
             'nome'          => $servico->nome,
-            'valorUnitario' => $servico->valor,
-            'valorTotal'    => $servico->valor * $this->form->quantidade,
+            'valorUnitario' => $this->form->valorUnitario,
+            'valorTotal'    => $this->form->valorUnitario * $this->form->quantidade,
         ];
 
 
         $this->form->id_servico = null;
         $this->form->quantidade = null;
 
+    }
+
+    public function atualizarValorUnitario()
+    {
+        if ($this->form->id_servico) {
+            $servico                   = $this->form->getServicoById($this->form->id_servico);
+            $this->form->valorUnitario = $servico->valor;
+        } else {
+            $this->form->valorUnitario = null;
+        }
     }
 
     public function save(): void
@@ -121,8 +133,10 @@ new class extends Component {
                          wire:model="form.id_servico"
                          placeholder="Selecione"
                          name="id_servico"
+                         wire:change="atualizarValorUnitario"
             >
 
+                <flux:select.option value="">Selecione</flux:select.option>
 
                 @foreach($servicos as $servico)
 
@@ -138,6 +152,10 @@ new class extends Component {
             <flux:input label="Quantidade*" placeholder="Digite a quantidade"
                         wire:model="form.quantidade"
                         name="quantidade"
+            />
+            <flux:input label="Valor Unitario*" placeholder="Digite o valor"
+                        wire:model="form.valorUnitario"
+                        name="valorUnitario"
             />
         </div>
 
