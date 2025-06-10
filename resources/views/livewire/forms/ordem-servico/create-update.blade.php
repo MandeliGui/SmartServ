@@ -104,12 +104,14 @@ new class extends Component {
     function mount()
     {
 
+
         $this->form->codigo       = (string)(OrdemServicoModel::latest()->first() ? (int)OrdemServicoModel::latest()->first()->codigo + 1 : 1);
         $this->form->dataAbertura = now()->format('Y-m-d');
         $this->form->clientes     = \App\Models\ClienteModel::query()->get();
 
 
         $this->id = request()->route('id') ?? null;
+
 
         if ($this->id) {
 

@@ -60,8 +60,27 @@ class OrdemServicoService
 
     public function update(array $data, mixed $id)
     {
-        $ordemServico = OrdemServicoModel::query()->where('id', $id);
+//        dd($data);
 
+        $ordemServico = OrdemServicoModel::find($id);
+
+
+        if (!empty($data['materiais'])) {
+
+
+            $data['materiais'] = array_filter($data['materiais'], function ($material) {
+                return isset($material['idMaterial']);
+            });
+            $ordemServico->materiais()->attach($data['materiais']);
+
+
+        }
+        if (!empty($data['servicos'])) {
+            $data['servicos'] = array_filter($data['servicos'], function ($servico) {
+                return isset($servico['idServico']);
+            });
+            $ordemServico->servicos()->attach($data['servicos']);
+        }
         $ordemServico->update([
             'tipo'         => $data['tipo'],
             'dataAbertura' => $data['dataAbertura'],
@@ -110,7 +129,7 @@ class OrdemServicoService
             $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
             $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
@@ -140,7 +159,7 @@ class OrdemServicoService
             $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $servicos                = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
             $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
@@ -182,6 +201,7 @@ class OrdemServicoService
 
         return false;
     }
+
     public function removeServico(mixed $id)
     {
         $ordemServico = OrdemServicoModel::query()
@@ -196,7 +216,7 @@ class OrdemServicoService
                 ->wherePivot('id', $id)
                 ->detach();
 
-            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
 

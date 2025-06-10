@@ -26,15 +26,10 @@ class EditarOrdemServicoRequest extends BaseValidationRequest
             'idCliente'    => $this->data['idCliente'],
             'idTecnico'    => $this->data['idTecnico'],
             'idAtendente'  => $this->data['idAtendente'],
-            "materiais"    => [
-                "id"         => $this->data['materiais']['id'],
-                "quantidade" => $this->data['materiais']['quantidade'],
-            ],
-            "servicos"     => [
-                "id"         => $this->data['servicos']['id'],
-                "quantidade" => $this->data['servicos']['quantidade'],
-            ],
+            "materiais"    => $this->data['materiais'],
+            "servicos"     => $this->data['servicos'],
         ];
+//        dd($this->data);
     }
 
     public function rules(): array
@@ -46,13 +41,17 @@ class EditarOrdemServicoRequest extends BaseValidationRequest
             'dataEntrega'          => ['nullable', 'date'],
             'status'               => ['required', 'string'],
             'valorTotal'           => ['required', 'numeric'],
-            'idCliente'            => ['required', 'integer', 'exists:tb_clientes,idCliente'],
+            'idCliente'            => ['required', 'integer', 'exists:tb_cliente,idCliente'],
             'idTecnico'            => ['nullable', 'integer', 'exists:tb_tecnicos,idTecnico'],
             'idAtendente'          => ['nullable', 'integer', 'exists:tb_atendentes,idAtendente'],
-            "materiais.id"         => ['required', 'integer', 'exists:tb_materiais,id'],
-            "materiais.quantidade" => ['required', 'integer', 'min:1'],
-            "servicos.id"          => ['required', 'integer', 'exists:tb_servicos,id'],
-            "servicos.quantidade"  => ['required', 'integer', 'min:1'],
+            "materiais.*.idMaterial"    => ['nullable', 'integer', 'exists:tb_materiais,id'],
+            "materiais.*.quantidade"    => ['nullable', 'integer', 'min:1'],
+            "materiais.*.valorUnitario" => ['nullable'],
+            "materiais.*.valorTotal"    => ['nullable'],
+            "servicos.*.idServico"      => ['nullable', 'integer', 'exists:tb_servicos,id'],
+            "servicos.*.quantidade"     => ['nullable', 'integer', 'min:1'],
+            "servicos.*.valorUnitario"  => ['nullable'],
+            "servicos.*.valorTotal"     => ['nullable'],
         ];
     }
 
@@ -71,16 +70,18 @@ class EditarOrdemServicoRequest extends BaseValidationRequest
             'idCliente.exists'              => ':attribute informado não existe',
             'idTecnico.exists'              => ':attribute informado não existe',
             'idAtendente.exists'            => ':attribute informado não existe',
-            'materiais.id.required'         => ':attribute é obrigatório',
-            'materiais.id.exists'           => ':attribute informado não existe',
-            'materiais.quantidade.required' => ':attribute é obrigatório',
-            'materiais.quantidade.integer'  => ':attribute deve ser um número inteiro',
-            'materiais.quantidade.min'      => ':attribute deve ser maior que 0',
-            'servicos.id.required'          => ':attribute é obrigatório',
-            'servicos.id.exists'            => ':attribute informado não existe',
-            'servicos.quantidade.required'  => ':attribute é obrigatório',
-            'servicos.quantidade.integer'   => ':attribute deve ser um número inteiro',
-            'servicos.quantidade.min'       => ':attribute deve ser maior que 0',
+            'materiais.*.idMaterial.required'    => ':attribute é obrigatório',
+            'materiais.*.idMaterial.exists'      => ':attribute informado não existe',
+            'materiais.*.quantidade.required'    => ':attribute é obrigatório',
+            'materiais.*.quantidade.min'         => ':attribute deve ser maior que 0',
+            'materiais.*.valorUnitario.required' => ':attribute é obrigatório',
+            'materiais.*.valorTotal.required'    => ':attribute é obrigatório',
+            'servicos.*.idServico.required'      => ':attribute é obrigatório',
+            'servicos.*.idServico.exists'        => ':attribute informado não existe',
+            'servicos.*.quantidade.required'     => ':attribute é obrigatório',
+            'servicos.*.quantidade.min'          => ':attribute deve ser maior que 0',
+            'servicos.*.valorUnitario.required'  => ':attribute é obrigatório',
+            'servicos.*.valorTotal.required'     => ':attribute é obrigatório',
         ];
     }
 

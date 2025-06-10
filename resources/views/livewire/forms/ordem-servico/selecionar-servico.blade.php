@@ -76,7 +76,7 @@ new class extends Component {
 
     public function save(): void
     {
-        if ($persistence === Persistence::CREATE) {
+        if ($this->persistence === Persistence::CREATE) {
             $this->ordemServicoForm->servicos = $this->servicosAdicionados;
 
             $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servicos: $this->ordemServicoForm->servicos);
@@ -99,7 +99,15 @@ new class extends Component {
 
     public function mount()
     {
+        $this->id = request()->route('id') ?? null;
 
+
+        if ($this->id) {
+
+            $this->persistence = Persistence::UPDATE;
+
+
+        }
     }
 
     public function removeServico(int $index): void

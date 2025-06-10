@@ -55,6 +55,7 @@ new class extends Component {
         $this->form->quantidade    = null;
         $this->form->valorUnitario = null;
 
+
     }
 
     public function editarMateriais()
@@ -79,7 +80,8 @@ new class extends Component {
 
     public function save(): void
     {
-        if ($persistence === Persistence::CREATE) {
+
+        if (!isset($this->materiaisAdicionados['id'])) {
             $this->ordemServicoForm->materiais = $this->materiaisAdicionados;
 
             $this->dispatch(AdicionarMateriaisForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, materiais: $this->ordemServicoForm->materiais);
@@ -88,7 +90,7 @@ new class extends Component {
 
             $this->materiaisAdicionados = [];
         } else {
-            dd($this->materiaisAdicionados);
+
             $this->ordemServicoForm->materiais = $this->materiaisAdicionados;
 
 
@@ -101,6 +103,7 @@ new class extends Component {
 
     public function mount()
     {
+        $this->ordemServicoForm->id = request()->route('id') ?? null;
 
     }
 

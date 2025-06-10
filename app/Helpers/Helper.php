@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Helpers;
 
@@ -164,8 +164,8 @@ class Helper
 
     public static function formatarCNPJ(?string $cnpj): ?string
     {
-        if (strlen((string) $cnpj) === 14) {
-            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', (string) $cnpj);
+        if (strlen((string)$cnpj) === 14) {
+            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', (string)$cnpj);
         }
 
         return $cnpj;
@@ -179,11 +179,11 @@ class Helper
 
         $cpfCnpj = preg_replace('/[^0-9]/', '', $cpfCnpj);
 
-        if (strlen((string) $cpfCnpj) === 11) {
+        if (strlen((string)$cpfCnpj) === 11) {
             return self::formatarCPF($cpfCnpj);
         }
 
-        if (strlen((string) $cpfCnpj) === 14) {
+        if (strlen((string)$cpfCnpj) === 14) {
             return self::formatarCNPJ($cpfCnpj);
         }
 
@@ -211,7 +211,7 @@ class Helper
 
         $cpfCnpj = str()->replaceMatches('/[^0-9]/', '', $cpfCnpj);
 
-        return strlen((string) $cpfCnpj) === 11 ? "PF" : (strlen((string) $cpfCnpj) === 14 ? "PJ" : null);
+        return strlen((string)$cpfCnpj) === 11 ? "PF" : (strlen((string)$cpfCnpj) === 14 ? "PJ" : null);
     }
 
     public static function obterEnderecoPorCep(?string $cep): ?stdClass
@@ -222,7 +222,7 @@ class Helper
 
         $cep = preg_replace('/[^0-9]/', '', $cep);
 
-        if (strlen((string) $cep) !== 8) {
+        if (strlen((string)$cep) !== 8) {
             return null;
         }
 
@@ -241,7 +241,7 @@ class Helper
 
         $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
 
-        if (strlen((string) $cnpj) !== 14) {
+        if (strlen((string)$cnpj) !== 14) {
             return null;
         }
 
@@ -249,5 +249,10 @@ class Helper
         $url = "https://open.cnpja.com/office/{$cnpj}";
 
         return json_decode(file_get_contents($url));
+    }
+
+    public static function isAssociativeArray(array $array): bool
+    {
+        return array_keys($array) !== range(0, count($array) - 1);
     }
 }
