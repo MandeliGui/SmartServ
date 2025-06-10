@@ -86,6 +86,41 @@ class OrdemServicoService
         return $servicos;
     }
 
+    public function editarMaterial(array $data)
+    {
+        $ordemServico = OrdemServicoModel::query()
+            ->whereHas('materiais', function (Builder $query) use ($data) {
+                $query->where('tb_ordem_servico_material.id', $data['id']);
+            })
+            ->first();
+
+
+        if ($ordemServico) {
+
+
+            $materiais = $ordemServico->materiais()
+                ->where('tb_ordem_servico_material.id', $data['id'])->first();
+
+            $materiais->pivot->quantidade    = $data['quantidade'];
+            $materiais->pivot->valorUnitario = $data['valorUnitario'];
+            $materiais->pivot->valorTotal    = $data['valorTotal'];
+            $materiais->pivot->save();
+
+
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
+                return $material->pivot;
+            });
+            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
+                return $servico->pivot;
+            });
+            $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
+            $ordemServico->save();
+            return true;
+        }
+
+        return false;
+    }
+
     public function removeMaterial(mixed $id)
     {
 
@@ -105,7 +140,10 @@ class OrdemServicoService
             $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $ordemServico->valorTotal = $materiais->sum('valorTotal');
+            $servicos                = $ordemServico->servicos()->get()->map(function ($servico) {
+                return $servico->pivot;
+            });
+            $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
             $ordemServico->save();
             return true;
         }
@@ -113,6 +151,37 @@ class OrdemServicoService
         return false;
     }
 
+    public function editarServico(array $data)
+    {
+        $ordemServico = OrdemServicoModel::query()
+            ->whereHas('servicos', function (Builder $query) use ($data) {
+                $query->where('tb_ordem_servico_servico.id', $data['id']);
+            })
+            ->first();
+
+        if ($ordemServico) {
+
+            $servicos = $ordemServico->servicos()
+                ->where('tb_ordem_servico_servico.id', $data['id'])->first();
+
+            $servicos->pivot->quantidade    = $data['quantidade'];
+            $servicos->pivot->valorUnitario = $data['valorUnitario'];
+            $servicos->pivot->valorTotal    = $data['valorTotal'];
+            $servicos->pivot->save();
+
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
+                return $servico->pivot;
+            });
+            $materials                = $ordemServico->materiais()->get()->map(function ($material) {
+                return $material->pivot;
+            });
+            $ordemServico->valorTotal = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
+            $ordemServico->save();
+            return true;
+        }
+
+        return false;
+    }
     public function removeServico(mixed $id)
     {
         $ordemServico = OrdemServicoModel::query()
@@ -130,7 +199,11 @@ class OrdemServicoService
             $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
-            $ordemServico->valorTotal = $servicos->sum('valorTotal');
+
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
+                return $material->pivot;
+            });
+            $ordemServico->valorTotal = $servicos->sum('valorTotal') + $materiais->sum('valorTotal');
             $ordemServico->save();
             return true;
         }

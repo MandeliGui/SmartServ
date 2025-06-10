@@ -111,6 +111,17 @@ class OrdemServicoForm extends Form
         return $ordemServico;
     }
 
+    public function editarMaterial($material)
+    {
+
+        $data         = OrdemServicoRequest::editarMaterial($material, $this->attributes())->validated();
+        $ordemServico = (new OrdemServicoService())->editarMaterial($data);
+
+        $this->setOrdemServico($this->id);
+
+
+    }
+
     public function removeMaterial(mixed $id)
     {
 
@@ -123,6 +134,19 @@ class OrdemServicoForm extends Form
 
         return $ordemServico;
     }
+
+    public function editarServico($servico)
+    {
+
+        $data = OrdemServicoRequest::editarServico($servico, $this->attributes())->validated();
+
+        $ordemServico = (new OrdemServicoService())->editarServico($data);
+
+        $this->setOrdemServico($this->id);
+
+        return $ordemServico;
+    }
+
 
     public function removeServico(mixed $id)
     {

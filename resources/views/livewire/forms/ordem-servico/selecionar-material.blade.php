@@ -51,32 +51,51 @@ new class extends Component {
         ];
 
 
-        $this->form->id_material = null;
-        $this->form->quantidade  = null;
+        $this->form->id_material   = null;
+        $this->form->quantidade    = null;
         $this->form->valorUnitario = null;
+
+    }
+
+    public function editarMateriais()
+    {
+        $this->form->valorTotal = $this->form->valorUnitario * $this->form->quantidade;
+
+        $this->dispatch(AdicionarMateriaisForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, materiais: $this->form->all());
+        \Flux::modal(AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL)->close();
 
     }
 
     public function atualizarValorUnitario()
     {
         if ($this->form->id_material) {
-            $material                    = \App\Models\MaterialModel::find($this->form->id_material);
+            $material = \App\Models\MaterialModel::find($this->form->id_material);
 
             $this->form->valorUnitario = $material->valor;
-        }else{
+        } else {
             $this->form->valorUnitario = null;
         }
     }
 
     public function save(): void
     {
-        $this->ordemServicoForm->materiais = $this->materiaisAdicionados;
+        if ($persistence === Persistence::CREATE) {
+            $this->ordemServicoForm->materiais = $this->materiaisAdicionados;
 
-        $this->dispatch(AdicionarMateriaisForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, materiais: $this->ordemServicoForm->materiais);
+            $this->dispatch(AdicionarMateriaisForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, materiais: $this->ordemServicoForm->materiais);
 
-        \Flux::modal(AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL)->close();
+            \Flux::modal(AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL)->close();
 
-        $this->materiaisAdicionados = [];
+            $this->materiaisAdicionados = [];
+        } else {
+            dd($this->materiaisAdicionados);
+            $this->ordemServicoForm->materiais = $this->materiaisAdicionados;
+
+
+            $this->dispatch(AdicionarMateriaisForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, materiais: $this->ordemServicoForm->materiais);
+
+            \Flux::modal(AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL)->close();
+        }
 
     }
 
@@ -94,14 +113,38 @@ new class extends Component {
     }
 
     #[On(AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL)]
-    public function openModalSelecionarMaterial(string $modalName): void
+    public function openModalSelecionarMaterial(string $modalName, mixed $idMaterial = null): void
     {
 
+        if ($idMaterial) {
+            $this->form->idMaterialSelecionado = $idMaterial;
 
-        $this->form->materiais = \App\Models\MaterialModel::query()->where('removido', false)->get();
+            $material = \App\Models\OrdemServicoModel::query()
+                ->whereHas('materiais', function ($query) use ($idMaterial) {
+                    $query->where('tb_ordem_servico_material.id', $idMaterial);
+                })
+                ->first();
+
+            if ($material) {
+                $pivotData = $material->materiais()
+                    ->wherePivot('id', $idMaterial)
+                    ->first();
+
+                $this->form->id_material   = $pivotData->pivot->idMaterial;
+                $this->form->quantidade    = $pivotData->pivot->quantidade;
+                $this->form->valorUnitario = $pivotData->pivot->valorUnitario;
 
 
-        $this->persistence = Persistence::CREATE;
+            }
+            $this->persistence = Persistence::UPDATE;
+        } else {
+
+            $this->form->materiais = \App\Models\MaterialModel::query()->where('removido', false)->get();
+
+
+            $this->persistence = Persistence::CREATE;
+        }
+
 
         Flux::modal($modalName)->show();
     }
@@ -133,6 +176,7 @@ new class extends Component {
                          placeholder="Selecione"
                          name="material.codigo"
                          wire:change="atualizarValorUnitario"
+                         :disabled="$persistence === Persistence::UPDATE"
             >
 
                 <flux:select.option value="">Selecione</flux:select.option>
@@ -157,8 +201,12 @@ new class extends Component {
             />
         </div>
 
+        @if($persistence === Persistence::CREATE)
 
-        <flux:button wire:click="addMateriais" variant="primary" class="mt-2">Adicionar</flux:button>
+            <flux:button wire:click="addMateriais" variant="primary" class="mt-2">Adicionar</flux:button>
+        @else
+            <flux:button wire:click="editarMateriais" variant="primary" class="mt-2">Atualizar</flux:button>
+        @endif
     </form>
 
 

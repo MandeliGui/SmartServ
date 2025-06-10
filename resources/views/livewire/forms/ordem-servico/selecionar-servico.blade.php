@@ -50,9 +50,18 @@ new class extends Component {
         ];
 
 
-        $this->form->id_servico = null;
-        $this->form->quantidade = null;
+        $this->form->id_servico    = null;
+        $this->form->quantidade    = null;
+        $this->form->valorUnitario = null;
 
+    }
+
+    public function editarServicos()
+    {
+        $this->form->valorTotal = $this->form->valorUnitario * $this->form->quantidade;
+
+        $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servicos: $this->form->all());
+        \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
     }
 
     public function atualizarValorUnitario()
@@ -67,14 +76,24 @@ new class extends Component {
 
     public function save(): void
     {
-        $this->ordemServicoForm->servicos = $this->servicosAdicionados;
+        if ($persistence === Persistence::CREATE) {
+            $this->ordemServicoForm->servicos = $this->servicosAdicionados;
 
-        $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servicos: $this->ordemServicoForm->servicos);
+            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servicos: $this->ordemServicoForm->servicos);
 
-        \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
+            \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
 
 
-        $this->servicosAdicionados = [];
+            $this->servicosAdicionados = [];
+        } else {
+            dd($this->servicosAdicionados);
+            $this->ordemServicoForm->servicos = $this->servicosAdicionados;
+
+
+            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servicos: $this->ordemServicoForm->servicos);
+
+            \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
+        }
 
     }
 
@@ -95,14 +114,37 @@ new class extends Component {
     }
 
     #[On(AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO)]
-    public function openModalSelecionarServico(string $modalName): void
+    public function openModalSelecionarServico(string $modalName, mixed $idServico = null): void
     {
 
+        if ($idServico) {
+            $this->form->idServicoSelecionado = $idServico;
 
-        $this->form->servicos = \App\Models\ServicosModel::query()->where('removido', false)->get();
+            $servico = \App\Models\OrdemServicoModel::query()
+                ->whereHas('servicos', function ($query) use ($idServico) {
+                    $query->where('tb_ordem_servico_servico.id', $idServico);
+                })
+                ->first();
+
+            if ($servico) {
+                $pivotData = $servico->servicos()
+                    ->wherePivot('id', $idServico)
+                    ->first();
+
+                $this->form->id_servico   = $pivotData->pivot->idServico;
+                $this->form->quantidade    = $pivotData->pivot->quantidade;
+                $this->form->valorUnitario = $pivotData->pivot->valorUnitario;
 
 
-        $this->persistence = Persistence::REMOVE;
+            }
+            $this->persistence = Persistence::UPDATE;
+        } else {
+
+            $this->form->servicos = \App\Models\ServicosModel::query()->where('removido', false)->get();
+
+
+            $this->persistence = Persistence::CREATE;
+        }
 
         Flux::modal($modalName)->show();
     }
@@ -134,6 +176,7 @@ new class extends Component {
                          placeholder="Selecione"
                          name="id_servico"
                          wire:change="atualizarValorUnitario"
+                         :disabled="$persistence === Persistence::UPDATE"
             >
 
                 <flux:select.option value="">Selecione</flux:select.option>
@@ -159,8 +202,13 @@ new class extends Component {
             />
         </div>
 
+        @if($persistence === Persistence::CREATE)
 
-        <flux:button wire:click="addServicos" variant="primary" class="mt-2">Adicionar</flux:button>
+            <flux:button wire:click="addServicos" variant="primary" class="mt-2">Adicionar</flux:button>
+
+        @else
+            <flux:button wire:click="editarServicos" variant="primary" class="mt-2">Atualizar</flux:button>
+        @endif
     </form>
 
     @if(count($servicosAdicionados) >0 )
@@ -179,6 +227,7 @@ new class extends Component {
 
             <flux:table.rows>
                 @foreach($servicosAdicionados as $servico)
+
                     <flux:table.row>
                         <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
                         <flux:table.cell>{{$servico['nome']}}</flux:table.cell>

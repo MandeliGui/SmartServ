@@ -11,10 +11,13 @@ use App\Http\Requests\Tenant\Cliente\CriarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\EditarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\RemoverClienteRequest;
 use App\Http\Requests\Tenant\OrdemServico\CriarOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\EditarMaterialOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\EditarOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\EditarServicoOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverMaterialOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverServicoOrdemSericoRequest;
+use App\Http\Requests\Tenant\Servicos\EditarServicoRequest;
 use App\Http\Requests\Tenant\Servicos\RemoverServicoRequest;
 
 class OrdemServicoRequest
@@ -31,7 +34,9 @@ class OrdemServicoRequest
             Persistence::CREATE                       => new CriarOrdemServicoRequest($this->data, $this->attributes),
             Persistence::UPDATE                       => new EditarOrdemServicoRequest($this->data, $this->attributes),
             Persistence::REMOVE                       => new RemoverOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::EDITAR_MATERIAL  => new EditarMaterialOrdemServicoRequest($this->data, $this->attributes),
             OrdemServicoPersistence::REMOVER_MATERIAL => new RemoverMaterialOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::EDITAR_SERVICO   => new EditarServicoOrdemServicoRequest($this->data, $this->attributes),
             OrdemServicoPersistence::REMOVER_SERVICO  => new RemoverServicoOrdemSericoRequest($this->data, $this->attributes),
         };
     }
@@ -51,9 +56,19 @@ class OrdemServicoRequest
         return new self(['id' => $id], Persistence::REMOVE, $attributes);
     }
 
+    public static function editarMaterial(array $data, array $attributes = []): self
+    {
+        return new self($data, OrdemServicoPersistence::EDITAR_MATERIAL, $attributes);
+    }
+
     public static function removeMaterial(int $id, array $attributes = []): self
     {
         return new self(['id' => $id], OrdemServicoPersistence::REMOVER_MATERIAL, $attributes);
+    }
+
+    public static function editarServico(array $data, array $attributes = []): self
+    {
+        return new self($data, OrdemServicoPersistence::EDITAR_SERVICO, $attributes);
     }
 
     public static function removeServico(int $id, array $attributes = []): self

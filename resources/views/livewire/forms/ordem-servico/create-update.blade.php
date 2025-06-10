@@ -52,20 +52,32 @@ new class extends Component {
     }
 
     #[On(AdicionarMateriaisForm::EVENT_PERSISTED)]
-    public function atualizarMateriais($materiais)
+    public function atualizarMateriais($materiais, $persistence)
     {
 
-        $this->form->materiais = array_merge($this->form->materiais ?? [], $materiais);
+        if ($persistence === Persistence::UPDATE->value) {
+            $this->form->editarMaterial($materiais);
+
+        } else {
+            $this->form->materiais = array_merge($this->form->materiais ?? [], $materiais);
+
+        }
+
     }
 
     #[On(AdicionarServicosForm::EVENT_PERSISTED)]
-    public function atualizarServicos($servicos)
+    public function atualizarServicos($servicos, $persistence)
     {
+        if ($persistence === Persistence::UPDATE->value) {
+            $this->form->editarServico($servicos);
+        } else {
 
-        $this->form->servicos = array_merge($this->form->servicos ?? [], $servicos);
+            $this->form->servicos = array_merge($this->form->servicos ?? [], $servicos);
+        }
     }
 
-    public function removeMaterial($index)
+    public
+    function removeMaterial($index)
     {
         if ($this->form->materiais[$index]['id']) {
             $this->form->removeMaterial($this->form->materiais[$index]['id']);
@@ -75,7 +87,8 @@ new class extends Component {
         }
     }
 
-    public function removeServico($index)
+    public
+    function removeServico($index)
     {
 
         if ($this->form->servicos[$index]['id']) {
@@ -87,7 +100,8 @@ new class extends Component {
         }
     }
 
-    public function mount()
+    public
+    function mount()
     {
 
         $this->form->codigo       = (string)(OrdemServicoModel::latest()->first() ? (int)OrdemServicoModel::latest()->first()->codigo + 1 : 1);

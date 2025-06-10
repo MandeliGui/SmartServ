@@ -18,6 +18,7 @@ class AdicionarMateriaisForm extends Form
     public ?string $quantidade    = null;
     public ?string $valorUnitario = null;
     public ?string $valorTotal    = null;
+    public ?int $idMaterialSelecionado = null;
 
     private function attributes(): array
     {
@@ -27,6 +28,7 @@ class AdicionarMateriaisForm extends Form
             "quantidade"    => "Quantidade",
             "valorUnitario" => "Valor Unitário",
             "valorTotal"    => "Valor Total",
+            "idMaterialSelecionado" => "Id do Material Selecionado",
         ];
     }
 
