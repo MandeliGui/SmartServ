@@ -10,6 +10,7 @@ use App\Http\Requests\Tenant\OrdemServicoRequest;
 use App\Models\ClienteModel;
 use App\Models\ServicosModel;
 use App\Services\Tenant\OrdemServicoService;
+use Flux\Flux;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -84,10 +85,8 @@ class OrdemServicoForm extends Form
 
 
         $ordemServico = (new OrdemServicoService())->create($data);
+        Flux::toast('Ordem de servico criada com sucesso!', variant: 'success');
 
-        $this->reset();
-
-        return $ordemServico;
     }
 
     public function update()
@@ -96,9 +95,8 @@ class OrdemServicoForm extends Form
 
         $ordemServico = (new OrdemServicoService())->update($data, $this->id);
 
-        $this->reset();
+        Flux::toast('Ordem de servico editada com sucesso!', variant: 'success');
 
-        return $ordemServico;
     }
 
     public function remove()
@@ -119,6 +117,8 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->editarMaterial($data);
 
         $this->setOrdemServico($this->id);
+        Flux::toast('Material editado com sucesso!', variant: 'success');
+
 
 
     }
@@ -132,8 +132,9 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->removeMaterial($data);
 
         $this->setOrdemServico($this->id);
+        Flux::toast('Material removido com sucesso!', variant: 'success');
 
-        return $ordemServico;
+
     }
 
     public function editarServico($servico)
@@ -144,6 +145,8 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->editarServico($data);
 
         $this->setOrdemServico($this->id);
+
+        Flux::toast('Servico editado com sucesso!', variant: 'success');
 
         return $ordemServico;
     }
@@ -158,6 +161,8 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->removeServico($data);
 
         $this->setOrdemServico($this->id);
+
+        Flux::toast('Servico removido com sucesso!', variant: 'success');
 
         return $ordemServico;
     }

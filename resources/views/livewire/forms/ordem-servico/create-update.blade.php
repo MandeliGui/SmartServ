@@ -84,6 +84,8 @@ new class extends Component {
         } else {
             unset($this->form->materiais[$index]);
             $this->form->materiais = array_values($this->form->materiais);
+            Flux::toast('Material removido com sucesso!', variant: 'success');
+
         }
     }
 
@@ -97,6 +99,7 @@ new class extends Component {
         } else {
             unset($this->form->servicos[$index]);
             $this->form->servicos = array_values($this->form->servicos);
+            Flux::toast('Serviço removido com sucesso!', variant: 'success');
         }
     }
 
@@ -127,9 +130,7 @@ new class extends Component {
 
 <div x-data>
     <form wire:submit.prevent="save">
-        <flux:text>Informações ordem de servico</flux:text>
 
-        <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
             <div>
@@ -208,14 +209,28 @@ new class extends Component {
                 <flux:accordion.content>
 
                     <flux:card class="space-y-6 mt-4 mb-4">
-                        <flux:button variant="primary" wire:click="$dispatchTo(
-                                                                                                '{{ \App\Livewire\Forms\AdicionarMateriaisForm::PATH_COMPONENT_FORM_SELECIONAR_MATERIAL }}',
-                                                                                                '{{ \App\Livewire\Forms\AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL }}',
-                                                                                                {
-                                                                                                    modalName: '{{ \App\Livewire\Forms\AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL }}'
-                                                                                                }
-                                                                                            )">+ Adicionar Material
-                        </flux:button>
+
+                        <div class="flex justify-between items-center">
+                            <flux:button variant="primary" wire:click="$dispatchTo(
+                                                                                                    '{{ \App\Livewire\Forms\AdicionarMateriaisForm::PATH_COMPONENT_FORM_SELECIONAR_MATERIAL }}',
+                                                                                                    '{{ \App\Livewire\Forms\AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL }}',
+                                                                                                    {
+                                                                                                        modalName: '{{ \App\Livewire\Forms\AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL }}'
+                                                                                                    }
+                                                                                                )">+ Adicionar Material
+                            </flux:button>
+
+                            @php
+                                $valorMateriais = collect($form->materiais)->sum('valorTotal');
+                            @endphp
+
+                            <div>
+                                <flux:heading class="mt-4">Valor total de materiais</flux:heading>
+                                <flux:heading size="xl"
+                                              class="inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                                    R$ {{ Helper::formatarValorMonetarioPtBr($valorMateriais)}}</flux:heading>
+                            </div>
+                        </div>
 
                         @if(count($form->materiais)>0)
 
@@ -271,23 +286,15 @@ new class extends Component {
                                         </flux:table.row>
                                     @endforeach
                                 </flux:table.rows>
-                                @php
-                                    $valorMateriais = collect($form->materiais)->sum('valorTotal');
-                                @endphp
+
 
 
                             </flux:table>
 
                         @endif
 
-                        <flux:separator></flux:separator>
-                        <div>
+{{--                        <flux:separator></flux:separator>--}}
 
-                            <flux:heading class="mt-4">Valor total de materiais</flux:heading>
-                            <flux:heading size="xl"
-                                          class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                R$ {{ Helper::formatarValorMonetarioPtBr($valorMateriais)}}</flux:heading>
-                        </div>
                     </flux:card>
                 </flux:accordion.content>
             </flux:accordion.item>
@@ -299,6 +306,8 @@ new class extends Component {
                 <flux:accordion.content>
 
                     <flux:card class="space-y-6 mt-4 mb-4">
+                        <div class="flex justify-between items-center">
+
                         <flux:button variant="primary" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
@@ -307,6 +316,19 @@ new class extends Component {
                                                                                     }
                                                                                 )">+ Adicionar Serviço
                         </flux:button>
+
+                            @php
+                                $valorServicos = collect($form->servicos)->sum('valorTotal');
+                            @endphp
+
+                            <div>
+
+                                <flux:heading class="mt-4">Valor total de servicos</flux:heading>
+                                <flux:heading size="xl"
+                                              class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                                    R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
+                            </div>
+                        </div>
 
                         @if(count($form->servicos)>0)
                             <flux:table class="">
@@ -364,22 +386,13 @@ new class extends Component {
                                         </flux:table.row>
                                     @endforeach
                                 </flux:table.rows>
-                                @php
-                                    $valorServicos = collect($form->servicos)->sum('valorTotal');
-                                @endphp
+
 
 
                             </flux:table>
 
                         @endif
-                        <flux:separator></flux:separator>
-                        <div>
 
-                            <flux:heading class="mt-4">Valor total de servicos</flux:heading>
-                            <flux:heading size="xl"
-                                          class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
-                        </div>
 
                     </flux:card>
                 </flux:accordion.content>
