@@ -129,7 +129,7 @@ new class extends Component {
 ?>
 
 <div x-data>
-    <form wire:submit.prevent="save">
+    <form>
 
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
@@ -288,12 +288,11 @@ new class extends Component {
                                 </flux:table.rows>
 
 
-
                             </flux:table>
 
                         @endif
 
-{{--                        <flux:separator></flux:separator>--}}
+                        {{--                        <flux:separator></flux:separator>--}}
 
                     </flux:card>
                 </flux:accordion.content>
@@ -308,14 +307,14 @@ new class extends Component {
                     <flux:card class="space-y-6 mt-4 mb-4">
                         <div class="flex justify-between items-center">
 
-                        <flux:button variant="primary" wire:click="$dispatchTo(
+                            <flux:button variant="primary" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO }}'
                                                                                     }
                                                                                 )">+ Adicionar Serviço
-                        </flux:button>
+                            </flux:button>
 
                             @php
                                 $valorServicos = collect($form->servicos)->sum('valorTotal');
@@ -388,7 +387,6 @@ new class extends Component {
                                 </flux:table.rows>
 
 
-
                             </flux:table>
 
                         @endif
@@ -411,8 +409,17 @@ new class extends Component {
             </flux:heading>
         </div>
 
+        <div  class="flex justify-between items-center">
+            <div>
 
-        <flux:button type="submit" variant="primary" class="mt-2">Salvar</flux:button>
+                <flux:button wire:click.prevent="save" type="submit" variant="primary" class="mt-2"
+                             icon:trailing="save">
+                    Salvar
+                </flux:button>
+                <flux:button type="submit" variant="success" icon:trailing="check">Finalizar</flux:button>
+            </div>
+            <flux:button variant="danger" class="mt-2" icon:trailing="x-mark">Cancelar</flux:button>
+        </div>
     </form>
 </div>
 
