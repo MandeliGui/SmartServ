@@ -44,6 +44,7 @@ class OrdemServicoForm extends Form
     public mixed $valorTotal;
 
     public mixed $idCliente;
+    public mixed $nomeCliente;
 
     public mixed $idTecnico;
 
@@ -167,6 +168,7 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->findOne($id);
 
 
+
         $this->id           = $ordemServico->id;
         $this->codigo       = $ordemServico->codigo;
         $this->tipo         = $ordemServico->tipo;
@@ -175,6 +177,7 @@ class OrdemServicoForm extends Form
         $this->status       = $ordemServico->status;
         $this->valorTotal   = $ordemServico->valorTotal;
         $this->idCliente    = $ordemServico->idCliente;
+        $this->nomeCliente  = $ordemServico->cliente->pessoa->nomeFantasia ?: $ordemServico->cliente->pessoa->nomeRazaoSocial;
         $this->idTecnico    = $ordemServico->idTecnico;
         $this->idAtendente  = $ordemServico->idAtendente;
 

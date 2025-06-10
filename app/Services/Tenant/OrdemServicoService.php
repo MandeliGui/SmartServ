@@ -98,11 +98,15 @@ class OrdemServicoService
     public function remove(mixed $id)
     {
         //        TODO: Implementar remoção lógica
-        $servicos = OrdemServicoModel::query()->where('id', $id);
+        $ordemServico = OrdemServicoModel::query()->find($id)->first();
 
-        $servicos->delete();
+        $ordemServico->servicos()->detach();
+        $ordemServico->materiais()->detach();
 
-        return $servicos;
+
+        $ordemServico->delete();
+
+        return $ordemServico;
     }
 
     public function editarMaterial(array $data)
