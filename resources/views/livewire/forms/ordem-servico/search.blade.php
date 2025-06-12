@@ -19,6 +19,7 @@ new class extends Component {
     public string $orderBy = 'codigo';
     public string $dir     = 'asc';
     public string $search  = '';
+    
 
     public OrdemServicoForm $form;
 
