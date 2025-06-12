@@ -78,6 +78,7 @@ $classes = Flux::classes()
         'subtle' => 'bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15',
 
         'success' => 'bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-500',
+        'info' => 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500',
     })
     ->add(match ($variant) { // Text color...
         'primary' => 'text-[var(--color-accent-foreground)]',
@@ -87,6 +88,7 @@ $classes = Flux::classes()
         'ghost' => 'text-zinc-800 dark:text-white',
         'subtle' => 'text-zinc-400 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white',
         'success' => 'text-white',
+        'info' => 'text-white',
     })
     ->add(match ($variant) { // Border color...
         'primary' => 'border border-black/10 dark:border-0',
@@ -107,6 +109,7 @@ $classes = Flux::classes()
         'ghost' => '',
         'subtle' => '',
         'success' => '',
+        'info' => '',
         'outline' => '[[data-flux-button-group]_&]:border-s-0 [:is([data-flux-button-group]>&:first-child,_[data-flux-button-group]_:first-child>&)]:border-s-[1px]',
         'filled' => '[[data-flux-button-group]_&]:border-e [:is([data-flux-button-group]>&:last-child,_[data-flux-button-group]_:last-child>&)]:border-e-0 [[data-flux-button-group]_&]:border-zinc-200/80 dark:[[data-flux-button-group]_&]:border-zinc-900/50',
         'danger' => '[[data-flux-button-group]_&]:border-e [:is([data-flux-button-group]>&:last-child,_[data-flux-button-group]_:last-child>&)]:border-e-0 [[data-flux-button-group]_&]:border-red-600 dark:[[data-flux-button-group]_&]:border-red-900/25',

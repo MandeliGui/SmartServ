@@ -20,6 +20,7 @@ new class extends Component {
 
     public float $valorMateriais = 0;
     public float $valorServicos  = 0;
+    public mixed $id;
 
 
     public function save(): void
@@ -103,24 +104,95 @@ new class extends Component {
         }
     }
 
+    public function finalizarOrdemServico()
+    {
+
+        $this->form->id = $this->id;
+        $id             = $this->form->id;
+
+        if ($this->form->status === \App\Enums\StatusOrdemServico::FINALIZADO->value) {
+            Flux::toast('Ordem de serviço já está finalizada!', variant: 'warning');
+            return;
+        }
+
+        $ordemServico = $this->form->finalizarOrdemServico();
+        Flux::toast('Ordem de serviço finalizada com sucesso!', variant: 'success');
+        $this->mount();
+        $this->id = $id;
+
+    }
+
+    public function cancelarOrdemServico()
+    {
+        $this->form->id = $this->id;
+        $id             = $this->form->id;
+
+
+        if ($this->form->status === \App\Enums\StatusOrdemServico::CANCELADO->value) {
+            Flux::toast('Ordem de serviço já está cancelada!', variant: 'warning');
+            return;
+        }
+
+        $ordemServico = $this->form->cancelarOrdemServico();
+        Flux::toast('Ordem de serviço cancelada com sucesso!', variant: 'success');
+        $this->mount();
+        $this->id = $id;
+
+
+    }
+
+    public function reabrirOrdemServico()
+    {
+        $this->form->id = $this->id;
+        $id             = $this->form->id;
+
+        if ($this->form->status === \App\Enums\StatusOrdemServico::PENDENTE->value ||
+            $this->form->status === \App\Enums\StatusOrdemServico::EM_ANDAMENTO->value) {
+            Flux::toast('Ordem de serviço já está em andamento!', variant: 'warning');
+            return;
+        }
+
+        $ordemServico = $this->form->reabrirOrdemServico();
+        Flux::toast('Ordem de serviço reaberta com sucesso!', variant: 'success');
+        $this->mount();
+        $this->id = $id;
+
+
+    }
+
     public
     function mount()
     {
 
 
-        $this->form->codigo       = (string)(OrdemServicoModel::latest()->first() ? (int)OrdemServicoModel::latest()->first()->codigo + 1 : 1);
+        $this->id       = request()->route('id') ?? null;
+        $this->form->id = request()->route('id') ?? null;
+
+
         $this->form->dataAbertura = now()->format('Y-m-d');
         $this->form->clientes     = \App\Models\ClienteModel::query()->get();
-
-
-        $this->id = request()->route('id') ?? null;
-
 
         if ($this->id) {
 
             $this->persistence = Persistence::UPDATE;
             $this->form->setOrdemServico($this->id);
+        }
 
+        if ($this->persistence === Persistence::CREATE) {
+            $this->form->codigo = (string)(OrdemServicoModel::latest()->first() ? (int)OrdemServicoModel::latest()->first()->codigo + 1 : 1);
+
+        }
+    }
+
+
+    private function finalizadaOuCancelada()
+    {
+
+        if ($this->form->status === \App\Enums\StatusOrdemServico::FINALIZADO->value ||
+            $this->form->status === \App\Enums\StatusOrdemServico::CANCELADO->value) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -129,136 +201,181 @@ new class extends Component {
 ?>
 
 <div x-data>
-    <form>
 
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-            <div>
-
-                <flux:heading class="mt-4">Nº Ordem de Serviço</flux:heading>
-                <flux:heading size="xl"
-                              class=" inline-block mt-2 text-accent-content strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">{{$form->codigo}}</flux:heading>
-            </div>
-
-            <flux:select label="Tipo"
-                         wire:model="form.tipo"
-                         placeholder="Selecione"
-                         name="tipo"
-            >
-
-                <flux:select.option value="{{\App\Enums\TipoOrdemServico::ORDEM_SERVICO->value}}">Ordem de Serviço
-                </flux:select.option>
-                <flux:select.option value="{{\App\Enums\TipoOrdemServico::ORCAMENTO->value}}">Orçamento
-                </flux:select.option>
+    <flux:tab.group>
+        <flux:tabs wire:model="tab">
+            <flux:tab name="dados">Dados</flux:tab>
+            <flux:tab name="pagamento" :disabled="$form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value">
+                Pagamento
+            </flux:tab>
+        </flux:tabs>
+        <flux:tab.panel name="dados">
 
 
-            </flux:select>
-        </div>
+            <form>
 
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-            <flux:date-picker wire:model="date">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                    <div>
 
-                <x-slot name="trigger">
-                    <flux:date-picker.input label="Data de Abertura"
-                                            wire:model="form.dataAbertura"
-                                            name="dataAbertura"
-                    />
-                </x-slot>
+                        <flux:heading class="">Nº Ordem de Serviço</flux:heading>
+                        <flux:heading size="xl"
+                                      class=" inline-block mt-2 text-accent-content strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">{{$form->codigo}}</flux:heading>
+                    </div>
 
-            </flux:date-picker>
+                    <flux:select label="Tipo"
+                                 wire:model="form.tipo"
+                                 placeholder="Selecione"
+                                 variant="listbox"
+                                 :disabled="$this->finalizadaOuCancelada()"
+                                 name="tipo"
+                    >
 
-            <flux:select label="Cliente*" variant="listbox" searchable
-                         wire:model="form.idCliente"
-                         placeholder="Selecione"
-                         name="idCliente"
-            >
-
-
-                @foreach($form->clientes as $cliente)
-
-                    <flux:select.option value="{{$cliente->idCliente}}">
-                        {{$cliente->pessoa->nomeFantasia ?: $cliente->pessoa->nomeRazaoSocial}}
-                    </flux:select.option>
-
-                @endforeach
+                        <flux:select.option value="{{\App\Enums\TipoOrdemServico::ORDEM_SERVICO->value}}">Ordem de
+                            Serviço
+                        </flux:select.option>
+                        <flux:select.option value="{{\App\Enums\TipoOrdemServico::ORCAMENTO->value}}">Orçamento
+                        </flux:select.option>
 
 
-            </flux:select>
-
-            <flux:select label="Status" variant="listbox" searchable
-                         wire:model="form.status"
-                         placeholder="Selecione"
-                         name="status">
-                <flux:select.option value="{{\App\Enums\StatusOrdemServico::PENDENTE->value}}">Pendente
-                </flux:select.option>
-                <flux:select.option value="{{\App\Enums\StatusOrdemServico::EM_ANDAMENTO->value}}">Em Andamento
-                </flux:select.option>
-                <flux:select.option value="{{\App\Enums\StatusOrdemServico::FINALIZADO->value}}">Finalizado
-                </flux:select.option>
-            </flux:select>
+                    </flux:select>
+                </div>
 
 
-        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+                    <flux:date-picker wire:model="date" :disabled="$this->finalizadaOuCancelada()">
 
-        <hr class="w-full h-px bg-accent my-4">
+                        <x-slot name="trigger">
+                            <flux:date-picker.input label="Data de Abertura"
+                                                    wire:model="form.dataAbertura"
+                                                    name="dataAbertura"
 
-        <flux:accordion>
-            <flux:accordion.item :expanded="true">
-                <flux:accordion.heading>Materiais</flux:accordion.heading>
-                <flux:accordion.content>
+                            />
+                        </x-slot>
 
-                    <flux:card class="space-y-6 mt-4 mb-4">
+                    </flux:date-picker>
 
-                        <div class="flex justify-between items-center">
-                            <flux:button variant="primary" wire:click="$dispatchTo(
+                    <flux:select label="Cliente*" variant="listbox" searchable
+                                 wire:model="form.idCliente"
+                                 placeholder="Selecione"
+                                 :disabled="$this->finalizadaOuCancelada()"
+                                 name="idCliente"
+                    >
+
+
+                        @foreach($form->clientes as $cliente)
+
+                            <flux:select.option value="{{$cliente->idCliente}}">
+                                {{$cliente->pessoa->nomeFantasia ?: $cliente->pessoa->nomeRazaoSocial}}
+                            </flux:select.option>
+
+                        @endforeach
+
+
+                    </flux:select>
+
+                    <flux:select label="Status" variant="listbox" searchable
+                                 wire:model="form.status"
+                                 :disabled="$this->finalizadaOuCancelada()"
+                                 placeholder="Selecione"
+                                 name="status">
+                        @if($form->status === \App\Enums\StatusOrdemServico::FINALIZADO->value)
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::FINALIZADO->value}}">
+                                Finalizado
+                            </flux:select.option>
+
+                        @elseif($form->status === \App\Enums\StatusOrdemServico::CANCELADO->value)
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::CANCELADO->value}}">
+                                Cancelado
+                            </flux:select.option>
+                        @else
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::PENDENTE->value}}">Pendente
+                            </flux:select.option>
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::EM_ANDAMENTO->value}}">Em
+                                Andamento
+                            </flux:select.option>
+                        @endif
+
+                    </flux:select>
+
+
+                </div>
+
+                <hr class="w-full h-px bg-accent my-4">
+
+                <flux:accordion>
+                    <flux:accordion.item :expanded="true">
+
+                        <flux:accordion.heading>
+                            <div class="flex justify-between items-center">
+                                <div>
+
+                                    Materiais
+                                </div>
+                                <div>
+                                    @php
+                                        $valorMateriais = collect($form->materiais)->sum('valorTotal');
+                                    @endphp
+
+                                    <div class="flex ">
+                                        <flux:heading class="mt-4 me-4">Valor total de materiais</flux:heading>
+                                        <flux:heading size="xl"
+                                                      class="inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                                            R$ {{ Helper::formatarValorMonetarioPtBr($valorMateriais)}}</flux:heading>
+                                    </div>
+                                </div>
+                            </div>
+                        </flux:accordion.heading>
+
+                        <flux:accordion.content>
+
+                            <flux:card class="space-y-6 mt-4 mb-4">
+
+                                <div class="flex justify-between items-center">
+                                    @if(!$this->finalizadaOuCancelada())
+
+                                        <flux:button variant="primary" wire:click="$dispatchTo(
                                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::PATH_COMPONENT_FORM_SELECIONAR_MATERIAL }}',
                                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL }}',
                                                                                                     {
                                                                                                         modalName: '{{ \App\Livewire\Forms\AdicionarMateriaisForm::MODAL_NAME_SELECIONAR_MATERIAL }}'
                                                                                                     }
                                                                                                 )">+ Adicionar Material
-                            </flux:button>
-
-                            @php
-                                $valorMateriais = collect($form->materiais)->sum('valorTotal');
-                            @endphp
-
-                            <div>
-                                <flux:heading class="mt-4">Valor total de materiais</flux:heading>
-                                <flux:heading size="xl"
-                                              class="inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                    R$ {{ Helper::formatarValorMonetarioPtBr($valorMateriais)}}</flux:heading>
-                            </div>
-                        </div>
-
-                        @if(count($form->materiais)>0)
-
-                            <flux:table class="">
-                                <flux:table.columns>
-
-                                    <flux:table.column>Codigo</flux:table.column>
-                                    <flux:table.column>Nome</flux:table.column>
-                                    <flux:table.column>Quantidade</flux:table.column>
-                                    <flux:table.column>Valor Unitario</flux:table.column>
-                                    <flux:table.column>Valor Total</flux:table.column>
+                                        </flux:button>
+                                    @endif
 
 
-                                </flux:table.columns>
+                                </div>
 
-                                <flux:table.rows>
-                                    @foreach($form->materiais as $material)
+                                @if(count($form->materiais)>0)
 
-                                        <flux:table.row class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
-                                            <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
-                                            <flux:table.cell>{{$material['nome']}}</flux:table.cell>
-                                            <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+                                    <flux:table class="">
+                                        <flux:table.columns>
 
-                                            @if(!is_null($material['id']))
-                                                <flux:table.cell>
-                                                    <flux:button wire:click="$dispatchTo(
+                                            <flux:table.column>Codigo</flux:table.column>
+                                            <flux:table.column>Nome</flux:table.column>
+                                            <flux:table.column>Quantidade</flux:table.column>
+                                            <flux:table.column>Valor Unitario</flux:table.column>
+                                            <flux:table.column>Valor Total</flux:table.column>
+
+
+                                        </flux:table.columns>
+
+                                        <flux:table.rows>
+                                            @foreach($form->materiais as $material)
+
+                                                <flux:table.row
+                                                    class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                                                    <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
+                                                    <flux:table.cell>{{$material['nome']}}</flux:table.cell>
+                                                    <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
+                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
+                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+
+                                                    @if(!is_null($material['id']))
+                                                        <flux:table.cell>
+                                                            <flux:button wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::PATH_COMPONENT_FORM_SELECIONAR_MATERIAL }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL }}',
                                                                                     {
@@ -266,97 +383,122 @@ new class extends Component {
                                                                                         idMaterial: {{$material['id']}}
                                                                                     }
                                                                                 )"
-                                                                 variant="primary" size="xs">
-                                                        <flux:icon icon="pencil" variant="micro"/>
-                                                    </flux:button>
+                                                                         variant="primary" size="xs">
+                                                                <flux:icon icon="pencil" variant="micro"/>
+                                                            </flux:button>
 
-                                                    <flux:button wire:click="removeMaterial({{$loop->index}})"
-                                                                 variant="danger" size="xs">
-                                                        <flux:icon icon="trash" variant="micro"/>
-                                                    </flux:button>
-                                                </flux:table.cell>
-                                            @else
-                                                <flux:table.cell>
-                                                    <flux:button wire:click="removeMaterial({{$loop->index}})"
-                                                                 variant="danger" size="xs">
-                                                        <flux:icon variant="micro" icon="trash"/>
-                                                    </flux:button>
-                                                </flux:table.cell>
-                                            @endif
-                                        </flux:table.row>
-                                    @endforeach
-                                </flux:table.rows>
-
-
-                            </flux:table>
-
-                        @endif
-
-                        {{--                        <flux:separator></flux:separator>--}}
-
-                    </flux:card>
-                </flux:accordion.content>
-            </flux:accordion.item>
+                                                            <flux:button
+                                                                wire:click="removeMaterial({{$loop->index}})"
+                                                                variant="danger" size="xs">
+                                                                <flux:icon icon="trash" variant="micro"/>
+                                                            </flux:button>
+                                                        </flux:table.cell>
+                                                    @else
+                                                        <flux:table.cell>
+                                                            <flux:button
+                                                                wire:click="removeMaterial({{$loop->index}})"
+                                                                variant="danger" size="xs">
+                                                                <flux:icon variant="micro" icon="trash"/>
+                                                            </flux:button>
+                                                        </flux:table.cell>
+                                                    @endif
+                                                </flux:table.row>
+                                            @endforeach
+                                        </flux:table.rows>
 
 
-            <flux:accordion.item :expanded="true">
+                                    </flux:table>
 
-                <flux:accordion.heading>Serviços</flux:accordion.heading>
-                <flux:accordion.content>
+                                @else
+                                    <div
+                                        class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                                        <p class="font-semibold text-accent">
+                                            Nenhum registro encontrado.
+                                        </p>
+                                    </div>
+                                @endif
 
-                    <flux:card class="space-y-6 mt-4 mb-4">
-                        <div class="flex justify-between items-center">
+                                {{--                        <flux:separator></flux:separator>--}}
 
-                            <flux:button variant="primary" wire:click="$dispatchTo(
+                            </flux:card>
+                        </flux:accordion.content>
+                    </flux:accordion.item>
+
+
+                    <flux:accordion.item :expanded="true">
+
+                        <flux:accordion.heading >
+                            <div class="flex justify-between items-center">
+
+
+
+                                    <div>
+                                        Serviços
+                                    </div>
+                                    <div>
+                                        @php
+                                            $valorServicos = collect($form->servicos)->sum('valorTotal');
+                                        @endphp
+
+                                        <div class="flex">
+
+                                            <flux:heading class="mt-4 me-4">Valor total de servicos</flux:heading>
+                                            <flux:heading size="xl"
+                                                          class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                                                R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
+                                        </div>
+                                    </div>
+
+                            </div>
+                        </flux:accordion.heading>
+                        <flux:accordion.content>
+
+                            <flux:card class="space-y-6 mt-4 mb-4">
+                                <div class="flex justify-between items-center">
+                                    @if(!$this->finalizadaOuCancelada())
+
+                                        <flux:button variant="primary" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO }}'
                                                                                     }
                                                                                 )">+ Adicionar Serviço
-                            </flux:button>
-
-                            @php
-                                $valorServicos = collect($form->servicos)->sum('valorTotal');
-                            @endphp
-
-                            <div>
-
-                                <flux:heading class="mt-4">Valor total de servicos</flux:heading>
-                                <flux:heading size="xl"
-                                              class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                    R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
-                            </div>
-                        </div>
-
-                        @if(count($form->servicos)>0)
-                            <flux:table class="">
-                                <flux:table.columns>
-
-                                    <flux:table.column>Codigo</flux:table.column>
-                                    <flux:table.column>Nome</flux:table.column>
-                                    <flux:table.column>Quantidade</flux:table.column>
-                                    <flux:table.column>Valor Unitario</flux:table.column>
-                                    <flux:table.column>Valor Total</flux:table.column>
-                                    <flux:table.column></flux:table.column>
+                                        </flux:button>
+                                    @endif
 
 
-                                </flux:table.columns>
+                                </div>
 
-                                <flux:table.rows>
-                                    @foreach($form->servicos as $servico)
+                                @if(count($form->servicos)>0)
+                                    <flux:table class="">
+                                        <flux:table.columns>
 
-                                        <flux:table.row class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
-                                            <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
-                                            <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
-                                            <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
-                                            <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
-                                            @if(!is_null($servico['id']))
-                                                <flux:table.cell>
-                                                    <div>
+                                            <flux:table.column>Codigo</flux:table.column>
+                                            <flux:table.column>Nome</flux:table.column>
+                                            <flux:table.column>Quantidade</flux:table.column>
+                                            <flux:table.column>Valor Unitario</flux:table.column>
+                                            <flux:table.column>Valor Total</flux:table.column>
+                                            <flux:table.column></flux:table.column>
 
-                                                        <flux:button wire:click="$dispatchTo(
+
+                                        </flux:table.columns>
+
+                                        <flux:table.rows>
+                                            @foreach($form->servicos as $servico)
+
+                                                <flux:table.row
+                                                    class="hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                                                    <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
+                                                    <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
+                                                    <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
+                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
+                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
+                                                    @if(!is_null($servico['id']))
+                                                        <flux:table.cell>
+                                                            <div>
+
+                                                                <flux:button wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
@@ -364,62 +506,98 @@ new class extends Component {
                                                                                         idServico: {{$servico['id']}}
                                                                                     }
                                                                                 )"
-                                                                     variant="primary" size="xs">
-                                                            <flux:icon icon="pencil" variant="micro"/>
-                                                        </flux:button>
+                                                                             variant="primary" size="xs">
+                                                                    <flux:icon icon="pencil" variant="micro"/>
+                                                                </flux:button>
 
-                                                        <flux:button wire:click="removeServico({{$loop->index}})"
-                                                                     variant="danger" size="xs">
-                                                            <flux:icon icon="trash" variant="micro"/>
-                                                        </flux:button>
-                                                    </div>
-                                                </flux:table.cell>
-                                            @else
-                                                <flux:table.cell>
-                                                    <flux:button wire:click="removeServico({{$loop->index}})"
-                                                                 variant="danger" size="xs">
-                                                        <flux:icon icon="trash" variant="micro"/>
-                                                    </flux:button>
-                                                </flux:table.cell>
-                                            @endif
-                                        </flux:table.row>
-                                    @endforeach
-                                </flux:table.rows>
+                                                                <flux:button
+                                                                    wire:click="removeServico({{$loop->index}})"
+                                                                    variant="danger" size="xs">
+                                                                    <flux:icon icon="trash" variant="micro"/>
+                                                                </flux:button>
+                                                            </div>
+                                                        </flux:table.cell>
+                                                    @else
+                                                        <flux:table.cell>
+                                                            <flux:button
+                                                                wire:click="removeServico({{$loop->index}})"
+                                                                variant="danger" size="xs">
+                                                                <flux:icon icon="trash" variant="micro"/>
+                                                            </flux:button>
+                                                        </flux:table.cell>
+                                                    @endif
+                                                </flux:table.row>
+                                            @endforeach
+                                        </flux:table.rows>
 
 
-                            </flux:table>
+                                    </flux:table>
+                                @else
+                                    <div
+                                        class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                                        <p class="font-semibold text-accent">
+                                            Nenhum registro encontrado.
+                                        </p>
+                                    </div>
 
+                                @endif
+
+
+                            </flux:card>
+                        </flux:accordion.content>
+                    </flux:accordion.item>
+                </flux:accordion>
+
+                <flux:separator class="mt-4" />
+
+
+                <div class="flex flex-col justify-end items-end  my-4">
+
+                    <flux:heading class="mt-4">Valor total ordem de serviço</flux:heading>
+                    <flux:heading size="xl"
+                                  class=" inline-block strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                        R$ {{ Helper::formatarValorMonetarioPtBr($form->valorTotal = $valorServicos + $valorMateriais)}}
+                    </flux:heading>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    @if(!$this->finalizadaOuCancelada())
+                        <div>
+
+                            <flux:button wire:click.prevent="save" type="submit" variant="primary" class="mt-2"
+                                         icon:trailing="save">
+                                @if($persistence === Persistence::UPDATE)
+                                    Salvar
+                                @else
+                                    Criar
+                                @endif
+                            </flux:button>
+
+                            @if(isset($this->id))
+                                <flux:button type="submit" wire:click.prevent="finalizarOrdemServico" variant="success"
+                                             icon:trailing="check">Finalizar
+                                </flux:button>
+                            @endif
+                        </div>
+                        @if(isset($this->id))
+                            <flux:button variant="danger" wire:click.prevent="cancelarOrdemServico" class="mt-2"
+                                         icon:trailing="x-mark">Cancelar
+                            </flux:button>
                         @endif
+                    @else
+                        <div>
+                            <flux:button wire:click.prevent="reabrirOrdemServico" variant="info" class="mt-2"
+                                         icon:trailing="arrow-path">
+                                Reabrir Comanda
+                            </flux:button>
+                        </div>
+                    @endif
+                </div>
+            </form>
 
+        </flux:tab.panel>
+        <flux:tab.panel name="pagamento"></flux:tab.panel>
+    </flux:tab.group>
 
-                    </flux:card>
-                </flux:accordion.content>
-            </flux:accordion.item>
-        </flux:accordion>
-
-        <hr class="w-full h-px bg-accent">
-
-
-        <div class="my-4">
-
-            <flux:heading class="mt-4">Valor total ordem de serviço</flux:heading>
-            <flux:heading size="xl"
-                          class=" inline-block strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                R$ {{ Helper::formatarValorMonetarioPtBr($form->valorTotal = $valorServicos + $valorMateriais)}}
-            </flux:heading>
-        </div>
-
-        <div  class="flex justify-between items-center">
-            <div>
-
-                <flux:button wire:click.prevent="save" type="submit" variant="primary" class="mt-2"
-                             icon:trailing="save">
-                    Salvar
-                </flux:button>
-                <flux:button type="submit" variant="success" icon:trailing="check">Finalizar</flux:button>
-            </div>
-            <flux:button variant="danger" class="mt-2" icon:trailing="x-mark">Cancelar</flux:button>
-        </div>
-    </form>
 </div>
 

@@ -120,7 +120,6 @@ class OrdemServicoForm extends Form
         Flux::toast('Material editado com sucesso!', variant: 'success');
 
 
-
     }
 
     public function removeMaterial(mixed $id)
@@ -167,11 +166,47 @@ class OrdemServicoForm extends Form
         return $ordemServico;
     }
 
+    public function finalizarOrdemServico()
+    {
+        $data = OrdemServicoRequest::finalizarOrdemServico(['id' => $this->id], $this->attributes())->validated();
+
+
+        $ordemServico = (new OrdemServicoService())->finalizarOrdemServico($data);
+
+        $this->setOrdemServico($this->id);
+
+        Flux::toast('Ordem de servico finalizada com sucesso!', variant: 'success');
+
+        return $ordemServico;
+    }
+
+    public function cancelarOrdemServico()
+    {
+        $data = OrdemServicoRequest::cancelarOrdemServico(['id' => $this->id], $this->attributes())->validated();
+
+
+        $ordemServico = (new OrdemServicoService())->cancelarOrdemServico($data);
+
+        $this->setOrdemServico($this->id);
+
+        Flux::toast('Ordem de servico cancelada com sucesso!', variant: 'success');
+
+        return $ordemServico;
+    }
+
+    public function reabrirOrdemServico()
+    {
+        $data         = OrdemServicoRequest::reabrirOrdemServico(['id' => $this->id], $this->attributes())->validated();
+        $ordemServico = (new OrdemServicoService())->reabrirOrdemServico($data);
+        $this->setOrdemServico($this->id);
+        Flux::toast('Ordem de servico reaberta com sucesso!', variant: 'success');
+        return $ordemServico;
+    }
+
     public function setOrdemServico(mixed $id): void
     {
 
         $ordemServico = (new OrdemServicoService())->findOne($id);
-
 
 
         $this->id           = $ordemServico->id;

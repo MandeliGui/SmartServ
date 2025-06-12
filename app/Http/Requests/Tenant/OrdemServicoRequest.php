@@ -10,10 +10,13 @@ use App\Http\Requests\BaseValidationRequest;
 use App\Http\Requests\Tenant\Cliente\CriarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\EditarClienteRequest;
 use App\Http\Requests\Tenant\Cliente\RemoverClienteRequest;
+use App\Http\Requests\Tenant\OrdemServico\CancelarOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\CriarOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\EditarMaterialOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\EditarOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\EditarServicoOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\FinalizarOrdemServicoRequest;
+use App\Http\Requests\Tenant\OrdemServico\ReabrirOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverMaterialOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverOrdemServicoRequest;
 use App\Http\Requests\Tenant\OrdemServico\RemoverServicoOrdemSericoRequest;
@@ -31,13 +34,16 @@ class OrdemServicoRequest
     )
     {
         $this->validationRequest = match ($this->persistence) {
-            Persistence::CREATE                       => new CriarOrdemServicoRequest($this->data, $this->attributes),
-            Persistence::UPDATE                       => new EditarOrdemServicoRequest($this->data, $this->attributes),
-            Persistence::REMOVE                       => new RemoverOrdemServicoRequest($this->data, $this->attributes),
-            OrdemServicoPersistence::EDITAR_MATERIAL  => new EditarMaterialOrdemServicoRequest($this->data, $this->attributes),
-            OrdemServicoPersistence::REMOVER_MATERIAL => new RemoverMaterialOrdemServicoRequest($this->data, $this->attributes),
-            OrdemServicoPersistence::EDITAR_SERVICO   => new EditarServicoOrdemServicoRequest($this->data, $this->attributes),
-            OrdemServicoPersistence::REMOVER_SERVICO  => new RemoverServicoOrdemSericoRequest($this->data, $this->attributes),
+            Persistence::CREATE                              => new CriarOrdemServicoRequest($this->data, $this->attributes),
+            Persistence::UPDATE                              => new EditarOrdemServicoRequest($this->data, $this->attributes),
+            Persistence::REMOVE                              => new RemoverOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::EDITAR_MATERIAL         => new EditarMaterialOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::REMOVER_MATERIAL        => new RemoverMaterialOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::EDITAR_SERVICO          => new EditarServicoOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::REMOVER_SERVICO         => new RemoverServicoOrdemSericoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::FINALIZAR_ORDEM_SERVICO => new FinalizarOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::CANCELAR_ORDEM_SERVICO  => new CancelarOrdemServicoRequest($this->data, $this->attributes),
+            OrdemServicoPersistence::REABRIR_ORDEM_SERVICO   => new ReabrirOrdemServicoRequest($this->data, $this->attributes),
         };
     }
 
@@ -74,6 +80,21 @@ class OrdemServicoRequest
     public static function removeServico(int $id, array $attributes = []): self
     {
         return new self(['id' => $id], OrdemServicoPersistence::REMOVER_SERVICO, $attributes);
+    }
+
+    public static function finalizarOrdemServico(array $data, array $attributes = []): self
+    {
+        return new self($data, OrdemServicoPersistence::FINALIZAR_ORDEM_SERVICO, $attributes);
+    }
+
+    public static function cancelarOrdemServico(array $data, array $attributes = []): self
+    {
+        return new self($data, OrdemServicoPersistence::CANCELAR_ORDEM_SERVICO, $attributes);
+    }
+
+    public static function reabrirOrdemServico(array $data, array $attributes = []): self
+    {
+        return new self($data, OrdemServicoPersistence::REABRIR_ORDEM_SERVICO, $attributes);
     }
 
     public function attributes(): array

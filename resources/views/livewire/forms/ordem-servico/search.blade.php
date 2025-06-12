@@ -105,7 +105,7 @@ new class extends Component {
 }; ?>
 <div>
 
-    <flux:button class="mb-4"  variant="primary" href="{{route('ordem-servico.novo')}}" wire:navigate>
+    <flux:button class="mb-4" variant="primary" href="{{route('ordem-servico.novo')}}" wire:navigate>
         + Nova Ordem de Servico
     </flux:button>
     {{-- INICIO TABELA --}}
@@ -118,6 +118,7 @@ new class extends Component {
                 <flux:table.columns>
 
                     <flux:table.column>Numero</flux:table.column>
+                    <flux:table.column>Situacao</flux:table.column>
                     <flux:table.column>Cliente</flux:table.column>
                     <flux:table.column>Telefone</flux:table.column>
                     <flux:table.column>Valor Total</flux:table.column>
@@ -132,6 +133,23 @@ new class extends Component {
                         <flux:table.row :key="$ordemServico->id">
                             <flux:table.cell class="">
                                 {{ $ordemServico->codigo }}
+                            </flux:table.cell>
+
+                            <flux:table.cell class="">
+
+                                @if($ordemServico->status == \App\Enums\StatusOrdemServico::PENDENTE->value)
+                                    <flux:badge size="lg" color="amber">Pendente</flux:badge>
+
+                                @elseif($ordemServico->status == \App\Enums\StatusOrdemServico::EM_ANDAMENTO->value)
+                                    <flux:badge size="lg" color="sky">Em Andamento</flux:badge>
+
+                                @elseif($ordemServico->status == \App\Enums\StatusOrdemServico::FINALIZADO->value)
+                                    <flux:badge size="lg" color="emerald">Finalizado</flux:badge>
+
+                                @elseif($ordemServico->status == \App\Enums\StatusOrdemServico::CANCELADO->value)
+                                    <flux:badge size="lg" color="red">Cancelado</flux:badge>
+
+                                @endif
                             </flux:table.cell>
 
                             <flux:table.cell class="">
@@ -150,7 +168,7 @@ new class extends Component {
                             <flux:table.cell class=" ">
                                 <flux:button variant="outline" icon="pencil" size="xs"
                                              href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate>
-                                    Editar
+                                    Visualizar
                                 </flux:button>
                                 {{--                                <flux:modal.trigger name="delete-cliente" >--}}
                                 <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(

@@ -234,4 +234,53 @@ class OrdemServicoService
 
         return false;
     }
+
+    public function finalizarOrdemServico(array $data)
+    {
+        $ordemServico = OrdemServicoModel::query()->find($data['id']);
+
+        if ($ordemServico) {
+            $ordemServico->update([
+                'status'      => $data['status'],
+                'dataEntrega' => $data['dataEntrega'],
+
+            ]);
+
+            return $ordemServico;
+        }
+
+        return null;
+    }
+
+    public function cancelarOrdemServico(array $data)
+    {
+        $ordemServico = OrdemServicoModel::query()->find($data['id']);
+
+        if ($ordemServico) {
+            $ordemServico->update([
+                'status' => $data['status'],
+            ]);
+
+            return $ordemServico;
+        }
+
+        return null;
+    }
+
+    public function reabrirOrdemServico(array $data)
+    {
+        $ordemServico = OrdemServicoModel::query()->find($data['id']);
+
+        if ($ordemServico) {
+            $ordemServico->update([
+                'status' => $data['status'],
+                'dataEntrega' => null,
+            ]);
+
+            return $ordemServico;
+        }
+
+        return null;
+    }
+
 }

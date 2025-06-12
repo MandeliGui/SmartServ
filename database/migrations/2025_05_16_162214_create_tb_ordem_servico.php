@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->enum('tipo', ['Orcamento', 'OrdemServico']);
             $table->date('dataAbertura')->default(now());
             $table->date('dataEntrega')->nullable();
-            $table->enum('status', ['Pendente', 'EmAndamento', 'Finalizado']);
+            $table->enum('status', ['Pendente', 'EmAndamento', 'Finalizado', 'Cancelado']);
             $table->decimal('valorTotal', 10, 2)->default(0);
             $table->integer('idCliente');
             $table->integer('idTecnico')->nullable();
