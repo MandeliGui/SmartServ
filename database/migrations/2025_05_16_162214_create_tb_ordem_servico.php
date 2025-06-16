@@ -27,6 +27,7 @@ return new class extends Migration {
 
 
             $table->boolean('removido')->default(false);
+            $table->foreignId('user_id')->constrained('users', 'id');
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrdemServicoModel extends Model
+class OrdemServicoModel extends BaseModel
 {
     protected $table      = 'tb_ordem_servico';
     protected $primaryKey = 'id';
@@ -19,6 +19,7 @@ class OrdemServicoModel extends Model
         'idCliente',
         'idTecnico',
         'idAtendente',
+        'user_id',
         'removido'
     ];
 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FormaPagamentoModel extends Model
+class FormaPagamentoModel extends BaseModel
 {
     protected $table      = 'tb_formas_pagamento';
     protected $primaryKey = 'id';

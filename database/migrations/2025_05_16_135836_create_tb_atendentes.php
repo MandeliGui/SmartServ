@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->integer('idAtendente');
             $table->boolean("removido")->default(false);
             $table->foreign('idAtendente')->references('id')->on('tb_pessoas');
-            $table->integer('user_id');
+            $table->foreignId('user_id')->constrained('users', 'id');
+
             $table->timestamps();
         });
     }

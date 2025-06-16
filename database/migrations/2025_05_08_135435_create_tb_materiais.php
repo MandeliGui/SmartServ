@@ -18,7 +18,8 @@ return new class extends Migration {
             $table->enum('unidade', ['UN', 'KG', 'L', 'M', 'CM'])->default('UN');
             $table->decimal('valor', 10, 2)->default(0);
             $table->boolean('removido')->default(false);
-            $table->integer('user_id');
+            $table->foreignId('user_id')->constrained('users', 'id');
+
             $table->timestamps();
         });
     }

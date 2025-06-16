@@ -46,6 +46,8 @@ class OrdemServicoService
             'idCliente'    => $data['idCliente'],
             'idTecnico'    => $data['idTecnico'],
             'idAtendente'  => $data['idAtendente'],
+            'user_id'      => auth()->user()->id,
+
         ]);
 
         if (!empty($data['materiais'])) {
@@ -273,7 +275,7 @@ class OrdemServicoService
 
         if ($ordemServico) {
             $ordemServico->update([
-                'status' => $data['status'],
+                'status'      => $data['status'],
                 'dataEntrega' => null,
             ]);
 

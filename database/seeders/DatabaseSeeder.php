@@ -25,6 +25,14 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345678'),
         ]);
 
+        User::create([
+            'name'     => 'Jessica Balan',
+            'email'    => 'jess@gmail.com',
+            'password' => bcrypt('12345678'),
+        ]);
+
+
+
         Usuario::create([
             'is_admin' => true,
             'nome'     => 'Guilherme Mandeli',
@@ -40,6 +48,15 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345678'),
             'removido' => false,
             'user_id'  => 1,
+        ]);
+
+        Usuario::create([
+            'is_admin' => true,
+            'nome'     => 'Jessica Balan',
+            'email'    => 'jess@gmail.com',
+            'password' => bcrypt('12345678'),
+            'removido' => false,
+            'user_id'  => 2,
         ]);
     }
 }

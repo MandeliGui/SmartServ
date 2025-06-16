@@ -20,7 +20,7 @@ return new class () extends Migration
             $table->string('descricao')->nullable();
             $table->decimal('valor', 10, 2);
             $table->boolean('removido')->default(false);
-            $table->integer('user_id');
+            $table->foreignId('user_id')->constrained('users', 'id');
             $table->timestamps();
         });
     }

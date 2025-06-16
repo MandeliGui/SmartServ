@@ -19,7 +19,7 @@ new class extends Component {
     public string $orderBy = 'codigo';
     public string $dir     = 'asc';
     public string $search  = '';
-    
+
 
     public OrdemServicoForm $form;
 
@@ -103,6 +103,20 @@ new class extends Component {
         ];
     }
 
+    public function toggleSelection($id): void
+    {
+        if (in_array($id, $this->selectedsIds)) {
+            $this->selectedsIds = array_diff($this->selectedsIds, [$id]);
+        } else {
+            $this->selectedsIds = [$id]; // Desmarca todos e seleciona apenas o novo
+        }
+    }
+
+    public function abrirDetalhes(int $id): void
+    {
+        $this->redirectRoute('ordem-servico.editar', $id, navigate: true);
+    }
+
 }; ?>
 <div>
 
@@ -131,7 +145,10 @@ new class extends Component {
                 <flux:table.rows>
                     @foreach ($this->ordensServico as $ordemServico)
 
-                        <flux:table.row :key="$ordemServico->id">
+                        <flux:table.row :key="$ordemServico->id"
+                                        class="cursor-pointer {{ in_array($ordemServico->id, $this->selectedsIds) ? 'dark:bg-accent bg-amber-500' : '' }}"
+                                        wire:click="toggleSelection({{ $ordemServico->id }})"
+                                        wire:dblclick="abrirDetalhes({{$ordemServico->id}})">
                             <flux:table.cell class="">
                                 {{ $ordemServico->codigo }}
                             </flux:table.cell>

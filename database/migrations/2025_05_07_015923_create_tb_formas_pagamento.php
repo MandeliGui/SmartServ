@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->string('nome');
             $table->string('descricao')->nullable();
             $table->string('removido')->default(false);
-            $table->integer('user_id');
+            $table->foreignId('user_id')->constrained('users', 'id');
+
             $table->timestamps();
         });
     }
