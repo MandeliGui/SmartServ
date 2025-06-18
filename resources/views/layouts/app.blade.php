@@ -30,15 +30,15 @@
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" wire:navigate>Home</flux:navlist.item>
         <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes
         </flux:navlist.item>
-        <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}">Servicos</flux:navlist.item>
-        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}">Tecnicos</flux:navlist.item>
-        <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}">Formas Pagamento</flux:navlist.item>
-        <flux:navlist.item icon="tag" href="{{ route('grupo-cliente') }}">Grupo Clientes</flux:navlist.item>
-        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}">Materiais</flux:navlist.item>
-        <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}">Atendentes</flux:navlist.item>
-        <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}">Ordem de Servico</flux:navlist.item>
-        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}">Usuarios</flux:navlist.item>
-        <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}">Cat. Entrada e Saida</flux:navlist.item>
+        <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}" wire:navigatey>Servicos</flux:navlist.item>
+        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}" wire:navigatey>Tecnicos</flux:navlist.item>
+        <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}" wire:navigatey>Formas Pagamento</flux:navlist.item>
+        <flux:navlist.item icon="tag" href="{{ route('grupo-cliente') }}" wire:navigatey>Grupo Clientes</flux:navlist.item>
+        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}" wire:navigatey>Materiais</flux:navlist.item>
+        <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}" wire:navigatey>Atendentes</flux:navlist.item>
+        <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigatey>Ordem de Servico</flux:navlist.item>
+        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuarios</flux:navlist.item>
+        <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigatey>Cat. Entrada e Saida</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
 

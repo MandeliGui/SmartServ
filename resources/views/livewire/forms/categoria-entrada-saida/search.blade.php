@@ -119,7 +119,7 @@ new class extends Component {
                                 {{ $categoria->nome }}
                             </flux:table.cell>
                             <flux:table.cell>
-                                <flux:badge size="lg" color="{{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
+                                <flux:badge color="{{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
                                 {{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                 </flux:badge>
                             </flux:table.cell>
