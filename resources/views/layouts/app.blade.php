@@ -38,6 +38,7 @@
         <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}">Atendentes</flux:navlist.item>
         <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}">Ordem de Servico</flux:navlist.item>
         <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}">Usuarios</flux:navlist.item>
+        <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}">Cat. Entrada e Saida</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
 

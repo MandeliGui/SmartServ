@@ -105,6 +105,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Volt::route('/editar/{id}', 'pages.tenant.ordem-servico.create')
             ->name('ordem-servico.editar');
     });
+
+    Route::prefix('categoria-entrada-saida')->group(function (): void {
+        Volt::route('/', 'pages.tenant.categoria-entrada-saida.search')
+            ->name('categoria-entrada-saida');
+
+    });
 });
 
 require __DIR__ . '/auth.php';
