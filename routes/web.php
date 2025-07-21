@@ -111,6 +111,18 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->name('categoria-entrada-saida');
 
     });
+
+    Route::prefix('entradas-saidas')->group(function (): void {
+        Volt::route('/', 'pages.tenant.entrada-saida.search')
+            ->name('entradas-saidas');
+
+    });
+
+    Route::prefix('bancos')->group(function (): void {
+        Volt::route('/', 'pages.tenant.bancos.search')
+            ->name('bancos');
+
+    });
 });
 
 require __DIR__ . '/auth.php';

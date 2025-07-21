@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CategoriaEntradaSaidaModel extends Model
+class CategoriaEntradaSaidaModel extends BaseModel
 {
     protected $table = 'tb_categoria_entrada_saida';
 

@@ -29,7 +29,7 @@ new class extends Component {
     public function openModalRemove(string $modalName, int $id): void
     {
 
-        $this->form->setCategoriaEntradaSaida($id);
+        $this->form->setFormaPagamento($id);
         Flux::modal($modalName)->show();
     }
 
@@ -44,7 +44,7 @@ new class extends Component {
             <div>
                 <flux:heading size="lg">Remover categoria?</flux:heading>
                 <flux:text class="mt-2">
-                    <p>Tem certeza que deseja remover a forma de categoria:</p>
+                    <p>Tem certeza que deseja remover a categoria:</p>
                     <strong>{{$this->form->nome ?? null}} </strong> ?
 
                 </flux:text>

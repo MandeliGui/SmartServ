@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Tenant\CategoriaEntradaSaida;
+namespace App\Http\Requests\Tenant\Banco;
 
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 
-class RemoverCategoriaEntradaSaidaRequest extends BaseValidationRequest
+class RemoverBancoRequest extends BaseValidationRequest
 {
     public function __construct(private array $data, array $attributes = [])
     {
@@ -17,23 +17,23 @@ class RemoverCategoriaEntradaSaidaRequest extends BaseValidationRequest
     public function prepareForValidation(): void
     {
         $this->data = [
-            'id' => Helper::getIdByRequest($this->data, 'id'),
+            'id' => Helper::getIdByRequest($this->data, 'id')
         ];
     }
 
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:tb_categoria_entrada_saida,id'],
+            'id' => ['required', 'integer', 'exists:tb_bancos,id'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'id.required' => ':attribute é obrigatório',
-            'id.integer'  => ':attribute deve ser um número inteiro',
-            'id.exists'   => ':attribute não existe',
+            'id.required' => 'O campo :attribute é obrigatório.',
+            'id.integer'  => 'O campo :attribute deve ser um número inteiro.',
+            'id.exists'   => 'O banco selecionado não existe.',
         ];
     }
 

@@ -24,6 +24,7 @@ class PessoaModel extends BaseModel
         'tipoPessoa',
         'idEndereco',
         'user_id',
+        'removido'
     ];
 
     public function endereco(): BelongsTo

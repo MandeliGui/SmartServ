@@ -39,6 +39,8 @@
         <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigatey>Ordem de Servico</flux:navlist.item>
         <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuarios</flux:navlist.item>
         <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigatey>Cat. Entrada e Saida</flux:navlist.item>
+        <flux:navlist.item icon="arrows-up-down" href="{{ route('entradas-saidas') }}" wire:navigatey>Entrada e Saida</flux:navlist.item>
+        <flux:navlist.item icon="banknotes" href="{{ route('bancos') }}" wire:navigatey>Bancos</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
 
@@ -52,12 +54,11 @@
     <flux:spacer/>
 
     <flux:dropdown position="top" alignt="start">
-        <flux:profile avatar="https://fluxui.dev/img/demo/user.png"/>
+        <flux:profile />
 
         <flux:menu>
             <flux:menu.radio.group>
-                <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                <flux:menu.radio>Truly Delta</flux:menu.radio>
+                <flux:menu.radio>{{ auth()->user()->name }}</flux:menu.radio>
             </flux:menu.radio.group>
 
             <flux:menu.separator/>
