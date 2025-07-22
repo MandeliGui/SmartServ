@@ -63,7 +63,7 @@ new class extends Component {
     public function openModalUpdate(string $modalName, int $id)
     {
         $this->persistence = Persistence::UPDATE;
-        $this->form->setFormaPagamento($id);
+        $this->form->setEntradaSaida($id);
         Flux::modal($modalName)->show();
 
     }
@@ -138,7 +138,7 @@ new class extends Component {
                         <flux:select.option value="{{ $banco->id }}">{{ $banco->nome }}</flux:select.option>
                     @endforeach
                 @else
-                    <flux:text class="m-2">Nenhuma categoria disponível</flux:text>
+                    <flux:text class="m-2">Nenhum banco disponível</flux:text>
                 @endif
 
             </flux:select>

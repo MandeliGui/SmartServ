@@ -49,6 +49,15 @@ new class extends Component {
         }
     }
 
+    public function desfazerbaixa(mixed $id)
+    {
+        $this->form->desfazerBaixa($id);
+
+        $this->dispatch(EntradasSaidasForm::EVENT_PERSISTED, persistence: \App\Enums\Persistence::UPDATE->value);
+
+        Flux::toast('Baixa desfeita com sucesso!', variant: 'success');
+    }
+
     public function updatedSelectPage($value): void
     {
         $this->selectedsIds = $value ? $this->entradaSaida->pluck('id')->toArray() : [];
@@ -176,7 +185,7 @@ new class extends Component {
 
                                         <flux:table.cell>
                                             <flux:badge
-                                                color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
+                                                    color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
                                                 {{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                             </flux:badge>
                                         </flux:table.cell>
@@ -191,13 +200,13 @@ new class extends Component {
 
                                         <flux:table.cell class="  items-center gap-3">
                                             <flux:text
-                                                class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                 R$ {{Helper::formatarValorMonetarioPtBr($item->valor_original)}}</flux:text>
                                         </flux:table.cell>
 
                                         <flux:table.cell class="items-center gap-3">
                                             <flux:text
-                                                class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                 R$ {{ Helper::formatarValorMonetarioPtBr($item->valor_pago)}}</flux:text>
                                         </flux:table.cell>
 
@@ -211,17 +220,10 @@ new class extends Component {
 
 
                                         <flux:table.cell
-                                            class="whitespace-nowrap">
+                                                class="whitespace-nowrap">
                                             <flux:button variant="primary" color="red" icon="banknote-x" size="xs"
                                                          class="cursor-pointer"
-                                                         wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
-                                                                                    {
-                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_UPDATE }}',
-                                                                                        id: '{{ $item->id }}'
-                                                                                    }
-                                                                                )" tooltip="Defazer Baixa">
+                                                         wire:click="desfazerbaixa({{$item->id}})" tooltip="Defazer Baixa">
 
                                             </flux:button>
 
@@ -276,7 +278,7 @@ new class extends Component {
                 @else
 
                     <div
-                        class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                            class="w-full text-center py-3 rounded-lg border-2 border-accent">
                         <p class="font-semibold text-accent">
                             Nenhum registro encontrado.
                         </p>
@@ -326,7 +328,7 @@ new class extends Component {
 
                                             <flux:table.cell>
                                                 <flux:badge
-                                                    color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
+                                                        color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
                                                     {{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                                 </flux:badge>
                                             </flux:table.cell>
@@ -341,7 +343,7 @@ new class extends Component {
 
                                             <flux:table.cell class=" items-center gap-3">
                                                 <flux:text
-                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                        class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                     R$ {{ $item->valor_original ?? '0,00'}}</flux:text>
                                             </flux:table.cell>
 
@@ -359,14 +361,14 @@ new class extends Component {
 
 
                                             <flux:table.cell
-                                                class="whitespace-nowrap">
+                                                    class="whitespace-nowrap">
                                                 <flux:button variant="primary" color="green" icon="banknotes" size="xs"
                                                              class="cursor-pointer"
                                                              wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_DAR_BAIXA }}',
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_DAR_BAIXA }}',
                                                                                     {
-                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_UPDATE }}',
+                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_DAR_BAIXA }}',
                                                                                         id: '{{ $item->id }}'
                                                                                     }
                                                                                 )" tooltip="Dar Baixa">
@@ -440,7 +442,7 @@ new class extends Component {
                     @else
 
                         <div
-                            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                                class="w-full text-center py-3 rounded-lg border-2 border-accent">
                             <p class="font-semibold text-accent">
                                 Nenhum registro encontrado.
                             </p>

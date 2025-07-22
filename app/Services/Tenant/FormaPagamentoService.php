@@ -3,6 +3,7 @@
 namespace App\Services\Tenant;
 
 use App\Http\Requests\Tenant\FilterPaginateRequest;
+use App\Models\EntradasSaidasModel;
 use App\Models\FormaPagamentoModel;
 
 class FormaPagamentoService

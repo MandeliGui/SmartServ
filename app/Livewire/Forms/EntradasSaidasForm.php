@@ -12,12 +12,15 @@ class EntradasSaidasForm extends Form
 {
     public const MODAL_NAME_CREATE                     = 'modal-entrada-saida-create';
     public const MODAL_NAME_UPDATE                     = 'modal-entrada-saida-update';
+    public const MODAL_NAME_DAR_BAIXA                  = 'modal-entrada-saida-dar-baixa';
     public const MODAL_NAME_REMOVE                     = 'modal-entrada-saida-remove';
     public const MODAL_NAME_REMOVE_MULTIPLE            = 'modal-entrada-saida-remove-multiple';
     public const PATH_COMPONENT_FORM_CREATE_AND_UPDATE = 'forms.entrada-saida.create-update';
+    public const PATH_COMPONENT_FORM_DAR_BAIXA         = 'forms.entrada-saida.dar-baixa';
     public const PATH_COMPONENT_FORM_REMOVE            = 'forms.entrada-saida.remove';
     public const EVENT_NAME_SHOW_MODAL_CREATE          = 'show-modal-create-entrada-saida';
     public const EVENT_NAME_SHOW_MODAL_UPDATE          = 'show-modal-update-entrada-saida';
+    public const EVENT_NAME_SHOW_MODAL_DAR_BAIXA       = 'show-modal-dar-baixa-entrada-saida';
     public const EVENT_NAME_SHOW_MODAL_REMOVE          = 'show-modal-remove-entrada-saida';
     public const EVENT_NAME_SHOW_MODAL_REMOVE_MULTIPLE = 'show-modal-entrada-saida-remove-multiple';
     public const EVENT_PERSISTED                       = 'entrada-saida-persisted';
@@ -34,7 +37,6 @@ class EntradasSaidasForm extends Form
     public mixed $categoria_id;
     public mixed $forma_pagamento_id;
     public mixed $banco_id;
-
 
 
     private function attributes(): array
@@ -78,29 +80,77 @@ class EntradasSaidasForm extends Form
         return $servico;
     }
 
-    public function remove()
+    public function darBaixa()
     {
-        $data = EntradaSaidaRequest::remove($this->id, $this->attributes())->validated();
+        $data = EntradaSaidaRequest::darBaixa($this->all(), $this->attributes())->validated();
 
-        $servico = (new FormaPagamentoService())->remove($data);
+
+        $servico = (new EntradaSaidaService())->darBaixa($data);
 
         $this->reset();
 
         return $servico;
     }
 
-    public function setFormaPagamento(mixed $id): void
+    public function desfazerBaixa($id)
     {
-        $formaPagamento = (new FormaPagamentoService())->findOne($id);
+        $servico = (new EntradaSaidaService())->desfazerBaixa($id);
 
-        if ($formaPagamento) {
-            $this->id        = $formaPagamento->id;
-            $this->nome      = $formaPagamento->nome;
-            $this->descricao = $formaPagamento->descricao;
+        $this->reset();
+
+        return $servico;
+    }
+
+    public function remove()
+    {
+        $data = EntradaSaidaRequest::remove($this->id, $this->attributes())->validated();
+
+
+        $servico = (new EntradaSaidaService())->remove($data['id']);
+
+        $this->reset();
+
+        return $servico;
+    }
+
+    public function setEntradaSaida(mixed $id): void
+    {
+        $entradaSaida = (new EntradaSaidaService())->findOne($id);
+
+
+//        "id" => 2
+//    "tipo" => 1
+//    "data_vencimento" => "2025-07-11"
+//    "data_pagamento" => null
+//    "valor_original" => "150.00"
+//    "status" => 1
+//    "valor_pago" => null
+//    "quantidade_meses" => 1
+//    "descricao" => null
+//    "categoria_id" => 1
+//    "forma_pagamento_id" => null
+//    "ordem_servico_id" => null
+//    "banco_id" => 1
+//    "removido" => 0
+//    "user_id" => 1
+//    "created_at" => "2025-07-11 20:43:01"
+//    "updated_at" => "2025-07-11 20:43:01"
+        if ($entradaSaida) {
+            $this->id                 = $entradaSaida->id;
+            $this->tipo               = $entradaSaida->tipo;
+            $this->data_vencimento    = $entradaSaida->data_vencimento;
+            $this->data_pagamento     = $entradaSaida->data_pagamento;
+            $this->valor_original     = $entradaSaida->valor_original;
+            $this->status             = $entradaSaida->status;
+            $this->valor_pago         = $entradaSaida->valor_pago;
+            $this->quantidade_meses   = $entradaSaida->quantidade_meses;
+            $this->descricao          = $entradaSaida->descricao;
+            $this->categoria_id       = $entradaSaida->categoria_id;
+            $this->forma_pagamento_id = $entradaSaida->forma_pagamento_id;
+            $this->ordem_servico_id   = $entradaSaida->ordem_servico_id;
+            $this->banco_id           = $entradaSaida->banco_id;
         } else {
-            $this->id        = null;
-            $this->nome      = null;
-            $this->descricao = null;
+            $this->reset();
         }
     }
 }

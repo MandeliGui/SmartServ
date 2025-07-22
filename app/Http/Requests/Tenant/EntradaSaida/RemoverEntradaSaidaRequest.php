@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tenant\EntradaSaida;
 
+use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 
 class RemoverEntradaSaidaRequest extends BaseValidationRequest
@@ -15,21 +16,29 @@ class RemoverEntradaSaidaRequest extends BaseValidationRequest
 
     public function prepareForValidation(): void
     {
-        // TODO: Implement prepareForValidation() method.
+        $this->data = [
+            'id' => Helper::getIdByRequest($this->data, 'id'),
+        ];
     }
 
     public function rules(): array
     {
-        // TODO: Implement rules() method.
+        return [
+            'id' => ['required', 'integer', 'exists:tb_entradas_saidas,id'],
+        ];
     }
 
     public function messages(): array
     {
-        // TODO: Implement messages() method.
+        return [
+            'id.required' => ':attribute é obrigatório.',
+            'id.integer'  => ':attribute deve ser um número inteiro.',
+            'id.exists'   => ':attribute não existe.',
+        ];
     }
 
     public function validated(): array
     {
-        // TODO: Implement validated() method.
+        return \Validator::make($this->data, $this->rules(), $this->messages(), $this->attributes())->validated();
     }
 }

@@ -23,7 +23,7 @@ class EntradaSaidaService
 
     public function findOne(mixed $id)
     {
-
+        return EntradasSaidasModel::query()->where('id', $id)->first();
     }
 
     public function create(array $data)
@@ -44,4 +44,43 @@ class EntradaSaidaService
 
         return $entradaSaida;
     }
+
+
+    public function remove(mixed $id)
+    {
+        $servico = EntradasSaidasModel::query()->where('id', $id);
+
+        $servico->delete();
+
+        return $servico;
+    }
+
+    public function darBaixa(array $data)
+    {
+        $servico = EntradasSaidasModel::query()->where('id', $data['id']);
+
+        $servico->update([
+            'data_pagamento'     => $data['data_pagamento'],
+            'valor_pago'         => $data['valor_pago'],
+            'forma_pagamento_id' => $data['forma_pagamento_id'],
+            'banco_id'           => $data['banco_id'],
+        ]);
+
+        return $servico;
+    }
+
+    public function desfazerBaixa(mixed $id)
+    {
+        $servico = EntradasSaidasModel::query()->where('id', $id)->first();
+
+
+        $servico->update([
+            'data_pagamento'     => null,
+            'valor_pago'         => null,
+            'forma_pagamento_id' => null,
+        ]);
+
+        return $servico;
+    }
+
 }

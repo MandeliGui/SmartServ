@@ -28,6 +28,10 @@ new #[Layout('layouts.app')] class extends Component {
         <livewire:forms.entrada-saida.create-update/>
     </flux:modal>
 
+    <flux:modal name="{{\App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_DAR_BAIXA}}" class="min-w-[88rem]">
+        <livewire:forms.entrada-saida.dar-baixa/>
+    </flux:modal>
+
     <flux:modal name="{{\App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_REMOVE}}" class="min-w-[88rem]">
         <livewire:forms.entrada-saida.remove/>
     </flux:modal>
