@@ -183,7 +183,8 @@ new class extends Component {
                                             class="whitespace-nowrap">
                                             <flux:button variant="primary" color="red" icon="banknote-x" size="xs"
                                                          class="cursor-pointer"
-                                                         wire:click="desfazerbaixa({{$item->id}})" tooltip="Defazer Baixa">
+                                                         wire:click="desfazerbaixa({{$item->id}})"
+                                                         tooltip="Defazer Baixa">
 
                                             </flux:button>
 
@@ -194,7 +195,7 @@ new class extends Component {
 
                                         <flux:table.cell>
                                             <flux:badge
-                                                    color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
+                                                color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
                                                 {{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                             </flux:badge>
                                         </flux:table.cell>
@@ -209,13 +210,13 @@ new class extends Component {
 
                                         <flux:table.cell class="  items-center gap-3">
                                             <flux:text
-                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                 R$ {{Helper::formatarValorMonetarioPtBr($item->valor_original)}}</flux:text>
                                         </flux:table.cell>
 
                                         <flux:table.cell class="items-center gap-3">
                                             <flux:text
-                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                 R$ {{ Helper::formatarValorMonetarioPtBr($item->valor_pago)}}</flux:text>
                                         </flux:table.cell>
 
@@ -224,11 +225,10 @@ new class extends Component {
                                         </flux:table.cell>
 
                                         <flux:table.cell class=" items-center gap-3">
-                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += $item->valor_pago) }}
+                                            {{--                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += $item->valor_pago) }}--}}
+                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_original : -$item->valor_original))  }}
+
                                         </flux:table.cell>
-
-
-
 
 
                                     </flux:table.row>
@@ -263,7 +263,6 @@ new class extends Component {
                                     </flux:table.cell>
 
 
-
                                     <flux:table.cell>
 
                                     </flux:table.cell>
@@ -279,7 +278,7 @@ new class extends Component {
                 @else
 
                     <div
-                            class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                        class="w-full text-center py-3 rounded-lg border-2 border-accent">
                         <p class="font-semibold text-accent">
                             Nenhum registro encontrado.
                         </p>
@@ -322,8 +321,6 @@ new class extends Component {
                                 <flux:table.rows>
                                     @foreach ($entradaSaidaPendente as $item)
 
-
-
                                         <flux:table.row :key="$item->id">
 
                                             <flux:table.cell
@@ -358,7 +355,7 @@ new class extends Component {
 
                                             <flux:table.cell>
                                                 <flux:badge
-                                                        color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
+                                                    color="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
                                                     {{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                                 </flux:badge>
                                             </flux:table.cell>
@@ -373,7 +370,7 @@ new class extends Component {
 
                                             <flux:table.cell class=" items-center gap-3">
                                                 <flux:text
-                                                        class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
+                                                    class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                     R$ {{ $item->valor_original ?? '0,00'}}</flux:text>
                                             </flux:table.cell>
 
@@ -388,9 +385,6 @@ new class extends Component {
                                             <flux:table.cell class=" items-center gap-3">
                                                 R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_original : -$item->valor_original))  }}
                                             </flux:table.cell>
-
-
-
 
 
                                         </flux:table.row>
@@ -425,7 +419,6 @@ new class extends Component {
                                         </flux:table.cell>
 
 
-
                                         <flux:table.cell>
 
                                         </flux:table.cell>
@@ -447,7 +440,7 @@ new class extends Component {
                     @else
 
                         <div
-                                class="w-full text-center py-3 rounded-lg border-2 border-accent">
+                            class="w-full text-center py-3 rounded-lg border-2 border-accent">
                             <p class="font-semibold text-accent">
                                 Nenhum registro encontrado.
                             </p>
