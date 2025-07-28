@@ -156,6 +156,7 @@ new class extends Component {
 
                             <flux:table.columns>
 
+                                <flux:table.column>Acoes</flux:table.column>
                                 <flux:table.column>Data Vencimento</flux:table.column>
                                 <flux:table.column>Tipo</flux:table.column>
                                 <flux:table.column>Descricao</flux:table.column>
@@ -164,7 +165,6 @@ new class extends Component {
                                 <flux:table.column>Valor Pago</flux:table.column>
                                 <flux:table.column>Data Pagamento</flux:table.column>
                                 <flux:table.column>Saldo</flux:table.column>
-                                <flux:table.column>Acoes</flux:table.column>
 
 
                             </flux:table.columns>
@@ -179,6 +179,15 @@ new class extends Component {
 
                                 @foreach ($entradaSaidaPago as $item)
                                     <flux:table.row :key="$item->id">
+                                        <flux:table.cell
+                                            class="whitespace-nowrap">
+                                            <flux:button variant="primary" color="red" icon="banknote-x" size="xs"
+                                                         class="cursor-pointer"
+                                                         wire:click="desfazerbaixa({{$item->id}})" tooltip="Defazer Baixa">
+
+                                            </flux:button>
+
+                                        </flux:table.cell>
                                         <flux:table.cell class=" items-center gap-3">
                                             {{ Helper::formatarDataPtBr($item->data_vencimento) }}
                                         </flux:table.cell>
@@ -219,15 +228,7 @@ new class extends Component {
                                         </flux:table.cell>
 
 
-                                        <flux:table.cell
-                                                class="whitespace-nowrap">
-                                            <flux:button variant="primary" color="red" icon="banknote-x" size="xs"
-                                                         class="cursor-pointer"
-                                                         wire:click="desfazerbaixa({{$item->id}})" tooltip="Defazer Baixa">
 
-                                            </flux:button>
-
-                                        </flux:table.cell>
 
 
                                     </flux:table.row>
@@ -261,13 +262,13 @@ new class extends Component {
 
                                     </flux:table.cell>
 
-                                    <flux:table.cell class=" items-center gap-3">
-                                        <b>R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario)  }}</b>
-                                    </flux:table.cell>
 
 
                                     <flux:table.cell>
 
+                                    </flux:table.cell>
+                                    <flux:table.cell class=" items-center gap-3">
+                                        <b>R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario)  }}</b>
                                     </flux:table.cell>
 
 
@@ -306,6 +307,7 @@ new class extends Component {
 
                                 <flux:table.columns>
 
+                                    <flux:table.column>Acoes</flux:table.column>
                                     <flux:table.column>Data Vencimento</flux:table.column>
                                     <flux:table.column>Tipo</flux:table.column>
                                     <flux:table.column>Descricao</flux:table.column>
@@ -314,14 +316,42 @@ new class extends Component {
                                     <flux:table.column>Valor Pago</flux:table.column>
                                     <flux:table.column>Data Pagamento</flux:table.column>
                                     <flux:table.column>Saldo previsto</flux:table.column>
-                                    <flux:table.column>Acoes</flux:table.column>
 
                                 </flux:table.columns>
 
                                 <flux:table.rows>
                                     @foreach ($entradaSaidaPendente as $item)
 
+
+
                                         <flux:table.row :key="$item->id">
+
+                                            <flux:table.cell
+                                                class="whitespace-nowrap">
+                                                <flux:button variant="primary" color="green" icon="banknotes" size="xs"
+                                                             class="cursor-pointer"
+                                                             wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_DAR_BAIXA }}',
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_DAR_BAIXA }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_DAR_BAIXA }}',
+                                                                                        id: '{{ $item->id }}'
+                                                                                    }
+                                                                                )" tooltip="Dar Baixa">
+
+                                                </flux:button>
+                                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                                <flux:button icon="trash" variant="danger" size="xs"
+                                                             class="cursor-pointer" wire:click="$dispatchTo(
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                                                                    {
+                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_REMOVE }}',
+                                                                                        id: '{{ $item->id }}'
+                                                                                    }
+                                                                                )" tooltip="Remover"></flux:button>
+                                                {{--                                </flux:modal.trigger>--}}
+                                            </flux:table.cell>
                                             <flux:table.cell class=" items-center gap-3">
                                                 {{ Helper::formatarDataPtBr($item->data_vencimento) }}
                                             </flux:table.cell>
@@ -360,32 +390,7 @@ new class extends Component {
                                             </flux:table.cell>
 
 
-                                            <flux:table.cell
-                                                    class="whitespace-nowrap">
-                                                <flux:button variant="primary" color="green" icon="banknotes" size="xs"
-                                                             class="cursor-pointer"
-                                                             wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_DAR_BAIXA }}',
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_DAR_BAIXA }}',
-                                                                                    {
-                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_DAR_BAIXA }}',
-                                                                                        id: '{{ $item->id }}'
-                                                                                    }
-                                                                                )" tooltip="Dar Baixa">
 
-                                                </flux:button>
-                                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
-                                                <flux:button icon="trash" variant="danger" size="xs"
-                                                             class="cursor-pointer" wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_REMOVE }}',
-                                                                                    '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
-                                                                                    {
-                                                                                        modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_REMOVE }}',
-                                                                                        id: '{{ $item->id }}'
-                                                                                    }
-                                                                                )" tooltip="Remover"></flux:button>
-                                                {{--                                </flux:modal.trigger>--}}
-                                            </flux:table.cell>
 
 
                                         </flux:table.row>
@@ -419,13 +424,13 @@ new class extends Component {
 
                                         </flux:table.cell>
 
-                                        <flux:table.cell class=" items-center gap-3">
-                                            <b>R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario)  }}</b>
-                                        </flux:table.cell>
 
 
                                         <flux:table.cell>
 
+                                        </flux:table.cell>
+                                        <flux:table.cell class=" items-center gap-3">
+                                            <b>R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario)  }}</b>
                                         </flux:table.cell>
 
 
