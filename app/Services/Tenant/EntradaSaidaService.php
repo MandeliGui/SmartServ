@@ -7,6 +7,7 @@ use App\Enums\TipoOrdemServico;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
 use App\Models\BancosModel;
 use App\Models\EntradasSaidasModel;
+use Carbon\Carbon;
 
 class EntradaSaidaService
 {
@@ -29,17 +30,25 @@ class EntradaSaidaService
     public function create(array $data)
     {
 
-        $entradaSaida = EntradasSaidasModel::query()->create([
-            'tipo'             => $data['tipo'],
-            'data_vencimento'  => $data['data_vencimento'],
-            'valor_original'   => $data['valor_original'],
-            'quantidade_meses' => $data['quantidade_meses'],
-            'descricao'        => $data['descricao'],
-            'categoria_id'     => $data['categoria_id'],
-            'banco_id'         => $data['banco_id'],
-            'removido'         => $data['removido'],
-            'user_id'          => auth()->user()->id,
-        ]);
+        $quantidadeMeses = $data['quantidade_meses'] ?? 1;
+        $dataVencimento  = Carbon::parse($data['data_vencimento']);
+
+        for ($i = 1; $i <= $quantidadeMeses; $i++) {
+
+            $entradaSaida = EntradasSaidasModel::query()->create([
+                'tipo'             => $data['tipo'],
+                'data_vencimento'  => $dataVencimento->format('Y-m-d'),
+                'valor_original'   => $data['valor_original'],
+                'quantidade_meses' => $data['quantidade_meses'],
+                'descricao'        => $data['descricao'],
+                'categoria_id'     => $data['categoria_id'],
+                'banco_id'         => $data['banco_id'],
+                'removido'         => $data['removido'],
+                'user_id'          => auth()->user()->id,
+            ]);
+
+           $dataVencimento = $dataVencimento->addMonthNoOverflow();
+        }
 
 
         return $entradaSaida;
