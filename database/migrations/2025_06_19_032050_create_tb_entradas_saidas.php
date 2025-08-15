@@ -21,7 +21,8 @@ return new class extends Migration {
             $table->integer('quantidade_meses')->default(1);
             $table->string('descricao', 255)->nullable();
 
-            $table->foreignId('categoria_id')->constrained('tb_categoria_entrada_saida', 'id');
+            $table->bigInteger('categoria_id');
+            $table->foreign('categoria_id')->references('id')->on('tb_categoria_entrada_saida');
             $table->foreignId('forma_pagamento_id')->nullable()->constrained('tb_formas_pagamento', 'id');
 
             $table->foreignId('ordem_servico_id')->nullable()->constrained('tb_ordem_servico', 'id');

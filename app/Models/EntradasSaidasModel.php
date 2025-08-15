@@ -18,6 +18,7 @@ class EntradasSaidasModel extends BaseModel
         'descricao',
         'categoria_id',
         'forma_pagamento_id',
+        'ordem_servico_id',
         'banco_id',
         'removido',
         'user_id',
@@ -38,6 +39,11 @@ class EntradasSaidasModel extends BaseModel
     public function banco()
     {
         return $this->belongsTo(BancosModel::class, 'banco_id');
+    }
+
+    public function ordemServico()
+    {
+        return $this->belongsTo(OrdemServicoModel::class, 'ordem_servico_id');
     }
 
 }

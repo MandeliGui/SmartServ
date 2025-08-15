@@ -20,7 +20,10 @@ new class extends Component {
 
     public float $valorMateriais = 0;
     public float $valorServicos  = 0;
-    public mixed $id;
+    public mixed $id = null;
+
+    public mixed $bancos          = [];
+    public mixed $formasPagamento = [];
 
 
     public function save(): void
@@ -50,6 +53,52 @@ new class extends Component {
 
         }
 
+    }
+
+    public function updatedFormCondicoesPagamento($value)
+    {
+
+            $this->form->dataVencimento = [];
+            if ($value === \App\Enums\CondicoesPagamento::A_VISTA->value) {
+                $this->form->quantidadeParcela = 1;
+                for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
+                    if (!isset($this->form->dataVencimento[$i])) {
+                        $this->form->dataVencimento[$i] = '';
+                    }
+                }
+            } else {
+                $this->form->quantidadeParcela = null;
+            }
+
+
+    }
+
+    public function updatedFormQuantidadeParcela()
+    {
+
+            if($this->form->quantidadeParcela > 0) {
+                for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
+                    if (!isset($this->form->dataVencimento[$i])) {
+                        $this->form->dataVencimento[$i] = '';
+                    }
+                }
+            }else{
+                $this->form->dataVencimento = [];
+            }
+
+
+    }
+
+    public function adicionarValorParcelasSeguintes($value)
+    {
+
+        for ($i = $value + 1; $i < $this->form->quantidadeParcela; $i++) {
+
+
+            $this->form->dataVencimento[$i] = \Carbon\Carbon::parse($this->form->dataVencimento[$value])->addMonthNoOverflow($i)
+                ->format('Y-m-d');
+
+        }
     }
 
     #[On(AdicionarMateriaisForm::EVENT_PERSISTED)]
@@ -108,14 +157,14 @@ new class extends Component {
     {
 
         $this->form->id = $this->id;
-        $id             = $this->form->id;
+        $id = $this->form->id;
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::FINALIZADO->value) {
             Flux::toast('Ordem de serviço já está finalizada!', variant: 'warning');
             return;
         }
 
-        $ordemServico = $this->form->finalizarOrdemServico();
+        $ordemServico = $this->form->finalizarOrdemServico($this->form->all());
         Flux::toast('Ordem de serviço finalizada com sucesso!', variant: 'success');
         $this->mount();
         $this->id = $id;
@@ -125,7 +174,7 @@ new class extends Component {
     public function cancelarOrdemServico()
     {
         $this->form->id = $this->id;
-        $id             = $this->form->id;
+        $id = $this->form->id;
 
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::CANCELADO->value) {
@@ -144,7 +193,7 @@ new class extends Component {
     public function reabrirOrdemServico()
     {
         $this->form->id = $this->id;
-        $id             = $this->form->id;
+        $id = $this->form->id;
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::PENDENTE->value ||
             $this->form->status === \App\Enums\StatusOrdemServico::EM_ANDAMENTO->value) {
@@ -165,12 +214,21 @@ new class extends Component {
     {
 
 
-        $this->id       = request()->route('id') ?? null;
+
+        $this->id = request()->route('id') ?? null;
         $this->form->id = request()->route('id') ?? null;
+
+        $this->bancos = \App\Models\BancosModel::where('removido', false)
+            ->orderBy('nome')
+            ->get();
+
+        $this->formasPagamento = \App\Models\FormaPagamentoModel::where('removido', false)
+            ->orderBy('nome')
+            ->get();
 
 
         $this->form->dataAbertura = now()->format('Y-m-d');
-        $this->form->clientes     = \App\Models\ClienteModel::query()->get();
+        $this->form->clientes = \App\Models\ClienteModel::query()->get();
 
         if ($this->id) {
 
@@ -201,19 +259,15 @@ new class extends Component {
 ?>
 
 <div x-data>
-
-
-    <flux:tab.group>
-        <flux:tabs wire:model="tab">
-            <flux:tab name="dados">Dados</flux:tab>
-            <flux:tab name="pagamento" :disabled="$form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value">
-                Pagamento
-            </flux:tab>
-        </flux:tabs>
-        <flux:tab.panel name="dados">
-
-
-            <form>
+    <form>
+        <flux:tab.group>
+            <flux:tabs wire:model="tab">
+                <flux:tab name="dados">Dados</flux:tab>
+                <flux:tab name="pagamento" :disabled="is_null($this->id)">
+                    Pagamento
+                </flux:tab>
+            </flux:tabs>
+            <flux:tab.panel name="dados">
 
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
@@ -290,10 +344,11 @@ new class extends Component {
                                 Cancelado
                             </flux:select.option>
                         @else
-                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::PENDENTE->value}}">Pendente
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::PENDENTE->value}}">
+                                Pendente
                             </flux:select.option>
-                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::EM_ANDAMENTO->value}}">Em
-                                Andamento
+                            <flux:select.option value="{{\App\Enums\StatusOrdemServico::EM_ANDAMENTO->value}}">
+                                Em Andamento
                             </flux:select.option>
                         @endif
 
@@ -427,27 +482,26 @@ new class extends Component {
 
                     <flux:accordion.item :expanded="true">
 
-                        <flux:accordion.heading >
+                        <flux:accordion.heading>
                             <div class="flex justify-between items-center">
 
 
+                                <div>
+                                    Serviços
+                                </div>
+                                <div>
+                                    @php
+                                        $valorServicos = collect($form->servicos)->sum('valorTotal');
+                                    @endphp
 
-                                    <div>
-                                        Serviços
+                                    <div class="flex">
+
+                                        <flux:heading class="mt-4 me-4">Valor total de servicos</flux:heading>
+                                        <flux:heading size="xl"
+                                                      class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
+                                            R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
                                     </div>
-                                    <div>
-                                        @php
-                                            $valorServicos = collect($form->servicos)->sum('valorTotal');
-                                        @endphp
-
-                                        <div class="flex">
-
-                                            <flux:heading class="mt-4 me-4">Valor total de servicos</flux:heading>
-                                            <flux:heading size="xl"
-                                                          class=" inline-block mt-2 strong bg-neutral-100 dark:bg-neutral-800 px-4 py-1 rounded">
-                                                R$ {{ Helper::formatarValorMonetarioPtBr($valorServicos)}}</flux:heading>
-                                        </div>
-                                    </div>
+                                </div>
 
                             </div>
                         </flux:accordion.heading>
@@ -548,7 +602,7 @@ new class extends Component {
                     </flux:accordion.item>
                 </flux:accordion>
 
-                <flux:separator class="mt-4" />
+                <flux:separator class="mt-4"/>
 
 
                 <div class="flex flex-col justify-end items-end  my-4">
@@ -560,44 +614,133 @@ new class extends Component {
                     </flux:heading>
                 </div>
 
-                <div class="flex justify-between items-center">
-                    @if(!$this->finalizadaOuCancelada())
-                        <div>
 
-                            <flux:button wire:click.prevent="save" type="submit" variant="primary" class="mt-2"
-                                         icon:trailing="save">
-                                @if($persistence === Persistence::UPDATE)
-                                    Salvar
-                                @else
-                                    Criar
-                                @endif
-                            </flux:button>
+            </flux:tab.panel>
 
-                            @if(isset($this->id))
-                                <flux:button type="submit" wire:click.prevent="finalizarOrdemServico" variant="success"
-                                             icon:trailing="check">Finalizar
-                                </flux:button>
-                            @endif
-                        </div>
-                        @if(isset($this->id))
-                            <flux:button variant="danger" wire:click.prevent="cancelarOrdemServico" class="mt-2"
-                                         icon:trailing="x-mark">Cancelar
-                            </flux:button>
+            <flux:tab.panel name="pagamento">
+                <div>
+
+                    <flux:heading size="lg">Valor Total:</flux:heading>
+                    <flux:heading size="xl">
+                        R$ {{Helper::formatarValorMonetarioPtBr($form->valorTotal)}}</flux:heading>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+                    <flux:select label="Condições de pagamento *"
+                                 wire:model.live="form.condicoesPagamento"
+                                 placeholder="Selecione"
+                                 variant="listbox"
+                                 name="condicoesPagamento"
+                    >
+
+                        <flux:select.option value="{{\App\Enums\CondicoesPagamento::A_VISTA->value}}">
+                            A Vista
+                        </flux:select.option>
+
+                        <flux:select.option value="{{\App\Enums\CondicoesPagamento::A_PRAZO->value}}">
+                            A prazo
+                        </flux:select.option>
+
+
+                    </flux:select>
+
+
+                    <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" mask="99"/>
+
+
+                    <flux:select label="Banco *"
+                                 wire:model="form.bancoId"
+                                 placeholder="Selecione"
+                                 variant="listbox"
+                                 name="bancoId"
+                                 :searchable="$bancos->count() > 10"
+                    >
+
+                        @foreach($bancos as $banco)
+
+                            <flux:select.option value="{{$banco->id}}">
+                                {{$banco->nome}}
+                            </flux:select.option>
+                        @endforeach
+
+                    </flux:select>
+
+                    <flux:select label="Forma de pagamento *"
+                                 wire:model="form.formaPagamentoId"
+                                 placeholder="Selecione"
+                                 variant="listbox"
+                                 name="formaPagamentoId"
+                                 :searchable="$formasPagamento->count() > 10"
+                    >
+
+                        @foreach($formasPagamento as $forma)
+
+                            <flux:select.option value="{{$forma->id}}">
+                                {{$forma->nome}}
+                            </flux:select.option>
+                        @endforeach
+
+                    </flux:select>
+                </div>
+
+                @for($i=0; $i < $this->form->quantidadeParcela; $i++)
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+                        <flux:date-picker wire:model="date" :disabled="$this->finalizadaOuCancelada()">
+
+                            <x-slot name="trigger">
+                                <flux:date-picker.input :label='$this->form->quantidadeParcela == 1 ? "Data de vencimento" : "Data de vencimento parcela " . $i+1'
+                                                        wire:model="form.dataVencimento.{{$i}}"
+                                                        name="dataVencimento.{{$i}}"
+                                                        wire:blur="{{ $i == 0 ? 'adicionarValorParcelasSeguintes(' . $i . ')' : '' }}"
+
+                                />
+                            </x-slot>
+
+                        </flux:date-picker>
+                    </div>
+                @endfor
+
+
+            </flux:tab.panel>
+
+        </flux:tab.group>
+
+        <div class="flex justify-between items-center">
+            @if(!$this->finalizadaOuCancelada())
+                <div>
+
+                    <flux:button wire:click.prevent="save" type="submit" variant="primary" class="mt-2"
+                                 icon:trailing="save">
+                        @if($persistence === Persistence::UPDATE)
+                            Salvar
+                        @else
+                            Criar
                         @endif
-                    @else
-                        <div>
-                            <flux:button wire:click.prevent="reabrirOrdemServico" variant="info" class="mt-2"
-                                         icon:trailing="arrow-path">
-                                Reabrir Comanda
-                            </flux:button>
-                        </div>
+                    </flux:button>
+
+                    @if(isset($this->id))
+                        <flux:button type="submit" wire:click.prevent="finalizarOrdemServico" variant="success"
+                                     icon:trailing="check">Finalizar
+                        </flux:button>
                     @endif
                 </div>
-            </form>
-
-        </flux:tab.panel>
-        <flux:tab.panel name="pagamento"></flux:tab.panel>
-    </flux:tab.group>
+                @if(isset($this->id))
+                    <flux:button variant="danger" wire:click.prevent="cancelarOrdemServico" class="mt-2"
+                                 icon:trailing="x-mark">Cancelar
+                    </flux:button>
+                @endif
+            @else
+                <div>
+                    <flux:button wire:click.prevent="reabrirOrdemServico" variant="info" class="mt-2"
+                                 icon:trailing="arrow-path">
+                        Reabrir Comanda
+                    </flux:button>
+                </div>
+            @endif
+        </div>
+    </form>
 
 </div>
 

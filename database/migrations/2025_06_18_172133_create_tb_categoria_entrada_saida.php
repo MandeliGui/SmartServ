@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('tb_categoria_entrada_saida', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id')->primary();
             $table->string('nome', 100);
             $table->tinyInteger('tipo')->comment('1 - Entrada, 2 - Saída');
             $table->string('descricao', 255)->nullable();

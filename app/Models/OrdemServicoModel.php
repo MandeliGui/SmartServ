@@ -45,19 +45,34 @@ class OrdemServicoModel extends BaseModel
     public function materiais()
     {
         return $this->belongsToMany(MaterialModel::class, 'tb_ordem_servico_material', 'idOrdemServico', 'idMaterial')
-            ->withPivot('id','idMaterial', 'quantidade', 'valorUnitario', 'valorTotal')
+            ->withPivot('id', 'idMaterial', 'quantidade', 'valorUnitario', 'valorTotal')
             ->withTimestamps();
     }
 
     public function servicos()
     {
         return $this->belongsToMany(ServicosModel::class, 'tb_ordem_servico_servico', 'idOrdemServico', 'idServico')
-            ->withPivot('id','idServico', 'quantidade', 'valorUnitario', 'valorTotal')
+            ->withPivot('id', 'idServico', 'quantidade', 'valorUnitario', 'valorTotal')
             ->withTimestamps();
     }
 
     public function cliente()
     {
         return $this->belongsTo(ClienteModel::class, 'idCliente', 'idCliente');
+    }
+
+    public function tecnico()
+    {
+        return $this->belongsTo(UsuarioModel::class, 'idTecnico', 'id');
+    }
+
+    public function atendente()
+    {
+        return $this->belongsTo(UsuarioModel::class, 'idAtendente', 'id');
+    }
+
+    public function entradasSaidas()
+    {
+        return $this->hasMany(EntradasSaidasModel::class, 'ordem_servico_id', 'id');
     }
 }
