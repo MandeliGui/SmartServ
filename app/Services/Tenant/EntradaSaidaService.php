@@ -18,6 +18,7 @@ class EntradaSaidaService
 
                 $query->where('banco_id', $idBanco);
             })
+
             ->orderBy($request->orderBy)
             ->paginate(perPage: $request->limit, page: $request->offset);
     }

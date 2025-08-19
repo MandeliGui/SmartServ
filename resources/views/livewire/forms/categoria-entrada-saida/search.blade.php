@@ -115,19 +115,19 @@ new class extends Component {
                 <flux:table.rows>
                     @foreach ($this->categorias as $categoria)
                         <flux:table.row :key="$categoria->id">
-                            <flux:table.cell >
+                            <flux:table.cell>
                                 {{ $categoria->nome }}
                             </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge color="{{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'green' : 'red' }}">
-                                {{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
+                                    {{ $categoria->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'Entrada' : 'Saída' }}
                                 </flux:badge>
                             </flux:table.cell>
-
-                            <flux:table.cell
-                                class="whitespace-nowrap">
-                                <flux:button variant="outline" icon="pencil" size="xs"
-                                             wire:click="$dispatchTo(
+                            @if($categoria->id > 0)
+                                <flux:table.cell
+                                    class="whitespace-nowrap">
+                                    <flux:button variant="outline" icon="pencil" size="xs"
+                                                 wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\CategoriasEntradaSaidaForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
                                                                                     '{{ \App\Livewire\Forms\CategoriasEntradaSaidaForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
                                                                                     {
@@ -135,10 +135,10 @@ new class extends Component {
                                                                                         id: '{{ $categoria->id }}'
                                                                                     }
                                                                                 )">
-                                    Editar
-                                </flux:button>
-                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
-                                <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
+                                        Editar
+                                    </flux:button>
+                                    {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                    <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\CategoriasEntradaSaidaForm::PATH_COMPONENT_FORM_REMOVE }}',
                                                                                     '{{ \App\Livewire\Forms\CategoriasEntradaSaidaForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
                                                                                     {
@@ -146,10 +146,11 @@ new class extends Component {
                                                                                         id: '{{ $categoria->id }}'
                                                                                     }
                                                                                 )">
-                                    Excluir
-                                </flux:button>
-                                {{--                                </flux:modal.trigger>--}}
-                            </flux:table.cell>
+                                        Excluir
+                                    </flux:button>
+                                    {{--                                </flux:modal.trigger>--}}
+                                </flux:table.cell>
+                            @endif
 
 
                         </flux:table.row>

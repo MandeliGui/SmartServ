@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->tinyInteger('tipo')->comment('1 - Entrada, 2 - Saída');
             $table->string('descricao', 255)->nullable();
             $table->boolean('removido')->default(false);
-            $table->foreignId('user_id')->constrained('users', 'id');
+            $table->foreignId('user_id')->nullable()->constrained('users', 'id');
             $table->timestamps();
         });
     }

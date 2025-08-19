@@ -9,6 +9,7 @@ class CategoriaEntradaSaidaModel extends BaseModel
     protected $table = 'tb_categoria_entrada_saida';
 
     protected $fillable = [
+        'id',
         'nome',
         'tipo',
         'descricao',

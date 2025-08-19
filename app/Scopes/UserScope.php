@@ -12,7 +12,7 @@ class UserScope implements Scope
     {
         if (auth()->check()) {
 
-            $builder->where('user_id', auth()->id());
+            $builder->where('user_id', auth()->id())->orWhere('user_id', null);
         }
     }
 }

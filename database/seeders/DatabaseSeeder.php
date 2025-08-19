@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Database\Seeders;
 
+use App\Enums\TipoEntradaSaida;
+use App\Models\CategoriaEntradaSaidaModel;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -57,5 +59,15 @@ class DatabaseSeeder extends Seeder
             'removido' => false,
             'user_id'  => 2,
         ]);
+
+        CategoriaEntradaSaidaModel::create([
+            'id' => -1,
+            'nome' => 'Ordens de Serviço',
+            'tipo' => TipoEntradaSaida::ENTRADA->value,
+            'descricao' => null,
+            'removido' => 0,
+            'user_id' => null,
+        ]);
+
     }
 }
