@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -21,17 +21,24 @@ class DatabaseSeeder extends Seeder
     {
 
         User::create([
-            'name'     => 'Guilherme Mandeli',
-            'email'    => 'guimandeli.santos@gmail.com',
-            'password' => bcrypt('12345678'),
+            'name'          => 'Guilherme Mandeli',
+            'razao_social'  => 'Guilherme Mandeli',
+            'nome_fantasia' => 'Guilherme Mandeli',
+            'email'         => 'guimandeli.santos@gmail.com',
+            'password'      => bcrypt('12345678'),
+            'cpf_cnpj'      => '12706497955',
+            'telefone'      => '43998442622',
         ]);
 
         User::create([
-            'name'     => 'Jessica Balan',
-            'email'    => 'jess@gmail.com',
-            'password' => bcrypt('12345678'),
+            'name'          => 'Jessica Balan',
+            'razao_social'  => 'Jessica Balan',
+            'nome_fantasia' => 'Jessica Balan',
+            'email'         => 'jess@gmail.com',
+            'password'      => bcrypt('12345678'),
+            'cpf_cnpj'      => '11441384936',
+            'telefone'      => '4396536081',
         ]);
-
 
 
         Usuario::create([
@@ -61,12 +68,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         CategoriaEntradaSaidaModel::create([
-            'id' => -1,
-            'nome' => 'Ordens de Serviço',
-            'tipo' => TipoEntradaSaida::ENTRADA->value,
+            'id'        => -1,
+            'nome'      => 'Ordens de Serviço',
+            'tipo'      => TipoEntradaSaida::ENTRADA->value,
             'descricao' => null,
-            'removido' => 0,
-            'user_id' => null,
+            'removido'  => 0,
+            'user_id'   => null,
         ]);
 
     }

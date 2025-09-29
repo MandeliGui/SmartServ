@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -26,8 +26,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'razao_social',
+        'nome_fantasia',
         'email',
         'password',
+        'cpf_cnpj',
+        'telefone',
     ];
 
     /**

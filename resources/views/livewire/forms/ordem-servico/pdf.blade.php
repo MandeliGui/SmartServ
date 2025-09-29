@@ -126,7 +126,8 @@ new class extends Component {
         <div class="header">
             <div class="empresa">
                 {{$user->name}}<br>
-                CNPJ: {{'CNPJ DO USUARIO AQUI'}}
+                {{$user->email}}<br>
+                CPF/CNPJ: {{Helper::formatarCpfCnpj($user->cpf_cnpj)}}
             </div>
             <div>
                 <br>
@@ -136,11 +137,13 @@ new class extends Component {
         </div>
 
         <div class="dados">
-            {{--            @dd($ordemServico->cliente->pessoa)--}}
+{{--                        @dd($ordemServico->cliente->pessoa)--}}
+{{--                        @dd(auth()->user())--}}
             <strong>Cliente:</strong> {{$ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial}}<br>
-            Endereço: {{Helper::obterEnderecoPorExtenso($ordemServico->cliente->pessoa->endereco)}}<br>
-            Telefone: {{Helper::formatarPhoneBR($ordemServico->cliente->pessoa->telefone)}}<br>
-            CPF/CNPJ: {{Helper::formatarCpfCnpj($ordemServico->cliente->pessoa->cpfCnpj)}}
+            <strong>Cpf/Cnpj:</strong> {{Helper::formatarCpfCnpj($ordemServico->cliente->pessoa->cpfCnpj)}}<br>
+            <strong>Endereço:</strong> {{Helper::obterEnderecoPorExtenso($ordemServico->cliente->pessoa->endereco)}}<br>
+            <strong>Telefone:</strong> {{Helper::formatarPhoneBR($ordemServico->cliente->pessoa->telefone)}}<br>
+            <strong>CPF/CNPJ:</strong> {{Helper::formatarCpfCnpj($ordemServico->cliente->pessoa->cpfCnpj)}}
         </div>
         @if($ordemServico->materiais->count() > 0)
 
@@ -236,107 +239,6 @@ new class extends Component {
         </div>
     </div>
 
-    <!-- VIA CLIENTE -->
-    <div class="via">
-        <div class="header">
-            <div class="empresa">
-                {{$user->name}}<br>
-                CNPJ: {{'CNPJ DO USUARIO AQUI'}}
-            </div>
-            <div>
-                <br>
-                <h2 style="text-align: center;"><strong>Ordem de Serviço nº {{$ordemServico->codigo}}</strong></h2>
-                {{--                Data: 22/09/2025--}}
-            </div>
-        </div>
-
-        <div class="dados">
-            {{--            @dd($ordemServico->cliente->pessoa)--}}
-            <strong>Cliente:</strong> {{$ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial}}<br>
-            Endereço: {{Helper::obterEnderecoPorExtenso($ordemServico->cliente->pessoa->endereco)}}<br>
-            Telefone: {{Helper::formatarPhoneBR($ordemServico->cliente->pessoa->telefone)}}
-        </div>
-        @if($ordemServico->materiais->count() > 0)
-
-            <table>
-                <thead>
-                <tr>
-                    <th>Material</th>
-                    <th>Qtd</th>
-                    <th>Valor Unit.</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                @php
-                    $valorTotal = 0;
-                @endphp
-                @foreach($ordemServico->materiais as $material)
-
-                    {{--            @dump($servico)--}}
-                    <tr>
-                        <td>{{$material->nome}}</td>
-                        <td>{{$quantidade = $material->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $material->valor}}</td>
-                        <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
-                    </tr>
-
-                @endforeach
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="3" class="total">Total</td>
-                    <td><strong>R$ {{Helper::formatarValorMonetarioPtBr($valorTotal)}}</strong></td>
-                </tr>
-                </tfoot>
-            </table>
-            <br>
-        @endif
-        @if($ordemServico->servicos->count() > 0)
-            <table>
-                <thead>
-                <tr>
-                    <th>Serviço</th>
-                    <th>Qtd</th>
-                    <th>Valor Unit.</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                @php
-                    $valorTotal = 0;
-                @endphp
-                @foreach($ordemServico->servicos as $servico)
-
-                    {{--            @dump($servico)--}}
-                    <tr>
-                        <td>{{$servico->nome}}</td>
-                        <td>{{$quantidade = $servico->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $servico->valor}}</td>
-                        <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
-                    </tr>
-                @endforeach
-
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="3" class="total">Total</td>
-                    <td><strong>R$ {{Helper::formatarValorMonetarioPtBr($valorTotal)}}</strong></td>
-                </tr>
-                </tfoot>
-            </table>
-        @endif
-        <br>
-        <br>
-
-        <div class="assinatura">
-            <span>Assinatura do Cliente</span>
-        </div>
-
-        <div class="observacao">
-            Este documento não é válido como nota fiscal.
-        </div>
-    </div>
 
     </body>
     </html>

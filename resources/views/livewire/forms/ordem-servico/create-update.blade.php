@@ -268,14 +268,17 @@ new class extends Component {
             </flux:tabs>
             <flux:tab.panel name="dados">
 
-                <div>
+                @if($this->id)
 
-                    <flux:button
-                        icon="document" variant="primary" color="rose" size="xs"
-                        href="{{ route('ordem-servico.pdf', $form->id) }}" target="_blank">
-                        Gerar PDF
-                    </flux:button>
-                </div>
+                    <div>
+
+                        <flux:button
+                            icon="document" variant="primary" color="rose" size="xs"
+                            href="{{ route('ordem-servico.pdf', $form->id) }}" target="_blank">
+                            Gerar PDF
+                        </flux:button>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
                     <div>
 
