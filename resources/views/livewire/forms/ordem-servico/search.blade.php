@@ -184,6 +184,10 @@ new class extends Component {
 
 
                             <flux:table.cell class=" ">
+                                <flux:button icon="document" variant="primary" color="rose" size="xs"
+                                             href="{{ route('ordem-servico.pdf', $ordemServico->id) }}" target="_blank">
+                                    Gerar PDF
+                                </flux:button>
                                 <flux:button variant="outline" icon="pencil" size="xs"
                                              href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate>
                                     Visualizar
@@ -199,6 +203,7 @@ new class extends Component {
                                                                                 )">
                                     Excluir
                                 </flux:button>
+
                                 {{--                                </flux:modal.trigger>--}}
                             </flux:table.cell>
 

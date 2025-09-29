@@ -20,7 +20,7 @@ new class extends Component {
 
     public float $valorMateriais = 0;
     public float $valorServicos  = 0;
-    public mixed $id = null;
+    public mixed $id             = null;
 
     public mixed $bancos          = [];
     public mixed $formasPagamento = [];
@@ -58,17 +58,17 @@ new class extends Component {
     public function updatedFormCondicoesPagamento($value)
     {
 
-            $this->form->dataVencimento = [];
-            if ($value === \App\Enums\CondicoesPagamento::A_VISTA->value) {
-                $this->form->quantidadeParcela = 1;
-                for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
-                    if (!isset($this->form->dataVencimento[$i])) {
-                        $this->form->dataVencimento[$i] = '';
-                    }
+        $this->form->dataVencimento = [];
+        if ($value === \App\Enums\CondicoesPagamento::A_VISTA->value) {
+            $this->form->quantidadeParcela = 1;
+            for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
+                if (!isset($this->form->dataVencimento[$i])) {
+                    $this->form->dataVencimento[$i] = '';
                 }
-            } else {
-                $this->form->quantidadeParcela = null;
             }
+        } else {
+            $this->form->quantidadeParcela = null;
+        }
 
 
     }
@@ -76,15 +76,15 @@ new class extends Component {
     public function updatedFormQuantidadeParcela()
     {
 
-            if($this->form->quantidadeParcela > 0) {
-                for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
-                    if (!isset($this->form->dataVencimento[$i])) {
-                        $this->form->dataVencimento[$i] = '';
-                    }
+        if ($this->form->quantidadeParcela > 0) {
+            for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
+                if (!isset($this->form->dataVencimento[$i])) {
+                    $this->form->dataVencimento[$i] = '';
                 }
-            }else{
-                $this->form->dataVencimento = [];
             }
+        } else {
+            $this->form->dataVencimento = [];
+        }
 
 
     }
@@ -96,7 +96,7 @@ new class extends Component {
 
 
             $this->form->dataVencimento[$i] = \Carbon\Carbon::parse($this->form->dataVencimento[$value])->addMonthNoOverflow($i)
-                ->format('Y-m-d');
+                                                            ->format('Y-m-d');
 
         }
     }
@@ -214,17 +214,16 @@ new class extends Component {
     {
 
 
-
         $this->id = request()->route('id') ?? null;
         $this->form->id = request()->route('id') ?? null;
 
         $this->bancos = \App\Models\BancosModel::where('removido', false)
-            ->orderBy('nome')
-            ->get();
+                                               ->orderBy('nome')
+                                               ->get();
 
         $this->formasPagamento = \App\Models\FormaPagamentoModel::where('removido', false)
-            ->orderBy('nome')
-            ->get();
+                                                                ->orderBy('nome')
+                                                                ->get();
 
 
         $this->form->dataAbertura = now()->format('Y-m-d');
@@ -269,9 +268,17 @@ new class extends Component {
             </flux:tabs>
             <flux:tab.panel name="dados">
 
+                <div>
 
+                    <flux:button
+                        icon="document" variant="primary" color="rose" size="xs"
+                        href="{{ route('ordem-servico.pdf', $form->id) }}" target="_blank">
+                        Gerar PDF
+                    </flux:button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
                     <div>
+
 
                         <flux:heading class="">Nº Ordem de Serviço</flux:heading>
                         <flux:heading size="xl"
@@ -684,7 +691,6 @@ new class extends Component {
                 </div>
 
                 @for($i=0; $i < $this->form->quantidadeParcela; $i++)
-
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
                         <flux:date-picker wire:model="date" :disabled="$this->finalizadaOuCancelada()">

@@ -258,4 +258,39 @@ class Helper
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
+
+    public static function obterEnderecoPorExtenso($enderecoModel)
+    {
+        $endereco = "";
+
+        if (!empty($enderecoModel->rua)) {
+            $endereco .= $enderecoModel->rua;
+        }
+
+        if (!empty($enderecoModel->numero)) {
+            $endereco .= ", " . $enderecoModel->numero;
+        }
+
+        if (!empty($enderecoModel->complemento)) {
+            $endereco .= " - " . $enderecoModel->complemento;
+        }
+
+        if (!empty($enderecoModel->bairro)) {
+            $endereco .= " - " . $enderecoModel->bairro;
+        }
+
+        if (!empty($enderecoModel->cidade)) {
+            $endereco .= " - " . $enderecoModel->cidade;
+        }
+
+        if (!empty($enderecoModel->estado)) {
+            $endereco .= " - " . $enderecoModel->estado;
+        }
+
+        if (!empty($enderecoModel->cep)) {
+            $endereco .= " - CEP: " . self::formatarCep($enderecoModel->cep);
+        }
+
+        return $endereco;
+    }
 }

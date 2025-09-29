@@ -123,6 +123,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->name('bancos');
 
     });
+    Route::get('/ordem-servico/{id}/pdf', [\App\Http\Controllers\Tenant\Api\OrdemServicoController::class, 'gerarPdf'])->name('ordem-servico.pdf');
 });
+
 
 require __DIR__ . '/auth.php';
