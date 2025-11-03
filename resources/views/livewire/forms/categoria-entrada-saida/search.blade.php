@@ -107,7 +107,7 @@ new class extends Component {
                     <flux:table.column>Nome</flux:table.column>
                     <flux:table.column>Tipo</flux:table.column>
 
-                    <flux:table.column>Acoes</flux:table.column>
+                    <flux:table.column>Ações</flux:table.column>
 
 
                 </flux:table.columns>

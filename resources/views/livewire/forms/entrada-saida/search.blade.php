@@ -156,7 +156,7 @@ new class extends Component {
 
                             <flux:table.columns>
 
-                                <flux:table.column>Acoes</flux:table.column>
+                                <flux:table.column>Ações</flux:table.column>
                                 <flux:table.column>Data Vencimento</flux:table.column>
                                 <flux:table.column>Tipo</flux:table.column>
                                 <flux:table.column>Descricao</flux:table.column>
@@ -306,7 +306,7 @@ new class extends Component {
 
                                 <flux:table.columns>
 
-                                    <flux:table.column>Acoes</flux:table.column>
+                                    <flux:table.column>Ações</flux:table.column>
                                     <flux:table.column>Data Vencimento</flux:table.column>
                                     <flux:table.column>Tipo</flux:table.column>
                                     <flux:table.column>Descricao</flux:table.column>

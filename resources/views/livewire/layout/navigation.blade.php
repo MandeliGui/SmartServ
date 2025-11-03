@@ -20,7 +20,7 @@ new class extends Component {
     <flux:navlist variant="outline">
         <flux:button x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon" variant="subtle"
                      aria-label="Toggle dark mode"/>
-        <flux:navlist.item icon="cog-6-tooth" href="#">Configuracoes</flux:navlist.item>
+        <flux:navlist.item icon="cog-6-tooth" href="#">Configurações</flux:navlist.item>
         <flux:navlist.item icon="information-circle" href="#">FAQ</flux:navlist.item>
     </flux:navlist>
     <flux:dropdown position="top" align="start" class="max-lg:hidden">
