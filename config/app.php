@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -120,7 +120,22 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+        'store'  => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+
+    'external_api' => [
+        'asaas' => [
+            'local'      => [
+                'base_url'     => env('ASAAS_API_BASE_URL', 'https://api-sandbox.asaas.com/v3'),
+                'access_token' => env('SANDBOX_ASAAS_API_ACCESS_TOKEN_SMART_SERV'),
+            ],
+            'production' => [
+                'base_url'     => env('ASAAS_API_BASE_URL', 'https://www.asaas.com/api/v3'),
+                'access_token' => env('ASAAS_API_ACCESS_TOKEN_SMART_SERV'),
+            ],
+
+        ],
+    ]
 
 ];

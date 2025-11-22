@@ -19,7 +19,7 @@
 
 
 <body class="font-sans text-gray-900 antialiased">
-<div class="min-h-screen flex flex-col sm:justify-center  pt-6 sm:pt-0 bg-gray-100 dark:bg-neutral-900">
+<div class="min-h-screen flex flex-col sm:justify-center  pt-6 sm:pt-0 bg-neutral-100 dark:bg-neutral-800">
 
     <div class="flex flex-col items-center mt-10">
         <a href="/" wire:navigate>
