@@ -35,6 +35,11 @@
         </div>
     </flux:card>
 </div>
+
+
+@persist('toast')
+<flux:toast/>
+@endpersist
 @fluxScripts
 
 </body>

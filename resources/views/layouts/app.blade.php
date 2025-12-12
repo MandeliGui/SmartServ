@@ -37,7 +37,7 @@
         <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}" wire:navigatey>Materiais</flux:navlist.item>
         <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}" wire:navigatey>Atendentes</flux:navlist.item>
         <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigatey>Ordem de Serviço</flux:navlist.item>
-{{--        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuários</flux:navlist.item>--}}
+        {{--        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuários</flux:navlist.item>--}}
         <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigatey>Cat. Entrada e Saída</flux:navlist.item>
         <flux:navlist.item icon="arrows-up-down" href="{{ route('entradas-saidas') }}" wire:navigatey>Entrada e Saída</flux:navlist.item>
         <flux:navlist.item icon="banknotes" href="{{ route('bancos') }}" wire:navigatey>Bancos</flux:navlist.item>
@@ -54,7 +54,7 @@
     <flux:spacer/>
 
     <flux:dropdown position="top" alignt="start">
-        <flux:profile />
+        <flux:profile/>
 
         <flux:menu>
             <flux:menu.radio.group>

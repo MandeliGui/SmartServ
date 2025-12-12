@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\ExternalApi\Asaas\Endpoints;
+namespace App\Services\ExternalApi\Asaas\Endpoints\Endpoints;
 
+use App\Services\ExternalApi\Asaas\Endpoints\Endpoints\Base\BaseEndpoint;
 use App\Services\ExternalApi\Asaas\Entities\Cobranca;
 use Illuminate\Http\Client\ConnectionException;
 

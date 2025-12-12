@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Adm\UserPlano;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use OwenIt\Auditing\Contracts\Auditable;
 
 class User extends Authenticatable
 {
@@ -60,5 +60,10 @@ class User extends Authenticatable
     public function usuarios(): HasMany
     {
         return $this->hasMany(Usuario::class, 'user_id');
+    }
+
+    public function plano()
+    {
+        return $this->hasOne(UserPlano::class);
     }
 }

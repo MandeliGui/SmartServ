@@ -3,8 +3,8 @@
 namespace App\Services\ExternalApi\Asaas\Facades;
 
 use App\Services\ExternalApi\Asaas\AsaasService;
-use App\Services\ExternalApi\Asaas\Endpoints\Cobrancas;
-use App\Services\ExternalApi\Asaas\Endpoints\Customers;
+use App\Services\ExternalApi\Asaas\Endpoints\Endpoints\Cobrancas;
+use App\Services\ExternalApi\Asaas\Endpoints\Endpoints\Customers;
 use Illuminate\Support\Facades\Facade;
 
 class Asaas extends Facade

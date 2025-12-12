@@ -103,7 +103,7 @@ class Helper
 
     public static function formatarValorMonetarioDB(mixed $val): float|null
     {
-        if(is_null($val)){
+        if (is_null($val)) {
             return null;
         }
         return (float)number_format($val, 2, ".", "");

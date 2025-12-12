@@ -2,9 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Services\ExternalApi\Asaas\AsaasService;
-use App\Services\ExternalApi\Asaas\Entities\Cobranca;
-use App\Services\ExternalApi\Asaas\Entities\Customer;
 use App\Services\ExternalApi\Asaas\Facades\Asaas;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\ConnectionException;
@@ -16,7 +13,7 @@ class Playground extends Command
      *
      * @var string
      */
-    protected $signature = 'playF';
+    protected $signature = 'play';
 
     /**
      * The console command description.
