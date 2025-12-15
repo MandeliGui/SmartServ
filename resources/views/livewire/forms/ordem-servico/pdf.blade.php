@@ -22,7 +22,7 @@ new class extends Component {
     public function mount($ordemServico)
     {
         $this->ordemServico = $ordemServico;
-        $this->user = auth()->user();
+        $this->user         = auth()->user();
 
     }
 
@@ -137,8 +137,8 @@ new class extends Component {
         </div>
 
         <div class="dados">
-{{--                        @dd($ordemServico->cliente->pessoa)--}}
-{{--                        @dd(auth()->user())--}}
+            {{--                        @dd($ordemServico->cliente->pessoa)--}}
+            {{--                        @dd(auth()->user())--}}
             <strong>Cliente:</strong> {{$ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial}}<br>
             <strong>Cpf/Cnpj:</strong> {{Helper::formatarCpfCnpj($ordemServico->cliente->pessoa->cpfCnpj)}}<br>
             <strong>Endereço:</strong> {{Helper::obterEnderecoPorExtenso($ordemServico->cliente->pessoa->endereco)}}<br>
@@ -172,7 +172,7 @@ new class extends Component {
                     <tr>
                         <td>{{$material->nome}}</td>
                         <td>{{$quantidade = $material->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $material->valor}}</td>
+                        <td>R$ {{$valorUnitario = $material->pivot->valorUnitario}}</td>
                         <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
                     </tr>
 
@@ -209,11 +209,10 @@ new class extends Component {
                 @endphp
                 @foreach($ordemServico->servicos as $servico)
 
-                    {{--            @dump($servico)--}}
                     <tr>
                         <td>{{$servico->nome}}</td>
                         <td>{{$quantidade = $servico->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $servico->valor}}</td>
+                        <td>R$ {{$valorUnitario = $servico->pivot->valorUnitario}}</td>
                         <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
                     </tr>
                 @endforeach
