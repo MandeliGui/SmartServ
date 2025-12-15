@@ -254,7 +254,7 @@ class OrdemServicoService
 
             for ($i = 0; $i < $data['quantidadeParcela']; $i++) {
                 $parcela = $i + 1;
-                $descricao = $data['quantidadeParcela'] > 1 ? "OS {$ordemServico->codigo} - {$nomeCliente} - Parcela {$parcela} de {$data['quantidadeParcela']}" :  'OS - {$ordemServico->codigo} - {$nomeCliente}';
+                $descricao = $data['quantidadeParcela'] > 1 ? "OS $ordemServico->codigo - {$nomeCliente} - Parcela {$parcela} de {$data['quantidadeParcela']}" :  "OS - {$ordemServico->codigo} - {$nomeCliente}";
                 EntradasSaidasModel::query()
                     ->create([
                         'tipo'               => TipoEntradaSaida::ENTRADA->value,
