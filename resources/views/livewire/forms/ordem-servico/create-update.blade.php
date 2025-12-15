@@ -4,6 +4,8 @@ use App\Enums\Persistence;
 use App\Helpers\Helper;
 use App\Livewire\Forms\AdicionarMateriaisForm;
 use App\Livewire\Forms\AdicionarServicosForm;
+use App\Livewire\Forms\BancosForm;
+use App\Livewire\Forms\FormaPagamentoForm;
 use App\Livewire\Forms\OrdemServicoForm;
 use App\Models\OrdemServicoModel;
 use Livewire\Attributes\On;
@@ -22,8 +24,10 @@ new class extends Component {
     public float $valorServicos  = 0;
     public mixed $id             = null;
 
-    public mixed $bancos          = [];
-    public mixed $formasPagamento = [];
+    public mixed $bancos           = [];
+    public mixed $formasPagamento  = [];
+    public mixed $bancoId          = null;
+    public mixed $formaPagamentoId = null;
 
 
     public function save(): void
@@ -249,6 +253,40 @@ new class extends Component {
         } else {
             return false;
         }
+    }
+
+    public function abrirModalBanco()
+    {
+        Flux::modal(BancosForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(BancosForm::EVENT_PERSISTED)]
+    public function bancoCriado()
+    {
+        $this->bancos = \App\Models\BancosModel::where('removido', false)
+                                               ->orderBy('nome')
+                                               ->get();
+
+        $bancoId = \App\Models\BancosModel::orderBy('id', 'desc')->first()->id;
+
+
+    }
+
+    public function abrirModalFormapagamento()
+    {
+        Flux::modal(FormaPagamentoForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(FormaPagamentoForm::EVENT_PERSISTED)]
+    public function formaPagamentoCriado()
+    {
+        $this->formasPagamento = \App\Models\FormaPagamentoModel::where('removido', false)
+                                                                ->orderBy('nome')
+                                                                ->get();
+
+        $bancoId = \App\Models\FormaPagamentoModel::orderBy('id', 'desc')->first()->id;
+
+
     }
 
 
@@ -560,11 +598,11 @@ new class extends Component {
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
                                                     @if($persistence == Persistence::CREATE)
 
-                                                    @if(!is_null($servico['id']))
-                                                        <flux:table.cell>
-                                                            <div>
+                                                        @if(!is_null($servico['id']))
+                                                            <flux:table.cell>
+                                                                <div>
 
-                                                                <flux:button wire:click="$dispatchTo(
+                                                                    <flux:button wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
@@ -572,26 +610,26 @@ new class extends Component {
                                                                                         idServico: {{$servico['id']}}
                                                                                     }
                                                                                 )"
-                                                                             variant="primary" size="xs">
-                                                                    <flux:icon icon="pencil" variant="micro"/>
-                                                                </flux:button>
+                                                                                 variant="primary" size="xs">
+                                                                        <flux:icon icon="pencil" variant="micro"/>
+                                                                    </flux:button>
 
+                                                                    <flux:button
+                                                                        wire:click="removeServico({{$loop->index}})"
+                                                                        variant="danger" size="xs">
+                                                                        <flux:icon icon="trash" variant="micro"/>
+                                                                    </flux:button>
+                                                                </div>
+                                                            </flux:table.cell>
+                                                        @else
+                                                            <flux:table.cell>
                                                                 <flux:button
                                                                     wire:click="removeServico({{$loop->index}})"
                                                                     variant="danger" size="xs">
                                                                     <flux:icon icon="trash" variant="micro"/>
                                                                 </flux:button>
-                                                            </div>
-                                                        </flux:table.cell>
-                                                    @else
-                                                        <flux:table.cell>
-                                                            <flux:button
-                                                                wire:click="removeServico({{$loop->index}})"
-                                                                variant="danger" size="xs">
-                                                                <flux:icon icon="trash" variant="micro"/>
-                                                            </flux:button>
-                                                        </flux:table.cell>
-                                                    @endif
+                                                            </flux:table.cell>
+                                                        @endif
                                                     @endif
                                                 </flux:table.row>
                                             @endforeach
@@ -660,40 +698,60 @@ new class extends Component {
 
                     <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" mask="99"/>
 
+                    <div class="flex items-end">
+                        <div class="flex-1">
+                            <flux:select label="Banco *"
+                                         wire:model="form.bancoId"
+                                         placeholder="Selecione"
+                                         variant="listbox"
+                                         name="bancoId"
+                                         :searchable="$bancos->count() > 10"
+                            >
 
-                    <flux:select label="Banco *"
-                                 wire:model="form.bancoId"
-                                 placeholder="Selecione"
-                                 variant="listbox"
-                                 name="bancoId"
-                                 :searchable="$bancos->count() > 10"
-                    >
+                                @foreach($bancos as $banco)
 
-                        @foreach($bancos as $banco)
+                                    <flux:select.option value="{{$banco->id}}" selected="{{$this->bancoId == $banco->id}}">
+                                        {{$banco->nome}}
+                                    </flux:select.option>
+                                @endforeach
 
-                            <flux:select.option value="{{$banco->id}}">
-                                {{$banco->nome}}
-                            </flux:select.option>
-                        @endforeach
+                            </flux:select>
+                        </div>
+                        <flux:button
+                            icon="plus"
+                            variant="primary"
+                            wire:click="abrirModalBanco"
+                            :disabled="$this->finalizadaOuCancelada()"
+                            aria-label="Adicionar cliente"
+                        />
+                    </div>
+                    <div class="flex items-end">
+                        <div class="flex-1">
+                            <flux:select label="Forma de pagamento *"
+                                         wire:model="form.formaPagamentoId"
+                                         placeholder="Selecione"
+                                         variant="listbox"
+                                         name="formaPagamentoId"
+                                         :searchable="$formasPagamento->count() > 10"
+                            >
 
-                    </flux:select>
+                                @foreach($formasPagamento as $forma)
 
-                    <flux:select label="Forma de pagamento *"
-                                 wire:model="form.formaPagamentoId"
-                                 placeholder="Selecione"
-                                 variant="listbox"
-                                 name="formaPagamentoId"
-                                 :searchable="$formasPagamento->count() > 10"
-                    >
+                                    <flux:select.option value="{{$forma->id}}" selected="{{ $formaPagamentoId == $forma->id }}">
+                                        {{$forma->nome}}
+                                    </flux:select.option>
+                                @endforeach
 
-                        @foreach($formasPagamento as $forma)
-
-                            <flux:select.option value="{{$forma->id}}">
-                                {{$forma->nome}}
-                            </flux:select.option>
-                        @endforeach
-
-                    </flux:select>
+                            </flux:select>
+                        </div>
+                        <flux:button
+                            icon="plus"
+                            variant="primary"
+                            wire:click="abrirModalFormapagamento"
+                            :disabled="$this->finalizadaOuCancelada()"
+                            aria-label="Adicionar cliente"
+                        />
+                    </div>
                 </div>
 
                 @for($i=0; $i < $this->form->quantidadeParcela; $i++)

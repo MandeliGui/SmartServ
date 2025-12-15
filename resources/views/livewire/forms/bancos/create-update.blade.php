@@ -28,7 +28,7 @@ new class extends Component {
             Flux::modal(BancosForm::MODAL_NAME_UPDATE)->close();
 
 
-            Flux::toast('Forma Pagamento editada com sucesso!', variant: 'success');
+            Flux::toast('Banco editado com sucesso!', variant: 'success');
 
 
         } else {
@@ -39,7 +39,7 @@ new class extends Component {
             $this->dispatch(BancosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servico: $servico);
             $this->form->reset();
             Flux::modal(BancosForm::MODAL_NAME_CREATE)->close();
-            Flux::toast('Forma Pagamento criada com sucesso!', variant: 'success');
+            Flux::toast('Banco criado com sucesso!', variant: 'success');
         }
 
     }
