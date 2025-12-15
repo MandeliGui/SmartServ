@@ -18,7 +18,7 @@ class CriarBancoRequest extends BaseValidationRequest
     {
         $this->data = [
             'nome'          => data_get($this->data, 'nome'),
-            'saldo_inicial' => (float)data_get($this->data, 'saldo_inicial', 0)
+            'saldo_inicial' => Helper::formatarDecimalDb(data_get($this->data, 'saldo_inicial', 0))
         ];
 
     }

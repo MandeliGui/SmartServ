@@ -45,8 +45,8 @@ new class extends Component {
             'codigo'        => $servico->codigo,
             'quantidade'    => $this->form->quantidade,
             'nome'          => $servico->nome,
-            'valorUnitario' => $this->form->valorUnitario,
-            'valorTotal'    => $this->form->valorUnitario * $this->form->quantidade,
+            'valorUnitario' => $valorUnitario = Helper::formatarDecimalDb($this->form->valorUnitario),
+            'valorTotal'    => $valorUnitario * $this->form->quantidade,
         ];
 
 
@@ -68,7 +68,7 @@ new class extends Component {
     {
         if ($this->form->id_servico) {
             $servico                   = $this->form->getServicoById($this->form->id_servico);
-            $this->form->valorUnitario = $servico->valor;
+            $this->form->valorUnitario = Helper::formatarValorMonetarioPtBr($servico->valor);
         } else {
             $this->form->valorUnitario = null;
         }
@@ -129,17 +129,17 @@ new class extends Component {
             $this->form->idServicoSelecionado = $idServico;
 
             $servico = \App\Models\OrdemServicoModel::query()
-                ->whereHas('servicos', function ($query) use ($idServico) {
-                    $query->where('tb_ordem_servico_servico.id', $idServico);
-                })
-                ->first();
+                                                    ->whereHas('servicos', function ($query) use ($idServico) {
+                                                        $query->where('tb_ordem_servico_servico.id', $idServico);
+                                                    })
+                                                    ->first();
 
             if ($servico) {
                 $pivotData = $servico->servicos()
-                    ->wherePivot('id', $idServico)
-                    ->first();
+                                     ->wherePivot('id', $idServico)
+                                     ->first();
 
-                $this->form->id_servico   = $pivotData->pivot->idServico;
+                $this->form->id_servico    = $pivotData->pivot->idServico;
                 $this->form->quantidade    = $pivotData->pivot->quantidade;
                 $this->form->valorUnitario = $pivotData->pivot->valorUnitario;
 
@@ -161,7 +161,7 @@ new class extends Component {
     public function with()
     {
         $servicos = \App\Models\ServicosModel::query()
-            ->get();
+                                             ->get();
 
         return [
             'servicos' => $servicos,
@@ -240,8 +240,8 @@ new class extends Component {
                         <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
                         <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
                         <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
+                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
+                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
                         <flux:table.cell>
                             <flux:button wire:click="removeServico({{$loop->index}})" variant="danger" class="mt-2">
                                 <flux:icon icon="trash"/>

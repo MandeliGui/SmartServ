@@ -45,8 +45,8 @@ new class extends Component {
             'codigo'        => $material->codigo,
             'quantidade'    => $this->form->quantidade,
             'nome'          => $material->nome,
-            'valorUnitario' => $this->form->valorUnitario,
-            'valorTotal'    => $this->form->valorUnitario * $this->form->quantidade,
+            'valorUnitario' => $valorUnitario = Helper::formatarDecimalDb($this->form->valorUnitario),
+            'valorTotal'    => $valorUnitario * $this->form->quantidade,
 
         ];
 
@@ -72,7 +72,7 @@ new class extends Component {
         if ($this->form->id_material) {
             $material = \App\Models\MaterialModel::find($this->form->id_material);
 
-            $this->form->valorUnitario = $material->valor;
+            $this->form->valorUnitario = Helper::formatarValorMonetarioPtBr($material->valor);
         } else {
             $this->form->valorUnitario = null;
         }
@@ -234,8 +234,8 @@ new class extends Component {
                         <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
                         <flux:table.cell>{{$material['nome']}}</flux:table.cell>
                         <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
-                        <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
+                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
                         <flux:table.cell>
                             <flux:button wire:click="removeMaterial({{$loop->index}})" variant="danger" class="mt-2">
                                 <flux:icon icon="trash"/>

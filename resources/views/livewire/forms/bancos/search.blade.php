@@ -118,7 +118,7 @@ new class extends Component {
                                 {{ $banco->nome }}
                             </flux:table.cell>
                             <flux:table.cell class=" items-center gap-3">
-                                {{ $banco->saldo }}
+                                {{ Helper::formatarValorMonetarioPtBr($banco->saldo) }}
                             </flux:table.cell>
 
                             <flux:table.cell

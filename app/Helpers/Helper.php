@@ -95,10 +95,14 @@ class Helper
     public static function formatarDecimalDb(mixed $val): float
     {
         if (empty($val)) {
-            return 0;
+            return 0.0;
         }
 
-        return (float)number_format(Str::replace([".", ","], ["", "."], $val), 2, ".", "");
+        // normaliza entrada: "1.234,56" -> "1234.56"
+        $normalized = is_string($val) ? str_replace(['.', ','], ['', '.'], $val) : (string)$val;
+
+        // converte para float e arredonda para 2 casas
+        return round((float)$normalized, 2);
     }
 
     public static function formatarValorMonetarioDB(mixed $val): float|null

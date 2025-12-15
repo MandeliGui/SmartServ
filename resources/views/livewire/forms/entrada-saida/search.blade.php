@@ -371,11 +371,11 @@ new class extends Component {
                                             <flux:table.cell class=" items-center gap-3">
                                                 <flux:text
                                                     class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
-                                                    R$ {{ $item->valor_original ?? '0,00'}}</flux:text>
+                                                    R$ {{ $item->valor_original ? Helper::formatarValorMonetarioPtBr($item->valor_original) : '0,00'}}</flux:text>
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
-                                                R$ {{ $item->valor_pago ?? '0,00' }}
+                                                R$ {{ $item->valor_pago ? Helper::formatarValorMonetarioPtBr($item->valor_pago) : '0,00' }}
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
