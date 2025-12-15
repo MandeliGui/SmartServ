@@ -558,6 +558,8 @@ new class extends Component {
                                                     <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
+                                                    @if($persistence == Persistence::CREATE)
+
                                                     @if(!is_null($servico['id']))
                                                         <flux:table.cell>
                                                             <div>
@@ -589,6 +591,7 @@ new class extends Component {
                                                                 <flux:icon icon="trash" variant="micro"/>
                                                             </flux:button>
                                                         </flux:table.cell>
+                                                    @endif
                                                     @endif
                                                 </flux:table.row>
                                             @endforeach
