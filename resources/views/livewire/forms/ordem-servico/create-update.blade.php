@@ -157,7 +157,7 @@ new class extends Component {
     {
 
         $this->form->id = $this->id;
-        $id = $this->form->id;
+        $id             = $this->form->id;
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::FINALIZADO->value) {
             Flux::toast('Ordem de serviço já está finalizada!', variant: 'warning');
@@ -174,7 +174,7 @@ new class extends Component {
     public function cancelarOrdemServico()
     {
         $this->form->id = $this->id;
-        $id = $this->form->id;
+        $id             = $this->form->id;
 
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::CANCELADO->value) {
@@ -187,13 +187,12 @@ new class extends Component {
         $this->redirect(route('ordem-servico'), navigate: true);
 
 
-
     }
 
     public function reabrirOrdemServico()
     {
         $this->form->id = $this->id;
-        $id = $this->form->id;
+        $id             = $this->form->id;
 
         if ($this->form->status === \App\Enums\StatusOrdemServico::PENDENTE->value ||
             $this->form->status === \App\Enums\StatusOrdemServico::EM_ANDAMENTO->value) {
@@ -206,7 +205,6 @@ new class extends Component {
         $this->redirect(route('ordem-servico'), navigate: true);
 
 
-
     }
 
     public
@@ -214,7 +212,7 @@ new class extends Component {
     {
 
 
-        $this->id = request()->route('id') ?? null;
+        $this->id       = request()->route('id') ?? null;
         $this->form->id = request()->route('id') ?? null;
 
         $this->bancos = \App\Models\BancosModel::where('removido', false)
@@ -227,7 +225,7 @@ new class extends Component {
 
 
         $this->form->dataAbertura = now()->format('Y-m-d');
-        $this->form->clientes = \App\Models\ClienteModel::query()->get();
+        $this->form->clientes     = \App\Models\ClienteModel::query()->get();
 
         if ($this->id) {
 
@@ -438,9 +436,10 @@ new class extends Component {
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
 
-                                                    @if(!is_null($material['id']))
-                                                        <flux:table.cell>
-                                                            <flux:button wire:click="$dispatchTo(
+                                                    @if($persistence == Persistence::CREATE)
+                                                        @if(!is_null($material['id']))
+                                                            <flux:table.cell>
+                                                                <flux:button wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::PATH_COMPONENT_FORM_SELECIONAR_MATERIAL }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarMateriaisForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL }}',
                                                                                     {
@@ -448,24 +447,25 @@ new class extends Component {
                                                                                         idMaterial: {{$material['id']}}
                                                                                     }
                                                                                 )"
-                                                                         variant="primary" size="xs">
-                                                                <flux:icon icon="pencil" variant="micro"/>
-                                                            </flux:button>
+                                                                             variant="primary" size="xs">
+                                                                    <flux:icon icon="pencil" variant="micro"/>
+                                                                </flux:button>
 
-                                                            <flux:button
-                                                                wire:click="removeMaterial({{$loop->index}})"
-                                                                variant="danger" size="xs">
-                                                                <flux:icon icon="trash" variant="micro"/>
-                                                            </flux:button>
-                                                        </flux:table.cell>
-                                                    @else
-                                                        <flux:table.cell>
-                                                            <flux:button
-                                                                wire:click="removeMaterial({{$loop->index}})"
-                                                                variant="danger" size="xs">
-                                                                <flux:icon variant="micro" icon="trash"/>
-                                                            </flux:button>
-                                                        </flux:table.cell>
+                                                                <flux:button
+                                                                    wire:click="removeMaterial({{$loop->index}})"
+                                                                    variant="danger" size="xs">
+                                                                    <flux:icon icon="trash" variant="micro"/>
+                                                                </flux:button>
+                                                            </flux:table.cell>
+                                                        @else
+                                                            <flux:table.cell>
+                                                                <flux:button
+                                                                    wire:click="removeMaterial({{$loop->index}})"
+                                                                    variant="danger" size="xs">
+                                                                    <flux:icon variant="micro" icon="trash"/>
+                                                                </flux:button>
+                                                            </flux:table.cell>
+                                                        @endif
                                                     @endif
                                                 </flux:table.row>
                                             @endforeach
