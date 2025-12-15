@@ -166,8 +166,8 @@ new class extends Component {
 
         $ordemServico = $this->form->finalizarOrdemServico($this->form->all());
         Flux::toast('Ordem de serviço finalizada com sucesso!', variant: 'success');
-        $this->mount();
-        $this->id = $id;
+        $this->redirect(route('ordem-servico'), navigate: true);
+
 
     }
 
@@ -184,8 +184,8 @@ new class extends Component {
 
         $ordemServico = $this->form->cancelarOrdemServico();
         Flux::toast('Ordem de serviço cancelada com sucesso!', variant: 'success');
-        $this->mount();
-        $this->id = $id;
+        $this->redirect(route('ordem-servico'), navigate: true);
+
 
 
     }
@@ -203,8 +203,8 @@ new class extends Component {
 
         $ordemServico = $this->form->reabrirOrdemServico();
         Flux::toast('Ordem de serviço reaberta com sucesso!', variant: 'success');
-        $this->mount();
-        $this->id = $id;
+        $this->redirect(route('ordem-servico'), navigate: true);
+
 
 
     }
