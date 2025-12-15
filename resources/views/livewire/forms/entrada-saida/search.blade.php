@@ -103,7 +103,13 @@ new class extends Component {
         return [
             'entradaSaidaPendente' => $this->entradaSaida->where('data_pagamento', null),
             'entradaSaidaPago'     => $this->entradaSaida->where('data_pagamento', '!=', null),
-            'saldoBancario'        => $this->entradaSaida->map(fn($item) => $item->banco->saldo)->sum(),
+            'saldoBancario'        => $this->entradaSaida
+                ->map(function ($item) {
+                    return $item->banco;
+                })
+                ->filter()
+                ->unique('id')
+                ->sum('saldo'),
             'bancos'               => $bancos,
             'count'                => $count,
         ];
