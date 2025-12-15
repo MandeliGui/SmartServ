@@ -79,7 +79,7 @@ new class extends Component {
 
     public function updatedFormQuantidadeParcela()
     {
-
+        $this->form->dataVencimento = [];
         if ($this->form->quantidadeParcela > 0) {
             for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
                 if (!isset($this->form->dataVencimento[$i])) {
