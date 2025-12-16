@@ -4,7 +4,6 @@ namespace App\Http\Requests\Tenant\Atendentes;
 
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
-use App\Rules\UniqueRule;
 use Validator;
 
 class RemoverAtendenteRequest extends BaseValidationRequest

@@ -4,7 +4,6 @@ namespace App\Http\Requests\Tenant\Atendentes;
 
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
-use App\Rules\UniqueRule;
 use Validator;
 
 class EditarAtendenteRequest extends BaseValidationRequest
@@ -44,8 +43,8 @@ class EditarAtendenteRequest extends BaseValidationRequest
             'id'                   => ['required', 'integer', 'exists:tb_atendentes,idAtendente'],
             'nome'                 => ['required', 'string', 'max:200'],
             'telefone'             => ['nullable', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email')],
-            'cpf'                  => ['nullable', 'string', 'max:11', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj')],
+            'email'                => ['nullable', 'email', 'max:200'],
+            'cpf'                  => ['nullable', 'string', 'max:11', 'min:11'],
             'dataNascimento'       => ['nullable', 'date'],
             'endereco.cep'         => ['nullable', 'string', 'max:8'],
             'endereco.rua'         => ['nullable', 'string', 'max:200'],
@@ -60,20 +59,14 @@ class EditarAtendenteRequest extends BaseValidationRequest
     public function messages(): array
     {
         return [
-            'id.required'                 => ':attribute é obrigatório.',
-            'id.integer'                  => ':attribute deve ser um número inteiro.',
-            'id.exists'                   => ':attribute não existe.',
-            'nome.required'               => ':attribute é obrigatório.',
-            'email.email'                 => ':attribute deve ser um endereço de e-mail válido.',
-            'cpf.max'                     => 'O :attribute não pode ter mais de 11 dígitos.',
-            'dataNascimento.date'         => ':attribute deve ser uma data válida.',
-            'endereco.cep.max'            => ':attribute não pode ter mais de 8 caracteres.',
-            'endereco.rua.max'            => ':attribute não pode ter mais de 200 caracteres.',
-            'endereco.numero.max'         => ':attribute não pode ter mais de 10 caracteres.',
-            'endereco.bairro.max'         => ':attribute não pode ter mais de 100 caracteres.',
-            'endereco.complemento.string' => ':attribute deve ser uma string.',
-            'endereco.cidade.string'      => ':attribute deve ser uma string.',
-            'endereco.uf.string'          => ':attribute deve ser uma string.',
+            'required' => 'O campo :attribute é obrigatório.',
+            'string'   => 'O campo :attribute deve ser uma string.',
+            'max'      => 'O campo :attribute deve ter no máximo :max caracteres.',
+            'min'      => 'O campo :attribute deve ter no mínimo :min caracteres.',
+            'integer'  => 'O campo :attribute deve ser um número inteiro.',
+            'exists'   => 'O :attribute informado não existe.',
+            'email'    => 'O campo :attribute deve ser um endereço de email válido.',
+            'date'     => 'O campo :attribute deve ser uma data válida.',
         ];
     }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Tenant\Tecnico;
 
 use App\Http\Requests\BaseValidationRequest;
-use App\Rules\UniqueRule;
 use Validator;
 
 class CriarTecnicoRequest extends BaseValidationRequest
@@ -43,9 +42,9 @@ class CriarTecnicoRequest extends BaseValidationRequest
         return [
 
             'nome'                 => ['required', 'string', 'max:200'],
-            'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email')],
-            'cpf'                  => ['required', 'string', 'max:11', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj')],
+            'telefone'             => ['nullable', 'string', 'max:20'],
+            'email'                => ['nullable', 'email', 'max:200'],
+            'cpf'                  => ['nullable', 'string', 'max:11'],
             'dataNascimento'       => ['nullable', 'date'],
             'endereco.cep'         => ['nullable', 'string', 'max:8'],
             'endereco.rua'         => ['nullable', 'string', 'max:200'],
@@ -60,19 +59,11 @@ class CriarTecnicoRequest extends BaseValidationRequest
     public function messages(): array
     {
         return [
-            'nome.required'               => ':attribute é obrigatório.',
-            'telefone.required'           => ':attribute é obrigatório.',
-            'email.email'                 => ':attribute deve ser um endereço de e-mail válido.',
-            'cpf.required'                => ':attribute é obrigatório.',
-            'cpf.max'                     => 'O :attribute não pode ter mais de 11 dígitos.',
-            'dataNascimento.date'         => ':attribute deve ser uma data válida.',
-            'endereco.cep.max'            => ':attribute não pode ter mais de 8 caracteres.',
-            'endereco.rua.max'            => ':attribute não pode ter mais de 200 caracteres.',
-            'endereco.numero.max'         => ':attribute não pode ter mais de 10 caracteres.',
-            'endereco.bairro.max'         => ':attribute não pode ter mais de 100 caracteres.',
-            'endereco.complemento.string' => ':attribute deve ser uma string.',
-            'endereco.cidade.string'      => ':attribute deve ser uma string.',
-            'endereco.uf.string'          => ':attribute deve ser uma string.',
+            'required' => 'O campo :attribute é obrigatório.',
+            'string'   => 'O campo :attribute deve ser uma string.',
+            'max'      => 'O campo :attribute deve ter no máximo :max caracteres.',
+            'date'     => 'O campo :attribute deve ser uma data válida.',
+            'email'    => 'O campo :attribute deve ser um email válido.',
         ];
     }
 
