@@ -474,7 +474,7 @@ new class extends Component {
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
 
-                                                    @if($persistence == Persistence::CREATE)
+                                                    @if($this->form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value  || $this->form->status !== \App\Enums\StatusOrdemServico::CANCELADO->value)
                                                         @if(!is_null($material['id']))
                                                             <flux:table.cell>
                                                                 <flux:button wire:click="$dispatchTo(
@@ -506,6 +506,16 @@ new class extends Component {
                                                         @endif
                                                     @endif
                                                 </flux:table.row>
+
+                                                @if(!empty($material['descricao']))
+                                                    {{-- Linha da descrição --}}
+                                                    <flux:table.row>
+                                                        <flux:table.cell colspan="6">
+                                                            <strong>Observação:</strong>
+                                                            {{ $material['descricao']}}
+                                                        </flux:table.cell>
+                                                    </flux:table.row>
+                                                @endif
                                             @endforeach
                                         </flux:table.rows>
 
@@ -596,7 +606,7 @@ new class extends Component {
                                                     <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
                                                     <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
-                                                    @if($persistence == Persistence::CREATE)
+                                                    @if($this->form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value  || $this->form->status !== \App\Enums\StatusOrdemServico::CANCELADO->value)
 
                                                         @if(!is_null($servico['id']))
                                                             <flux:table.cell>
@@ -632,6 +642,18 @@ new class extends Component {
                                                         @endif
                                                     @endif
                                                 </flux:table.row>
+
+                                                @if(!empty($servico['descricao']))
+
+                                                    {{-- Linha da descrição --}}
+                                                    <flux:table.row>
+                                                        <flux:table.cell colspan="6">
+                                                            <strong>Observação:</strong>
+                                                            {{ $servico['descricao'] ?? 'Sem descrição' }}
+                                                        </flux:table.cell>
+                                                    </flux:table.row>
+                                                @endif
+
                                             @endforeach
                                         </flux:table.rows>
 

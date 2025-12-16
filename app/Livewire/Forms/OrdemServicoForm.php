@@ -121,6 +121,7 @@ class OrdemServicoForm extends Form
     {
 
         $data         = OrdemServicoRequest::editarMaterial($material, $this->attributes())->validated();
+
         $ordemServico = (new OrdemServicoService())->editarMaterial($data);
 
         $this->setOrdemServico($this->id);
@@ -237,6 +238,7 @@ class OrdemServicoForm extends Form
                 'id'            => $material->pivot->id,
                 'codigo'        => $material->codigo,
                 'nome'          => $material->nome,
+                'descricao'     => $material->pivot->descricao,
                 'valorUnitario' => $material->pivot->valorUnitario,
                 'quantidade'    => $material->pivot->quantidade,
                 'valorTotal'    => $material->pivot->valorTotal,
@@ -248,6 +250,7 @@ class OrdemServicoForm extends Form
                 'id'            => $servico->pivot->id,
                 'codigo'        => $servico->codigo,
                 'nome'          => $servico->nome,
+                'descricao'     => $servico->pivot->descricao,
                 'valorUnitario' => $servico->pivot->valorUnitario,
                 'quantidade'    => $servico->pivot->quantidade,
                 'valorTotal'    => $servico->pivot->valorTotal,

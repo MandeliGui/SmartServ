@@ -12,6 +12,7 @@ class OrdemServicoService
 {
     public function findAll(FilterPaginateRequest $request, array $filters = [])
     {
+
         $request->validate(
             rules: [
                 "orderBy" => ["in:codigo"],
@@ -22,12 +23,12 @@ class OrdemServicoService
         );
 
         return OrdemServicoModel::query()
-            ->when(!is_null($request->orderBy), function ($query) use ($request): void {
-                $query->orderBy($request->orderBy, $request->dir);
-            })->when(!empty($request->search), function ($query) use ($request): void {
+                                ->when(!is_null($request->orderBy), function ($query) use ($request): void {
+                                    $query->orderBy($request->orderBy, $request->dir);
+                                })->when(!empty($request->search), function ($query) use ($request): void {
                 $query->search($request->search);
             })
-            ->paginate(perPage: $request->limit, page: $request->offset);
+                                ->paginate(perPage: $request->limit, page: $request->offset);
     }
 
     public function findOne(mixed $id)
@@ -56,6 +57,7 @@ class OrdemServicoService
             $ordemServico->materiais()->attach($data['materiais']);
         }
         if (!empty($data['servicos'])) {
+
             $ordemServico->servicos()->attach($data['servicos']);
         }
         return $ordemServico;
@@ -115,29 +117,31 @@ class OrdemServicoService
 
     public function editarMaterial(array $data)
     {
+
         $ordemServico = OrdemServicoModel::query()
-            ->whereHas('materiais', function (Builder $query) use ($data) {
-                $query->where('tb_ordem_servico_material.id', $data['id']);
-            })
-            ->first();
+                                         ->whereHas('materiais', function (Builder $query) use ($data) {
+                                             $query->where('tb_ordem_servico_material.id', $data['id']);
+                                         })
+                                         ->first();
 
 
         if ($ordemServico) {
 
 
             $materiais = $ordemServico->materiais()
-                ->where('tb_ordem_servico_material.id', $data['id'])->first();
+                                      ->where('tb_ordem_servico_material.id', $data['id'])->first();
 
-            $materiais->pivot->quantidade = $data['quantidade'];
+            $materiais->pivot->quantidade    = $data['quantidade'];
             $materiais->pivot->valorUnitario = $data['valorUnitario'];
-            $materiais->pivot->valorTotal = $data['valorTotal'];
+            $materiais->pivot->valorTotal    = $data['valorTotal'];
+            $materiais->pivot->descricao     = $data['descricao'];
             $materiais->pivot->save();
 
 
-            $materiais = $ordemServico->materiais()->get()->map(function ($material) {
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
             $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
@@ -152,22 +156,22 @@ class OrdemServicoService
     {
 
         $ordemServico = OrdemServicoModel::query()
-            ->whereHas('materiais', function ($query) use ($id) {
-                $query->where('tb_ordem_servico_material.id', $id);
-            })
-            ->first();
+                                         ->whereHas('materiais', function ($query) use ($id) {
+                                             $query->where('tb_ordem_servico_material.id', $id);
+                                         })
+                                         ->first();
 
 
         if ($ordemServico) {
 
             $ordemServico->materiais()
-                ->wherePivot('id', $id)
-                ->detach();
+                         ->wherePivot('id', $id)
+                         ->detach();
 
-            $materiais = $ordemServico->materiais()->get()->map(function ($material) {
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
             $ordemServico->valorTotal = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
@@ -180,26 +184,28 @@ class OrdemServicoService
 
     public function editarServico(array $data)
     {
+
         $ordemServico = OrdemServicoModel::query()
-            ->whereHas('servicos', function (Builder $query) use ($data) {
-                $query->where('tb_ordem_servico_servico.id', $data['id']);
-            })
-            ->first();
+                                         ->whereHas('servicos', function (Builder $query) use ($data) {
+                                             $query->where('tb_ordem_servico_servico.id', $data['id']);
+                                         })
+                                         ->first();
 
         if ($ordemServico) {
 
             $servicos = $ordemServico->servicos()
-                ->where('tb_ordem_servico_servico.id', $data['id'])->first();
+                                     ->where('tb_ordem_servico_servico.id', $data['id'])->first();
 
-            $servicos->pivot->quantidade = $data['quantidade'];
+            $servicos->pivot->quantidade    = $data['quantidade'];
             $servicos->pivot->valorUnitario = $data['valorUnitario'];
-            $servicos->pivot->valorTotal = $data['valorTotal'];
+            $servicos->pivot->valorTotal    = $data['valorTotal'];
+            $servicos->pivot->descricao     = $data['descricao'];
             $servicos->pivot->save();
 
-            $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
+            $servicos                 = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
-            $materials = $ordemServico->materiais()->get()->map(function ($material) {
+            $materials                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
             $ordemServico->valorTotal = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
@@ -213,22 +219,22 @@ class OrdemServicoService
     public function removeServico(mixed $id)
     {
         $ordemServico = OrdemServicoModel::query()
-            ->whereHas('servicos', function (Builder $query) use ($id) {
-                $query->where('tb_ordem_servico_servico.id', $id);
-            })
-            ->first();
+                                         ->whereHas('servicos', function (Builder $query) use ($id) {
+                                             $query->where('tb_ordem_servico_servico.id', $id);
+                                         })
+                                         ->first();
 
         if ($ordemServico) {
 
             $ordemServico->servicos()
-                ->wherePivot('id', $id)
-                ->detach();
+                         ->wherePivot('id', $id)
+                         ->detach();
 
             $servicos = $ordemServico->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
 
-            $materiais = $ordemServico->materiais()->get()->map(function ($material) {
+            $materiais                = $ordemServico->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
             $ordemServico->valorTotal = $servicos->sum('valorTotal') + $materiais->sum('valorTotal');
@@ -253,24 +259,24 @@ class OrdemServicoService
 
 
             for ($i = 0; $i < $data['quantidadeParcela']; $i++) {
-                $parcela = $i + 1;
-                $descricao = $data['quantidadeParcela'] > 1 ? "OS $ordemServico->codigo - {$nomeCliente} - Parcela {$parcela} de {$data['quantidadeParcela']}" :  "OS - {$ordemServico->codigo} - {$nomeCliente}";
+                $parcela   = $i + 1;
+                $descricao = $data['quantidadeParcela'] > 1 ? "OS $ordemServico->codigo - {$nomeCliente} - Parcela {$parcela} de {$data['quantidadeParcela']}" : "OS - {$ordemServico->codigo} - {$nomeCliente}";
                 EntradasSaidasModel::query()
-                    ->create([
-                        'tipo'               => TipoEntradaSaida::ENTRADA->value,
-                        'data_vencimento'    => $data['dataVencimento'][$i],
-                        'data_pagamento'     => null,
-                        'valor_original'     => $data['valor'] / $data['quantidadeParcela'],
-                        'valor_pago'         => null,
-                        'quantidade_meses'   => $data['quantidadeParcela'],
-                        'descricao'          => $descricao,
-                        'categoria_id'       => -1,
-                        'forma_pagamento_id' => $data['formaPagamentoId'],
-                        'banco_id'           => $data['bancoId'],
-                        'ordem_servico_id'   => $ordemServico->id,
-                        'removido'           => false,
-                        'user_id'            => auth()->user()->id,
-                    ]);
+                                   ->create([
+                                       'tipo'               => TipoEntradaSaida::ENTRADA->value,
+                                       'data_vencimento'    => $data['dataVencimento'][$i],
+                                       'data_pagamento'     => null,
+                                       'valor_original'     => $data['valor'] / $data['quantidadeParcela'],
+                                       'valor_pago'         => null,
+                                       'quantidade_meses'   => $data['quantidadeParcela'],
+                                       'descricao'          => $descricao,
+                                       'categoria_id'       => -1,
+                                       'forma_pagamento_id' => $data['formaPagamentoId'],
+                                       'banco_id'           => $data['bancoId'],
+                                       'ordem_servico_id'   => $ordemServico->id,
+                                       'removido'           => false,
+                                       'user_id'            => auth()->user()->id,
+                                   ]);
             }
 
             return $ordemServico;

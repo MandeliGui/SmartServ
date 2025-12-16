@@ -23,10 +23,11 @@ new class extends Component {
     {
 
 
-        Validator::make($this->form->only('id_servico', 'quantidade', 'valorUnitario'),
+        Validator::make($this->form->only('id_servico', 'quantidade', 'descricao', 'valorUnitario'),
             rules: [
                 'id_servico'    => 'required',
                 'quantidade'    => 'required|numeric',
+                'descricao'     => 'nullable',
                 'valorUnitario' => 'required',
             ],
             messages: [
@@ -44,6 +45,7 @@ new class extends Component {
             'idServico'     => $this->form->id_servico,
             'codigo'        => $servico->codigo,
             'quantidade'    => $this->form->quantidade,
+            'descricao'     => $this->form->descricao,
             'nome'          => $servico->nome,
             'valorUnitario' => $valorUnitario = Helper::formatarDecimalDb($this->form->valorUnitario),
             'valorTotal'    => $valorUnitario * $this->form->quantidade,
@@ -58,6 +60,7 @@ new class extends Component {
 
     public function editarServicos()
     {
+
         $this->form->valorTotal = $this->form->valorUnitario * $this->form->quantidade;
 
         $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servicos: $this->form->all());
@@ -86,8 +89,9 @@ new class extends Component {
 
             $this->servicosAdicionados = [];
         } else {
-            dd($this->servicosAdicionados);
+
             $this->ordemServicoForm->servicos = $this->servicosAdicionados;
+            dd($this->ordemServicoForm->servicos);
 
 
             $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servicos: $this->ordemServicoForm->servicos);
@@ -142,6 +146,7 @@ new class extends Component {
                 $this->form->id_servico    = $pivotData->pivot->idServico;
                 $this->form->quantidade    = $pivotData->pivot->quantidade;
                 $this->form->valorUnitario = $pivotData->pivot->valorUnitario;
+                $this->form->descricao     = $pivotData->pivot->descricao;
 
 
             }
@@ -210,6 +215,13 @@ new class extends Component {
             />
         </div>
 
+        <flux:textarea
+            label="Descrição"
+            placeholder="Digite a descrição"
+            wire:model="form.descricao"
+            name="descricao"
+        />
+
         @if($persistence === Persistence::CREATE)
 
             <flux:button wire:click="addServicos" variant="primary" class="mt-2">Adicionar</flux:button>
@@ -248,6 +260,17 @@ new class extends Component {
                             </flux:button>
                         </flux:table.cell>
                     </flux:table.row>
+                    @if(!empty($servico['descricao']))
+
+                        {{-- Linha da descrição --}}
+                        <flux:table.row
+                        >
+                            <flux:table.cell colspan="6">
+                                <strong>Observação:</strong>
+                                {{ $servico['descricao'] }}
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endif
                 @endforeach
             </flux:table.rows>
 

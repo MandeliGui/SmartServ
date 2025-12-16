@@ -20,9 +20,11 @@ class EditarServicoOrdemServicoRequest extends BaseValidationRequest
         $this->data = [
             'id'            => Helper::getIdByRequest($this->data, 'idServicoSelecionado'),
             'quantidade'    => (int)$this->data['quantidade'],
+            'descricao'     => $this->data['descricao'],
             'valorUnitario' => Helper::formatarValorMonetarioDB((float)$this->data['valorUnitario']),
             'valorTotal'    => Helper::formatarValorMonetarioDB((float)$this->data['valorTotal']),
         ];
+
     }
 
     public function rules(): array
@@ -30,6 +32,7 @@ class EditarServicoOrdemServicoRequest extends BaseValidationRequest
         return [
             'id'            => ['required', 'integer', 'exists:tb_ordem_servico_servico,id'],
             'quantidade'    => ['required', 'numeric'],
+            'descricao'     => ['nullable', 'string'],
             'valorUnitario' => ['required', 'numeric'],
             'valorTotal'    => ['required', 'numeric'],
         ];
@@ -38,15 +41,11 @@ class EditarServicoOrdemServicoRequest extends BaseValidationRequest
     public function messages(): array
     {
         return [
-            'id.required'            => ':attribute é obrigatório.',
-            'id.integer'             => ':attribute deve ser um número inteiro.',
-            'id.exists'              => ':attribute informado não existe na tabela de servicos da ordem de serviço.',
-            'quantidade.required'    => ':attribute é obrigatório.',
-            'quantidade.numeric'     => ':attribute deve ser um número.',
-            'valorUnitario.required' => ':attribute é obrigatório.',
-            'valorUnitario.numeric'  => ':attribute deve ser um número.',
-            'valorTotal.required'    => ':attribute é obrigatório.',
-            'valorTotal.numeric'     => ':attribute deve ser um número.',
+            'required' => 'O campo :attribute é obrigatório.',
+            'integer'  => 'O campo :attribute deve ser um número inteiro.',
+            'numeric'  => 'O campo :attribute deve ser um número.',
+            'string'   => 'O campo :attribute deve ser uma string.',
+            'exists'   => 'O :attribute informado não existe.',
         ];
     }
 

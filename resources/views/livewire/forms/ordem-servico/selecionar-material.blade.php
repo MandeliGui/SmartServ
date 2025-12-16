@@ -27,6 +27,7 @@ new class extends Component {
             rules: [
                 'id_material'   => 'required',
                 'quantidade'    => 'required|numeric',
+                'descricao'     => 'nullable',
                 'valorUnitario' => 'required',
             ],
             messages: [
@@ -44,6 +45,7 @@ new class extends Component {
             'idMaterial'    => $this->form->id_material,
             'codigo'        => $material->codigo,
             'quantidade'    => $this->form->quantidade,
+            'descricao'     => $this->form->descricao,
             'nome'          => $material->nome,
             'valorUnitario' => $valorUnitario = Helper::formatarDecimalDb($this->form->valorUnitario),
             'valorTotal'    => $valorUnitario * $this->form->quantidade,
@@ -123,19 +125,20 @@ new class extends Component {
             $this->form->idMaterialSelecionado = $idMaterial;
 
             $material = \App\Models\OrdemServicoModel::query()
-                ->whereHas('materiais', function ($query) use ($idMaterial) {
-                    $query->where('tb_ordem_servico_material.id', $idMaterial);
-                })
-                ->first();
+                                                     ->whereHas('materiais', function ($query) use ($idMaterial) {
+                                                         $query->where('tb_ordem_servico_material.id', $idMaterial);
+                                                     })
+                                                     ->first();
 
             if ($material) {
                 $pivotData = $material->materiais()
-                    ->wherePivot('id', $idMaterial)
-                    ->first();
+                                      ->wherePivot('id', $idMaterial)
+                                      ->first();
 
                 $this->form->id_material   = $pivotData->pivot->idMaterial;
                 $this->form->quantidade    = $pivotData->pivot->quantidade;
                 $this->form->valorUnitario = $pivotData->pivot->valorUnitario;
+                $this->form->descricao     = $pivotData->pivot->descricao;
 
 
             }
@@ -156,7 +159,7 @@ new class extends Component {
     public function with()
     {
         $materiais = \App\Models\MaterialModel::query()
-            ->get();
+                                              ->get();
 
         return [
             'materiais' => $materiais,
@@ -204,6 +207,13 @@ new class extends Component {
             />
         </div>
 
+        <flux:textarea
+            label="Descrição"
+            placeholder="Digite a descrição"
+            wire:model="form.descricao"
+            name="descricao"
+        />
+
         @if($persistence === Persistence::CREATE)
 
             <flux:button wire:click="addMateriais" variant="primary" class="mt-2">Adicionar</flux:button>
@@ -230,18 +240,38 @@ new class extends Component {
 
             <flux:table.rows>
                 @foreach($materiaisAdicionados as $material)
+                    {{-- Linha principal --}}
                     <flux:table.row>
-                        <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
-                        <flux:table.cell>{{$material['nome']}}</flux:table.cell>
-                        <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
-                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
-                        <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+                        <flux:table.cell>{{ $material['codigo'] }}</flux:table.cell>
+                        <flux:table.cell>{{ $material['nome'] }}</flux:table.cell>
+                        <flux:table.cell>{{ $material['quantidade'] }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:button wire:click="removeMaterial({{$loop->index}})" variant="danger" class="mt-2">
+                            R$ {{ Helper::formatarValorMonetarioPtBr($material['valorUnitario']) }}
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            R$ {{ Helper::formatarValorMonetarioPtBr($material['valorTotal']) }}
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <flux:button
+                                wire:click="removeMaterial({{ $loop->index }})"
+                                variant="danger"
+                            >
                                 <flux:icon icon="trash"/>
                             </flux:button>
                         </flux:table.cell>
                     </flux:table.row>
+
+                    @if(!empty($material['descricao']))
+
+                        {{-- Linha da descrição --}}
+                        <flux:table.row
+                        >
+                            <flux:table.cell colspan="6">
+                                <strong>Observação:</strong>
+                                {{ $material['descricao'] }}
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endif
                 @endforeach
             </flux:table.rows>
 
