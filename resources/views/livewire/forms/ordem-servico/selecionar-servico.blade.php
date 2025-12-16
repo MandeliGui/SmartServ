@@ -4,6 +4,8 @@ use App\Enums\Persistence;
 use App\Helpers\Helper;
 use App\Livewire\Forms\AdicionarServicosForm;
 use App\Livewire\Forms\OrdemServicoForm;
+use App\Livewire\Forms\ServicosForm;
+use App\Models\ServicosModel;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -16,6 +18,7 @@ new class extends Component {
     public AdicionarServicosForm $form;
     public OrdemServicoForm      $ordemServicoForm;
     public ?Persistence          $persistence = Persistence::CREATE;
+    public mixed                 $servicos    = null;
 
     public array $servicosAdicionados = [];
 
@@ -153,7 +156,7 @@ new class extends Component {
             $this->persistence = Persistence::UPDATE;
         } else {
 
-            $this->form->servicos = \App\Models\ServicosModel::query()->where('removido', false)->get();
+            $this->form->servicos = ServicosModel::query()->where('removido', false)->get();
 
 
             $this->persistence = Persistence::CREATE;
@@ -162,14 +165,30 @@ new class extends Component {
         Flux::modal($modalName)->show();
     }
 
+    public function abrirModalServico()
+    {
+        Flux::modal(ServicosForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(ServicosForm::EVENT_PERSISTED)]
+    public function materialAdicionado()
+    {
+        $this->servicos = ServicosModel::query()
+                                       ->get();
+
+        $ultimoServico             = ServicosModel::orderBy('id', 'desc')->first();
+        $this->form->id_servico    = $ultimoServico->id;
+        $this->form->valorUnitario = Helper::formatarValorMonetarioPtBr($ultimoServico->valor);
+    }
+
     #[On(AdicionarServicosForm::EVENT_PERSISTED)]
     public function with()
     {
-        $servicos = \App\Models\ServicosModel::query()
-                                             ->get();
+        $this->servicos = ServicosModel::query()
+                                       ->get();
 
         return [
-            'servicos' => $servicos,
+            'servicos' => $this->servicos,
         ];
     }
 
@@ -184,24 +203,36 @@ new class extends Component {
         <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
-            <flux:select label="Servicos*" variant="listbox" searchable
-                         wire:model="form.id_servico"
-                         placeholder="Selecione"
-                         name="id_servico"
-                         wire:change="atualizarValorUnitario"
-                         :disabled="$persistence === Persistence::UPDATE"
-            >
+            <div class="flex items-end">
 
-                <flux:select.option value="">Selecione</flux:select.option>
+                <div class="flex-1">
+                    <flux:select label="Servicos*" variant="listbox" searchable
+                                 wire:model="form.id_servico"
+                                 placeholder="Selecione"
+                                 name="id_servico"
+                                 wire:change="atualizarValorUnitario"
+                                 :disabled="$persistence === Persistence::UPDATE"
+                    >
 
-                @foreach($servicos as $servico)
+                        <flux:select.option value="">Selecione</flux:select.option>
 
-                    <flux:select.option
-                        value="{{$servico->id}}">{{$servico->nome}}</flux:select.option>
-                @endforeach
+                        @foreach($servicos as $servico)
+
+                            <flux:select.option
+                                value="{{$servico->id}}">{{$servico->nome}}</flux:select.option>
+                        @endforeach
 
 
-            </flux:select>
+                    </flux:select>
+                </div>
+                <flux:button
+                    :disabled="$persistence === Persistence::UPDATE"
+                    icon="plus"
+                    variant="primary"
+                    wire:click="abrirModalServico"
+                    aria-label="Adicionar serviço"
+                />
+            </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
 
@@ -281,5 +312,10 @@ new class extends Component {
             <flux:button wire:click="save()" variant="primary" class="mt-2">Salvar</flux:button>
         </div>
     @endif
+
+
+    <flux:modal name="{{ServicosForm::MODAL_NAME_CREATE}}" class="min-w-[22rem]">
+        <livewire:forms.servicos.create-update/>
+    </flux:modal>
 </div>
 

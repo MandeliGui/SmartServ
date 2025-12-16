@@ -471,8 +471,8 @@ new class extends Component {
                                                     <flux:table.cell>{{$material['codigo']}}</flux:table.cell>
                                                     <flux:table.cell>{{$material['nome']}}</flux:table.cell>
                                                     <flux:table.cell>{{$material['quantidade']}}</flux:table.cell>
-                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
-                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
+                                                    <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorUnitario'])}}</flux:table.cell>
+                                                    <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($material['valorTotal'])}}</flux:table.cell>
 
                                                     @if($this->form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value  || $this->form->status !== \App\Enums\StatusOrdemServico::CANCELADO->value)
                                                         @if(!is_null($material['id']))
@@ -604,8 +604,8 @@ new class extends Component {
                                                     <flux:table.cell>{{$servico['codigo']}}</flux:table.cell>
                                                     <flux:table.cell>{{$servico['nome']}}</flux:table.cell>
                                                     <flux:table.cell>{{$servico['quantidade']}}</flux:table.cell>
-                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
-                                                    <flux:table.cell>{{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
+                                                    <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($servico['valorUnitario'])}}</flux:table.cell>
+                                                    <flux:table.cell>R$ {{Helper::formatarValorMonetarioPtBr($servico['valorTotal'])}}</flux:table.cell>
                                                     @if($this->form->status !== \App\Enums\StatusOrdemServico::FINALIZADO->value  || $this->form->status !== \App\Enums\StatusOrdemServico::CANCELADO->value)
 
                                                         @if(!is_null($servico['id']))

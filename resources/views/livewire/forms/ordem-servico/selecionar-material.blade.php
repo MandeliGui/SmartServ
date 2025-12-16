@@ -3,7 +3,9 @@
 use App\Enums\Persistence;
 use App\Helpers\Helper;
 use App\Livewire\Forms\AdicionarMateriaisForm;
+use App\Livewire\Forms\MateriaisForm;
 use App\Livewire\Forms\OrdemServicoForm;
+use App\Models\MaterialModel;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -16,6 +18,7 @@ new class extends Component {
     public AdicionarMateriaisForm $form;
     public OrdemServicoForm       $ordemServicoForm;
     public ?Persistence           $persistence = Persistence::CREATE;
+    public mixed                  $materiais;
 
     public array $materiaisAdicionados = [];
 
@@ -72,7 +75,7 @@ new class extends Component {
     public function atualizarValorUnitario()
     {
         if ($this->form->id_material) {
-            $material = \App\Models\MaterialModel::find($this->form->id_material);
+            $material = MaterialModel::find($this->form->id_material);
 
             $this->form->valorUnitario = Helper::formatarValorMonetarioPtBr($material->valor);
         } else {
@@ -145,7 +148,7 @@ new class extends Component {
             $this->persistence = Persistence::UPDATE;
         } else {
 
-            $this->form->materiais = \App\Models\MaterialModel::query()->where('removido', false)->get();
+            $this->form->materiais = MaterialModel::query()->where('removido', false)->get();
 
 
             $this->persistence = Persistence::CREATE;
@@ -155,14 +158,30 @@ new class extends Component {
         Flux::modal($modalName)->show();
     }
 
+    public function abrirModalMaterial()
+    {
+        Flux::modal(MateriaisForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(MateriaisForm::EVENT_PERSISTED)]
+    public function materialAdicionado()
+    {
+        $this->materiais = MaterialModel::query()
+                                        ->get();
+
+        $ultimoMaterial            = MaterialModel::orderBy('id', 'desc')->first();
+        $this->form->id_material   = $ultimoMaterial->id;
+        $this->form->valorUnitario = Helper::formatarValorMonetarioPtBr($ultimoMaterial->valor);
+    }
+
     #[On(AdicionarMateriaisForm::EVENT_PERSISTED)]
     public function with()
     {
-        $materiais = \App\Models\MaterialModel::query()
-                                              ->get();
+        $this->materiais = MaterialModel::query()
+                                        ->get();
 
         return [
-            'materiais' => $materiais,
+            'materiais' => $this->materiais,
         ];
     }
 
@@ -177,23 +196,36 @@ new class extends Component {
         <hr class="w-full h-px bg-accent mt-2">
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
-            <flux:select label="Material*" variant="listbox" searchable
-                         wire:model="form.id_material"
-                         placeholder="Selecione"
-                         name="material.codigo"
-                         wire:change="atualizarValorUnitario"
-                         :disabled="$persistence === Persistence::UPDATE"
-            >
+            <div class="flex items-end">
 
-                <flux:select.option value="">Selecione</flux:select.option>
-                @foreach($materiais as $material)
+                <div class="flex-1">
 
-                    <flux:select.option
-                        value="{{$material->id}}">{{$material->nome}}</flux:select.option>
-                @endforeach
+                    <flux:select label="Material*" variant="listbox" searchable
+                                 wire:model="form.id_material"
+                                 placeholder="Selecione"
+                                 name="material.codigo"
+                                 wire:change="atualizarValorUnitario"
+                                 :disabled="$persistence === Persistence::UPDATE"
+                    >
+
+                        <flux:select.option value="">Selecione</flux:select.option>
+                        @foreach($materiais as $material)
+
+                            <flux:select.option
+                                value="{{$material->id}}">{{$material->nome}}</flux:select.option>
+                        @endforeach
 
 
-            </flux:select>
+                    </flux:select>
+                </div>
+                <flux:button
+                    :disabled="$persistence === Persistence::UPDATE"
+                    icon="plus"
+                    variant="primary"
+                    wire:click="abrirModalMaterial"
+                    aria-label="Adicionar material"
+                />
+            </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
 
@@ -283,5 +315,10 @@ new class extends Component {
         </div>
     @endif
 
+
+    <flux:modal name="{{MateriaisForm::MODAL_NAME_CREATE}}" class="min-w-[22rem]">
+        <livewire:forms.materiais.create-update/>
+    </flux:modal>
 </div>
+
 
