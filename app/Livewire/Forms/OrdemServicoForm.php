@@ -86,6 +86,7 @@ class OrdemServicoForm extends Form
 
     public function create()
     {
+
         $data = OrdemServicoRequest::create($this->all(), $this->attributes())->validated();
 
 

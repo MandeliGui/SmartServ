@@ -95,7 +95,6 @@ new class extends Component {
 
     public function adicionarValorParcelasSeguintes($value)
     {
-
         for ($i = $value + 1; $i < $this->form->quantidadeParcela; $i++) {
 
 
@@ -779,13 +778,16 @@ new class extends Component {
                 @for($i=0; $i < $this->form->quantidadeParcela; $i++)
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-                        <flux:date-picker wire:model="date" :disabled="$this->finalizadaOuCancelada()">
+                        <flux:date-picker
+                            wire:model="form.dataVencimento.{{$i}}"
+                            :disabled="$this->finalizadaOuCancelada()">
 
                             <x-slot name="trigger">
-                                <flux:date-picker.input :label='$this->form->quantidadeParcela == 1 ? "Data de vencimento" : "Data de vencimento parcela " . $i+1'
-                                                        wire:model="form.dataVencimento.{{$i}}"
-                                                        name="dataVencimento.{{$i}}"
-                                                        wire:blur="{{ $i == 0 ? 'adicionarValorParcelasSeguintes(' . $i . ')' : '' }}"
+                                <flux:date-picker.input
+                                    :label='$this->form->quantidadeParcela == 1 ? "Data de vencimento" : "Data de vencimento parcela " . $i+1'
+
+                                    name="dataVencimento.{{$i}}"
+                                    wire:blur="{{ $i == 0 ? 'adicionarValorParcelasSeguintes(' . $i . ')' : '' }}"
 
                                 />
                             </x-slot>
