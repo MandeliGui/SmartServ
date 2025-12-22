@@ -104,11 +104,11 @@ new class extends Component {
             </flux:select>
 
 
-            <flux:date-picker wire:model="date" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE">
+            <flux:date-picker wire:model="form.data_vencimento" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE">
 
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de Vencimento*"
-                                            wire:model="form.data_vencimento"
+
 
 
                     />
@@ -148,11 +148,11 @@ new class extends Component {
             </flux:select>
 
 
-            <flux:date-picker wire:model="date">
+            <flux:date-picker wire:model="form.data_pagamento">
 
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de pagamento*"
-                                            wire:model="form.data_pagamento"
+
                                             name="data_pagamento"
 
 

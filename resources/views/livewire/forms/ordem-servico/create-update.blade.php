@@ -343,11 +343,11 @@ new class extends Component {
 
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-                    <flux:date-picker wire:model="date" :disabled="$this->finalizadaOuCancelada()">
+                    <flux:date-picker wire:model="form.dataAbertura" :disabled="$this->finalizadaOuCancelada()">
 
                         <x-slot name="trigger">
                             <flux:date-picker.input label="Data de Abertura"
-                                                    wire:model="form.dataAbertura"
+
                                                     name="dataAbertura"
 
                             />

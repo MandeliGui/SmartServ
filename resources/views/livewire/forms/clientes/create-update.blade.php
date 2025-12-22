@@ -184,10 +184,10 @@ new class extends Component {
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj"/>
 
-            <flux:date-picker wire:model="date">
+            <flux:date-picker wire:model="form.dataNascimento">
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de Nascimento" placeholder="00/00/0000"
-                                            wire:model="form.dataNascimento"
+
                                             name="dataNascimento"
                                             wire:loading.attr="disabled"
                                             wire:target="buscarCnpj"/>

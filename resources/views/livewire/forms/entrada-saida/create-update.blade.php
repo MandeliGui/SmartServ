@@ -111,11 +111,11 @@ new class extends Component {
             </flux:select>
 
 
-            <flux:date-picker wire:model="date">
+            <flux:date-picker  wire:model="form.data_vencimento">
 
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de Vencimento*"
-                                            wire:model="form.data_vencimento"
+
                                             name="data_vencimento"
 
                     />
