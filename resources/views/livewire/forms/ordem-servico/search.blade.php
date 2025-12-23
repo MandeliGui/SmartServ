@@ -195,7 +195,7 @@ new class extends Component {
                                     Visualizar
                                 </flux:button>
                                 {{--                                <flux:modal.trigger name="delete-cliente" >--}}
-                                @if(empty($ordemServico->entradasSaidas))
+
                                     <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
                                                                                     '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
@@ -206,15 +206,7 @@ new class extends Component {
                                                                                 )">
                                         Excluir
                                     </flux:button>
-                                @else
-                                    <flux:tooltip content="Existem entradas/saídas vinculadas a esta ordem de serviço. Não é possível excluí-la.">
-                                        <span>
-                                            <flux:button disabled icon="trash" variant="danger" size="xs">
-                                                Excluir
-                                            </flux:button>
-                                        </span>
-                                    </flux:tooltip>
-                                @endif
+                               
 
 
                                 {{--                                </flux:modal.trigger>--}}
