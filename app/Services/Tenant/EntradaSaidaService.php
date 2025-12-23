@@ -2,6 +2,7 @@
 
 namespace App\Services\Tenant;
 
+use App\Enums\StatusEntradaSaida;
 use App\Enums\TipoEntradaSaida;
 use App\Enums\TipoOrdemServico;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
@@ -14,13 +15,12 @@ class EntradaSaidaService
     public function findAll(FilterPaginateRequest $request, array $filters = [])
     {
         return EntradasSaidasModel::query()
-            ->when($filters['idBanco'], function ($query, $idBanco) {
+                                  ->when($filters['idBanco'], function ($query, $idBanco) {
 
-                $query->where('banco_id', $idBanco);
-            })
-
-            ->orderBy($request->orderBy)
-            ->paginate(perPage: $request->limit, page: $request->offset);
+                                      $query->where('banco_id', $idBanco);
+                                  })
+                                  ->orderBy($request->orderBy)
+                                  ->paginate(perPage: $request->limit, page: $request->offset);
     }
 
     public function findOne(mixed $id)
@@ -48,7 +48,7 @@ class EntradaSaidaService
                 'user_id'          => auth()->user()->id,
             ]);
 
-           $dataVencimento = $dataVencimento->addMonthNoOverflow();
+            $dataVencimento = $dataVencimento->addMonthNoOverflow();
         }
 
 
@@ -71,6 +71,7 @@ class EntradaSaidaService
 
         $servico->update([
             'data_pagamento'     => $data['data_pagamento'],
+            'status'             => StatusEntradaSaida::PAGO->value,
             'valor_pago'         => $data['valor_pago'],
             'forma_pagamento_id' => $data['forma_pagamento_id'],
             'banco_id'           => $data['banco_id'],
@@ -85,6 +86,7 @@ class EntradaSaidaService
 
 
         $servico->update([
+            'status'             => StatusEntradaSaida::PENDENTE->value,
             'data_pagamento'     => null,
             'valor_pago'         => null,
             'forma_pagamento_id' => null,
