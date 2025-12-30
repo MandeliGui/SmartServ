@@ -25,21 +25,19 @@ class OrdemServicoModel extends BaseModel
 
     public function scopeSearch($query, $search)
     {
+        ds()->queriesOn();
         return $query->where(function ($query) use ($search) {
             $query->where('codigo', 'LIKE', "%{$search}%")
                   ->orWhere('tipo', 'LIKE', "%{$search}%")
                   ->orWhere('status', 'LIKE', "%{$search}%")
                   ->orWhere('valorTotal', 'LIKE', "%{$search}%")
-                  ->orWhereHas('cliente', function ($query) use ($search) {
-                      $query->pessoa->where('nome', 'LIKE', "%{$search}%");
-                  })
-                  ->orWhereHas('tecnico', function ($query) use ($search) {
-                      $query->pessoa->where('nome', 'LIKE', "%{$search}%");
-                  })
-                  ->orWhereHas('atendente', function ($query) use ($search) {
-                      $query->pessoa->where('nome', 'LIKE', "%{$search}%");
+                  ->orWhereHas('cliente.pessoa', function ($q2) use ($search) {
+                      $q2->where('nomeFantasia', 'LIKE', "%{$search}%")
+                      ->orWhere('nomeRazaoSocial', 'LIKE', "%{$search}%")
+                      ->orWhere('telefone', 'LIKE', "%{$search}%");
                   });
         });
+        ds()->queriesOff();
     }
 
     public function materiais()

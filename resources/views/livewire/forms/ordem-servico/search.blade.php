@@ -18,7 +18,7 @@ new class extends Component {
     public int    $limit   = 10;
     public int    $offset  = 0;
     public string $orderBy = 'codigo';
-    public string $dir     = 'asc';
+    public string $dir     = 'desc';
     public string $search  = '';
 
 
@@ -95,12 +95,12 @@ new class extends Component {
             $this->selectAll = false;
         }
 
-        $count = !empty($this->search) ? $this->atendente->total() : count($this->getAllIds());
+//        $count = !empty($this->search) ? $this->atendente->total() : count($this->getAllIds());
 
 
         return [
             'ordensServico' => $this->ordensServico,
-            'count'         => $count,
+//            'count'         => $count,
         ];
     }
 
@@ -120,6 +120,13 @@ new class extends Component {
 
 }; ?>
 <div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+
+        <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Pesquisar (Número OS, Cliente, Telefone)"/>
+    </div>
+    <br>
+
 
     <flux:button class="mb-4" variant="primary" href="{{route('ordem-servico.novo')}}" wire:navigate>
         + Nova Ordem de Servico
@@ -203,7 +210,8 @@ new class extends Component {
                                                 <flux:menu.item icon="document"
                                                                 @click.stop
                                                                 href="{{ route('ordem_servico.pdf', $ordemServico->id, false) }}" target="_blank"
-                                                >Gerar sem valor</flux:menu.item>
+                                                >Gerar sem valor
+                                                </flux:menu.item>
                                             </flux:menu>
                                         </flux:dropdown>
 
@@ -214,10 +222,14 @@ new class extends Component {
                                                  @click.stop>
                                         Visualizar
                                     </flux:button>
+                                    @if($ordemServico->entradasSaidas->count() > 0)
+                                        <flux:button :class="'opacity-50 cursor-not-allowed'" icon="trash" variant="danger" size="xs" tooltip="Não é possível excluir uma ordem de serviço que possui entradas/saídas vinculadas." @click.stop aria-disabled="true">
 
-                                    <flux:button icon="trash" variant="danger" size="xs"
-
-                                                 wire:click.stop="$dispatchTo(
+                                            Excluir
+                                        </flux:button>
+                                    @else
+                                        <flux:button icon="trash" variant="danger" size="xs"
+                                                     wire:click.stop="$dispatchTo(
                                          '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
                                          '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
                                          {
@@ -225,8 +237,9 @@ new class extends Component {
                                              id: '{{ $ordemServico->id }}'
                                          }
                                      )">
-                                        Excluir
-                                    </flux:button>
+                                            Excluir
+                                        </flux:button>
+                                    @endif
 
 
                                 </div>
