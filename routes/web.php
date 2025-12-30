@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Tenant\Api\OrdemServicoController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::redirect('/', 'login');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+     ->middleware(['auth', 'verified'])
+     ->name('dashboard');
 
 Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+     ->middleware(['auth'])
+     ->name('profile');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('clientes')->group(function (): void {
@@ -123,7 +124,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->name('bancos');
 
     });
-    Route::get('/ordem-servico/{id}/pdf', [\App\Http\Controllers\Tenant\Api\OrdemServicoController::class, 'gerarPdf'])->name('ordem-servico.pdf');
+    Route::get('/ordem-servico/{id}/pdf', [OrdemServicoController::class, 'gerarPdf'])->name('ordem-servico.pdf');
+    Route::get('/ordem_servico/{id}/pdf', [OrdemServicoController::class, 'gerarPdfSemValor'])->name('ordem_servico.pdf');
 });
 
 

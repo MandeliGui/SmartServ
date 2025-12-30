@@ -186,29 +186,50 @@ new class extends Component {
 
 
                             <flux:table.cell class=" ">
-                                <flux:button icon="document" variant="primary" color="rose" size="xs"
-                                             href="{{ route('ordem-servico.pdf', $ordemServico->id) }}" target="_blank">
-                                    Gerar PDF
-                                </flux:button>
-                                <flux:button variant="outline" icon="pencil" size="xs"
-                                             href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate>
-                                    Visualizar
-                                </flux:button>
-                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                <div class="flex gap-1">
 
-                                    <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
-                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
-                                                                                    {
-                                                                                        modalName: '{{ \App\Livewire\Forms\OrdemServicoForm::MODAL_NAME_REMOVE }}',
-                                                                                        id: '{{ $ordemServico->id }}'
-                                                                                    }
-                                                                                )">
+                                    <flux:button.group>
+                                        <flux:button icon="document" variant="primary" color="rose" size="xs"
+                                                     href="{{ route('ordem-servico.pdf', $ordemServico->id) }}" target="_blank"
+                                                     @click.stop>
+                                            Gerar PDF
+                                        </flux:button>
+
+                                        <flux:dropdown>
+                                            <flux:button icon="chevron-down" variant="primary" color="rose" size="xs"
+                                                         @click.stop></flux:button>
+
+                                            <flux:menu>
+                                                <flux:menu.item icon="document"
+                                                                @click.stop
+                                                                href="{{ route('ordem_servico.pdf', $ordemServico->id, false) }}" target="_blank"
+                                                >Gerar sem valor</flux:menu.item>
+                                            </flux:menu>
+                                        </flux:dropdown>
+
+
+                                    </flux:button.group>
+                                    <flux:button variant="outline" icon="pencil" size="xs"
+                                                 href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate
+                                                 @click.stop>
+                                        Visualizar
+                                    </flux:button>
+
+                                    <flux:button icon="trash" variant="danger" size="xs"
+
+                                                 wire:click.stop="$dispatchTo(
+                                         '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                         '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                         {
+                                             modalName: '{{ \App\Livewire\Forms\OrdemServicoForm::MODAL_NAME_REMOVE }}',
+                                             id: '{{ $ordemServico->id }}'
+                                         }
+                                     )">
                                         Excluir
                                     </flux:button>
-                               
 
 
+                                </div>
                                 {{--                                </flux:modal.trigger>--}}
                             </flux:table.cell>
 

@@ -8,6 +8,7 @@ use App\Livewire\Forms\EntradasSaidasForm;
 use App\Models\EntradasSaidasModel;
 use App\Services\Tenant\EntradaSaidaService;
 use App\Services\Tenant\FormaPagamentoService;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -103,13 +104,9 @@ new class extends Component {
         return [
             'entradaSaidaPendente' => $this->entradaSaida->where('data_pagamento', null),
             'entradaSaidaPago'     => $this->entradaSaida->where('data_pagamento', '!=', null),
-            'saldoBancario'        => $this->entradaSaida
-                ->map(function ($item) {
-                    return $item->banco;
-                })
-                ->filter()
-                ->unique('id')
-                ->sum('saldo'),
+            'saldoBancario' => \App\Models\BancosModel::when($this->idBanco, function (Builder $query) {
+                return $query->where('id', $this->idBanco);
+            })->sum('saldo_inicial'),
             'bancos'               => $bancos,
             'count'                => $count,
         ];

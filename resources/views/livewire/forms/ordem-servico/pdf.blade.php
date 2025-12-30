@@ -17,6 +17,7 @@ new class extends Component {
     public OrdemServicoForm $form;
 
     public $ordemServico;
+    public $mostrarValores = true;
     public $user;
 
     public function mount($ordemServico)
@@ -172,8 +173,8 @@ new class extends Component {
                     <tr>
                         <td>{{$material->nome}}</td>
                         <td>{{$quantidade = $material->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $material->pivot->valorUnitario}}</td>
-                        <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
+                        <td>R$ {{$this->mostrarValores ?  $valorUnitario = $material->pivot->valorUnitario : "-"}}</td>
+                        <td>R$ {{$this->mostrarValores ?  Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario) : "-"}}</td>
                     </tr>
 
                 @endforeach
@@ -181,7 +182,7 @@ new class extends Component {
                 <tfoot>
                 <tr>
                     <td colspan="3" class="total">Total</td>
-                    <td><strong>R$ {{Helper::formatarValorMonetarioPtBr($valorTotal)}}</strong></td>
+                    <td><strong>R$ {{$this->mostrarValores ? Helper::formatarValorMonetarioPtBr($valorTotal) : "-"}}</strong></td>
                 </tr>
                 </tfoot>
             </table>
@@ -212,8 +213,8 @@ new class extends Component {
                     <tr>
                         <td>{{$servico->nome}}</td>
                         <td>{{$quantidade = $servico->pivot->quantidade}}</td>
-                        <td>R$ {{$valorUnitario = $servico->pivot->valorUnitario}}</td>
-                        <td>R$ {{Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario)}}</td>
+                        <td>R$ {{$this->mostrarValores ? $valorUnitario = $servico->pivot->valorUnitario : "-"}}</td>
+                        <td>R$ {{$this->mostrarValores ? Helper::formatarValorMonetarioPtBr( $valorTotal += $quantidade * $valorUnitario) : "-"}}</td>
                     </tr>
                 @endforeach
 
@@ -221,7 +222,7 @@ new class extends Component {
                 <tfoot>
                 <tr>
                     <td colspan="3" class="total">Total</td>
-                    <td><strong>R$ {{Helper::formatarValorMonetarioPtBr($valorTotal)}}</strong></td>
+                    <td><strong>R$ {{$this->mostrarValores ? Helper::formatarValorMonetarioPtBr($valorTotal) : "-"}}</strong></td>
                 </tr>
                 </tfoot>
             </table>

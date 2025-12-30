@@ -15,5 +15,5 @@ class extends Component {
 
 
 <div>
-    <livewire:forms.ordem-servico.pdf :ordem-servico="$ordemServico" />
+    <livewire:forms.ordem-servico.pdf :ordem-servico="$ordemServico" :mostrar-valores="$mostrarValores" />
 </div>
