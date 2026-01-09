@@ -104,7 +104,7 @@ new class extends Component {
 
         $entradaSaidaPago = $collection
             ->whereNotNull('data_pagamento')
-            ->sortByDesc('data_pagamento')
+            ->sortBy('data_pagamento')
             ->values();
         $count = !empty($this->search) ? $this->entradaSaida->total() : count($this->getAllIds());
 
