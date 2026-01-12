@@ -61,6 +61,7 @@ class OrdemServicoForm extends Form
     public ?int  $bancoId;
     public ?int  $formaPagamentoId;
     public mixed $dataVencimento     = [];
+    public mixed $parcelas           = [];
 
 
     private function attributes(): array
@@ -121,7 +122,7 @@ class OrdemServicoForm extends Form
     public function editarMaterial($material)
     {
 
-        $data         = OrdemServicoRequest::editarMaterial($material, $this->attributes())->validated();
+        $data = OrdemServicoRequest::editarMaterial($material, $this->attributes())->validated();
 
         $ordemServico = (new OrdemServicoService())->editarMaterial($data);
 

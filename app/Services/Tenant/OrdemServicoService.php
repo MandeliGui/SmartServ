@@ -264,9 +264,9 @@ class OrdemServicoService
                 EntradasSaidasModel::query()
                                    ->create([
                                        'tipo'               => TipoEntradaSaida::ENTRADA->value,
-                                       'data_vencimento'    => $data['dataVencimento'][$i],
+                                       'data_vencimento'    => $data['parcelas'][$i]['dataVencimento'],
                                        'data_pagamento'     => null,
-                                       'valor_original'     => $data['valor'] / $data['quantidadeParcela'],
+                                       'valor_original'     => $data['parcelas'][$i]['valor'],
                                        'valor_pago'         => null,
                                        'quantidade_meses'   => $data['quantidadeParcela'],
                                        'descricao'          => $descricao,

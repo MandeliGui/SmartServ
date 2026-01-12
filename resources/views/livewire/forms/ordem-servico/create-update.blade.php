@@ -62,12 +62,13 @@ new class extends Component {
     public function updatedFormCondicoesPagamento($value)
     {
 
-        $this->form->dataVencimento = [];
+        $this->form->parcelas = [];
         if ($value === \App\Enums\CondicoesPagamento::A_VISTA->value) {
             $this->form->quantidadeParcela = 1;
             for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
-                if (!isset($this->form->dataVencimento[$i])) {
-                    $this->form->dataVencimento[$i] = '';
+                if (!isset($this->form->parcelas[$i]['dataVencimento'])) {
+                    $this->form->parcelas[$i]['dataVencimento'] = '';
+                    $this->form->parcelas[$i]['valor']          = $this->form->valorTotal;
                 }
             }
         } else {
@@ -79,15 +80,34 @@ new class extends Component {
 
     public function updatedFormQuantidadeParcela()
     {
-        $this->form->dataVencimento = [];
-        if ($this->form->quantidadeParcela > 0) {
-            for ($i = 0; $i < $this->form->quantidadeParcela; $i++) {
-                if (!isset($this->form->dataVencimento[$i])) {
-                    $this->form->dataVencimento[$i] = '';
+        $this->form->parcelas = [];
+
+        $q = (int)$this->form->quantidadeParcela;
+        if ($q > 0) {
+            // total em reais (float)
+            $totalReais = (float)$this->form->valorTotal;
+
+            // converte para centavos inteiros
+            $totalCentavos = (int)round($totalReais * 100);
+
+            // divisão inteira e resto
+            $baseCentavos = intdiv($totalCentavos, $q);
+            $resto        = $totalCentavos % $q;
+
+            for ($i = 0; $i < $q; $i++) {
+                if (!isset($this->form->parcelas[$i]['dataVencimento'])) {
+                    $this->form->parcelas[$i]['dataVencimento'] = '';
                 }
+
+                // distribui 1 centavo extra para as primeiras $resto parcelas
+                $valorCentavos = $baseCentavos + ($i < $resto ? 1 : 0);
+                $valorReais    = $valorCentavos / 100;
+
+                // formata no padrão pt-BR usando seu helper
+                $this->form->parcelas[$i]['valor'] = Helper::formatarValorMonetarioPtBr($valorReais);
             }
         } else {
-            $this->form->dataVencimento = [];
+            $this->form->parcelas = [];
         }
 
 
@@ -97,12 +117,54 @@ new class extends Component {
     {
         for ($i = $value + 1; $i < $this->form->quantidadeParcela; $i++) {
 
-
-            $this->form->dataVencimento[$i] = \Carbon\Carbon::parse($this->form->dataVencimento[$value])->addMonthNoOverflow($i)
-                                                            ->format('Y-m-d');
+            $this->form->parcelas[$i]['dataVencimento'] = \Carbon\Carbon::parse($this->form->parcelas[$value]['dataVencimento'])->addMonthNoOverflow($i)
+                                                                        ->format('Y-m-d');
 
         }
     }
+
+
+    public function ajustarValorOutrasParcelas($value)
+    {
+        $valorAtualParcela        = Helper::formatarDecimalDb($this->form->parcelas[$value]['valor']);
+        $numeroParcela            = $value;
+        $valorOrdemServicoAteAqui = 0;
+        for ($i = 0; $i < $numeroParcela; $i++) {
+
+            $valorOrdemServicoAteAqui += Helper::formatarDecimalDb($this->form->parcelas[$i]['valor']);
+
+        }
+
+
+        $qtdParcelas = $this->form->quantidadeParcela;
+
+        $totalReais = (float)$this->form->valorTotal;
+
+        // converte para centavos inteiros
+        $totalCentavos = (int)round(($totalReais - $valorOrdemServicoAteAqui) * 100);
+
+        // cálculo do novo valor total das outras parcelas
+        $novoTotalOutrasParcelasCentavos = $totalCentavos - (int)round($valorAtualParcela * 100);
+
+        // nova quantidade de parcelas restantes
+        $qtdParcelasRestantes = $qtdParcelas - ($value + 1);
+
+        if ($qtdParcelasRestantes > 0) {
+            // nova divisão inteira e resto para as outras parcelas
+            $baseCentavos = intdiv($novoTotalOutrasParcelasCentavos, $qtdParcelasRestantes);
+            $resto        = $novoTotalOutrasParcelasCentavos % $qtdParcelasRestantes;
+
+            for ($i = $value + 1; $i < $qtdParcelas; $i++) {
+                // distribui 1 centavo extra para as primeiras parcelas restantes
+                $valorCentavos = $baseCentavos + ($i - ($value + 1) < $resto ? 1 : 0);
+                $valorReais    = $valorCentavos / 100;
+
+                // formata no padrão pt-BR usando seu helper
+                $this->form->parcelas[$i]['valor'] = Helper::formatarValorMonetarioPtBr($valorReais);
+            }
+        }
+    }
+
 
     #[On(AdicionarMateriaisForm::EVENT_PERSISTED)]
     public function atualizarMateriais($materiais, $persistence)
@@ -166,8 +228,23 @@ new class extends Component {
             Flux::toast('Ordem de serviço já está finalizada!', variant: 'warning');
             return;
         }
+//        dd($this->form->all());
+        $valor = array_reduce($this->form->parcelas, function ($carry, $item) {
+            return $carry + Helper::formatarDecimalDb($item['valor']);
+        }, 0);
+        if ($valor !== Helper::formatarDecimalDb($this->form->valorTotal)) {
+            Flux::toast('O valor total das parcelas não confere com o valor total da ordem de serviço!', variant: 'danger');
+            return;
+        }
+
+
+
+        try {
 
         $ordemServico = $this->form->finalizarOrdemServico($this->form->all());
+        }catch (Throwable $e){
+            dd($e);
+        }
         Flux::toast('Ordem de serviço finalizada com sucesso!', variant: 'success');
         $this->redirect(route('ordem-servico'), navigate: true);
 
@@ -718,81 +795,101 @@ new class extends Component {
 
 
                     <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" mask="99"/>
+                    <div>
 
-                    <div class="flex items-end">
-                        <div class="flex-1">
-                            <flux:select label="Banco *"
-                                         wire:model="form.bancoId"
-                                         placeholder="Selecione"
-                                         variant="listbox"
-                                         name="bancoId"
-                                         :searchable="$bancos->count() > 10"
-                            >
+                        <div class="flex items-end">
+                            <div class="flex-1">
+                                <flux:select label="Banco *"
+                                             wire:model="form.bancoId"
+                                             placeholder="Selecione"
+                                             variant="listbox"
 
-                                @foreach($bancos as $banco)
+                                             :searchable="$bancos->count() > 10"
+                                >
 
-                                    <flux:select.option value="{{$banco->id}}" selected="{{$this->bancoId == $banco->id}}">
-                                        {{$banco->nome}}
-                                    </flux:select.option>
-                                @endforeach
+                                    @foreach($bancos as $banco)
 
-                            </flux:select>
+                                        <flux:select.option value="{{$banco->id}}" selected="{{$this->bancoId == $banco->id}}">
+                                            {{$banco->nome}}
+                                        </flux:select.option>
+                                    @endforeach
+
+                                </flux:select>
+                            </div>
+
+                            <flux:button
+                                icon="plus"
+                                variant="primary"
+                                wire:click="abrirModalBanco"
+                                :disabled="$this->finalizadaOuCancelada()"
+                                aria-label="Adicionar cliente"
+                            />
+
                         </div>
-                        <flux:button
-                            icon="plus"
-                            variant="primary"
-                            wire:click="abrirModalBanco"
-                            :disabled="$this->finalizadaOuCancelada()"
-                            aria-label="Adicionar cliente"
-                        />
+                        <flux:error name="bancoId"/>
                     </div>
-                    <div class="flex items-end">
-                        <div class="flex-1">
-                            <flux:select label="Forma de pagamento *"
-                                         wire:model="form.formaPagamentoId"
-                                         placeholder="Selecione"
-                                         variant="listbox"
-                                         name="formaPagamentoId"
-                                         :searchable="$formasPagamento->count() > 10"
-                            >
+                    <div>
 
-                                @foreach($formasPagamento as $forma)
+                        <div class="flex items-end">
+                            <div class="flex-1">
+                                <flux:select label="Forma de pagamento *"
+                                             wire:model="form.formaPagamentoId"
+                                             placeholder="Selecione"
+                                             variant="listbox"
 
-                                    <flux:select.option value="{{$forma->id}}" selected="{{ $formaPagamentoId == $forma->id }}">
-                                        {{$forma->nome}}
-                                    </flux:select.option>
-                                @endforeach
+                                             :searchable="$formasPagamento->count() > 10"
+                                >
 
-                            </flux:select>
+                                    @foreach($formasPagamento as $forma)
+
+                                        <flux:select.option value="{{$forma->id}}" selected="{{ $formaPagamentoId == $forma->id }}">
+                                            {{$forma->nome}}
+                                        </flux:select.option>
+                                    @endforeach
+
+                                </flux:select>
+                            </div>
+                            <flux:button
+                                icon="plus"
+                                variant="primary"
+                                wire:click="abrirModalFormapagamento"
+                                :disabled="$this->finalizadaOuCancelada()"
+                                aria-label="Adicionar cliente"
+                            />
                         </div>
-                        <flux:button
-                            icon="plus"
-                            variant="primary"
-                            wire:click="abrirModalFormapagamento"
-                            :disabled="$this->finalizadaOuCancelada()"
-                            aria-label="Adicionar cliente"
-                        />
+                        <flux:error name="formaPagamentoId"/>
                     </div>
                 </div>
 
                 @for($i=0; $i < $this->form->quantidadeParcela; $i++)
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
                         <flux:date-picker
-                            wire:model="form.dataVencimento.{{$i}}"
+                            wire:model="form.parcelas.{{$i}}.dataVencimento"
                             :disabled="$this->finalizadaOuCancelada()">
 
                             <x-slot name="trigger">
                                 <flux:date-picker.input
                                     :label='$this->form->quantidadeParcela == 1 ? "Data de vencimento" : "Data de vencimento parcela " . $i+1'
 
-                                    name="dataVencimento.{{$i}}"
+                                    name="parcelas.{{$i}}.dataVencimento"
                                     wire:blur="{{ $i == 0 ? 'adicionarValorParcelasSeguintes(' . $i . ')' : '' }}"
 
                                 />
                             </x-slot>
 
                         </flux:date-picker>
+                        @if($this->form->quantidadeParcela > 1)
+                            <flux:input
+                                :label='"Valor da parcela " . $i+1'
+                                wire:model="form.parcelas.{{$i}}.valor"
+                                name="parcelas.{{$i}}.valor"
+                                is-decimal="true"
+                                wire:blur="ajustarValorOutrasParcelas({{ $i }})"
+
+
+                            />
+                        @endif
                     </div>
                 @endfor
 
