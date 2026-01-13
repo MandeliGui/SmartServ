@@ -3,6 +3,7 @@
 namespace App\Services\Tenant;
 
 use App\Enums\StatusEntradaSaida;
+use App\Enums\Tenant\PeriodicidadeEnum;
 use App\Enums\TipoEntradaSaida;
 use App\Enums\TipoOrdemServico;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
@@ -30,6 +31,7 @@ class EntradaSaidaService
 
     public function create(array $data)
     {
+//        dd($data);
 
         $quantidadeMeses = $data['quantidade_meses'] ?? 1;
         $dataVencimento  = Carbon::parse($data['data_vencimento']);
@@ -37,22 +39,25 @@ class EntradaSaidaService
         for ($i = 1; $i <= $quantidadeMeses; $i++) {
 
             $entradaSaida = EntradasSaidasModel::query()->create([
-                'tipo'             => $data['tipo'],
-                'data_vencimento'  => $dataVencimento->format('Y-m-d'),
-                'valor_original'   => $data['valor_original'],
-                'quantidade_meses' => $data['quantidade_meses'],
-                'descricao'        => $data['descricao'],
-                'categoria_id'     => $data['categoria_id'],
-                'banco_id'         => $data['banco_id'],
-                'removido'         => $data['removido'],
-                'user_id'          => auth()->user()->id,
+                'tipo'               => $data['tipo'],
+                'data_vencimento'    => $dataVencimento->format('Y-m-d'),
+                'valor_original'     => $data['valor_original'],
+                'quantidade_meses'   => $data['quantidade_meses'],
+                'data_pagamento'     => $data['data_pagamento'],
+                'valor_pago'         => $data['valor_pago'],
+                'forma_pagamento_id' => $data['forma_pagamento_id'],
+                'descricao'          => $data['descricao'],
+                'categoria_id'       => $data['categoria_id'],
+                'banco_id'           => $data['banco_id'],
+                'removido'           => $data['removido'],
+                'user_id'            => auth()->user()->id,
             ]);
 
-            $dataVencimento = $dataVencimento->addMonthNoOverflow();
+            $dataVencimento = $dataVencimento->addMonthsNoOverflow(PeriodicidadeEnum::obterNumero($data['periodicidade'] ?? PeriodicidadeEnum::UNICA->value));
         }
 
 
-        return $entradaSaida;
+//        return $entradaSaida;
     }
 
 

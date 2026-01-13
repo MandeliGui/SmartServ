@@ -32,11 +32,13 @@ class EntradasSaidasForm extends Form
     public mixed $data_pagamento;
     public mixed $valor_original;
     public mixed $valor_pago;
-    public mixed $quantidade_meses;
     public mixed $descricao;
     public mixed $categoria_id;
     public mixed $forma_pagamento_id;
     public mixed $banco_id;
+    public mixed $quantidade_meses = 1;
+    public mixed $situacao         = 0;
+    public mixed $periodicidade;
 
 
     private function attributes(): array
