@@ -70,6 +70,7 @@ new class extends Component {
 
     public function alterarCategoriaEntradaSaida()
     {
+        $this->form->categoria_id = null;
         $this->categoriaEntradaSaida = \App\Models\CategoriaEntradaSaidaModel::query()->where('tipo', $this->form->tipo)
             ->where('removido', false)
             ->get();
