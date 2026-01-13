@@ -86,6 +86,11 @@ new class extends Component {
         if (!$this->isRecorrente) {
             $this->form->quantidade_meses = 1;
             $this->form->periodicidade    = null;
+        } else {
+            $this->form->situacao           = 0;
+            $this->form->data_pagamento     = null;
+            $this->form->valor_pago         = null;
+            $this->form->forma_pagamento_id = null;
         }
     }
 
