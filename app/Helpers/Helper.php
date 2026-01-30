@@ -240,6 +240,7 @@ class Helper
 
     public static function obterDadosEmpresaPorCnpj(?string $cnpj): ?stdClass
     {
+        try {
 
         if ($cnpj === null || $cnpj === '' || $cnpj === '0') {
 
@@ -256,6 +257,9 @@ class Helper
         $url = "https://open.cnpja.com/office/{$cnpj}";
 
         return json_decode(file_get_contents($url));
+        }catch (\Exception $e){
+            return null;
+        }
     }
 
     public static function isAssociativeArray(array $array): bool
