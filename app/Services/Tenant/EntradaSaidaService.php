@@ -49,6 +49,7 @@ class EntradaSaidaService
                 'descricao'          => $data['descricao'],
                 'categoria_id'       => $data['categoria_id'],
                 'banco_id'           => $data['banco_id'],
+                'id_fornecedor'      => $data['id_fornecedor'],
                 'removido'           => $data['removido'],
                 'user_id'            => auth()->user()->id,
             ]);

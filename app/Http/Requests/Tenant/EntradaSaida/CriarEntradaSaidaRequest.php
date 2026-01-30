@@ -30,6 +30,7 @@ class CriarEntradaSaidaRequest extends BaseValidationRequest
             'descricao'          => data_get($this->data, 'descricao'),
             'categoria_id'       => data_get($this->data, 'categoria_id'),
             'banco_id'           => data_get($this->data, 'banco_id'),
+            'id_fornecedor'      => data_get($this->data, 'id_fornecedor'),
             'removido'           => data_get($this->data, 'removido', false),
         ];
     }
@@ -48,6 +49,7 @@ class CriarEntradaSaidaRequest extends BaseValidationRequest
             'descricao'          => ['nullable', 'string', 'max:255'],
             'categoria_id'       => ['required', 'integer', 'exists:tb_categoria_entrada_saida,id'],
             'banco_id'           => ['required', 'integer', 'exists:tb_bancos,id'],
+            'id_fornecedor'      => ['nullable', 'integer', 'exists:tb_fornecedores,id'],
             'removido'           => ['boolean'],
         ];
     }

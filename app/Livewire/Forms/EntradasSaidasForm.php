@@ -39,6 +39,7 @@ class EntradasSaidasForm extends Form
     public mixed $quantidade_meses = 1;
     public mixed $situacao         = 0;
     public mixed $periodicidade;
+    public mixed $id_fornecedor;
 
 
     private function attributes(): array
@@ -54,13 +55,13 @@ class EntradasSaidasForm extends Form
             'descricao'          => 'Descrição',
             'categoria_id'       => 'Categoria',
             'forma_pagamento_id' => 'Forma de Pagamento',
+            'id_fornecedor'      => 'Fornecedor',
             'banco_id'           => 'Banco',
         ];
     }
 
     public function create()
     {
-
         $data = EntradaSaidaRequest::create($this->all(), $this->attributes())->validated();
 
 
@@ -120,23 +121,6 @@ class EntradasSaidasForm extends Form
         $entradaSaida = (new EntradaSaidaService())->findOne($id);
 
 
-//        "id" => 2
-//    "tipo" => 1
-//    "data_vencimento" => "2025-07-11"
-//    "data_pagamento" => null
-//    "valor_original" => "150.00"
-//    "status" => 1
-//    "valor_pago" => null
-//    "quantidade_meses" => 1
-//    "descricao" => null
-//    "categoria_id" => 1
-//    "forma_pagamento_id" => null
-//    "ordem_servico_id" => null
-//    "banco_id" => 1
-//    "removido" => 0
-//    "user_id" => 1
-//    "created_at" => "2025-07-11 20:43:01"
-//    "updated_at" => "2025-07-11 20:43:01"
         if ($entradaSaida) {
             $this->id                 = $entradaSaida->id;
             $this->tipo               = $entradaSaida->tipo;
@@ -151,6 +135,7 @@ class EntradasSaidasForm extends Form
             $this->forma_pagamento_id = $entradaSaida->forma_pagamento_id;
             $this->ordem_servico_id   = $entradaSaida->ordem_servico_id;
             $this->banco_id           = $entradaSaida->banco_id;
+            $this->id_fornecedor      = $entradaSaida->id_fornecedor;
         } else {
             $this->reset();
         }

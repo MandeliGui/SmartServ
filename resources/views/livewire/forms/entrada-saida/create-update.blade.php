@@ -17,6 +17,7 @@ new class extends Component {
 
     public mixed $categoriaEntradaSaida = [];
     public mixed $bancos                = [];
+    public mixed $fornecedores          = [];
     public mixed $formasPagamento       = [];
     public bool  $isRecorrente          = false;
 
@@ -105,8 +106,9 @@ new class extends Component {
 
     public function mount()
     {
-        $this->bancos          = \App\Models\BancosModel::query()->get();
-        $this->formasPagamento = \App\Models\FormaPagamentoModel::query()->get();
+        $this->bancos          = \App\Models\BancosModel::query()->where('removido', false)->get();
+        $this->formasPagamento = \App\Models\FormaPagamentoModel::query()->where('removido', false)->get();
+        $this->fornecedores    = \App\Models\FornecedoresModel::query()->where('removido', false)->get();
 
     }
 
@@ -118,7 +120,8 @@ new class extends Component {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
 
-            <flux:select variant="listbox" placeholder="Selecione o tipo" label="Tipo*" wire:model="form.tipo"
+
+            <flux:select variant="listbox" placeholder="Selecione o tipo" label="Tipo*" wire:model.live="form.tipo"
                          name="tipo" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"
                          wire:change="alterarCategoriaEntradaSaida">
                 <flux:select.option value="{{\App\Enums\TipoEntradaSaida::ENTRADA->value}}">Entrada</flux:select.option>
@@ -139,6 +142,21 @@ new class extends Component {
                 @endif
 
             </flux:select>
+            @if(!empty($form->tipo) && $form->tipo == \App\Enums\TipoEntradaSaida::SAIDA->value)
+                <div class="col-span-2">
+
+                    <flux:select variant="listbox" searchable placeholder="Selecione o fornecedor..." label="Fornecedor"
+                                 wire:model="form.id_fornecedor"
+                                 name="id_fornecedor">
+
+
+                        @foreach($fornecedores as $fornecedor)
+                            <flux:select.option value="{{ $fornecedor->id }}">{{ $fornecedor->nome_fantasia ?? $fornecedor->razao_social }}</flux:select.option>
+                        @endforeach
+
+                    </flux:select>
+                </div>
+            @endif
 
 
             <flux:date-picker wire:model="form.data_vencimento">
@@ -166,6 +184,7 @@ new class extends Component {
                 </flux:field>
             </div>
         </div>
+
 
         @if($this->isRecorrente)
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
