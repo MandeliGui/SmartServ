@@ -25,7 +25,6 @@
     </div>
 
 
-    <flux:input as="button" variant="filled" placeholder="Search..." icon="magnifying-glass"/>
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" wire:navigate>Home</flux:navlist.item>
         <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes
@@ -37,6 +36,7 @@
         <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}" wire:navigatey>Materiais</flux:navlist.item>
         <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}" wire:navigatey>Atendentes</flux:navlist.item>
         <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigatey>Ordem de Serviço</flux:navlist.item>
+        <flux:navlist.item icon="document" href="{{ route('contratos') }}" wire:navigatey>Contratos</flux:navlist.item>
         {{--        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuários</flux:navlist.item>--}}
         <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigatey>Cat. Entrada e Saída</flux:navlist.item>
         <flux:navlist.item icon="arrows-up-down" href="{{ route('entradas-saidas') }}" wire:navigatey>Entrada e Saída</flux:navlist.item>

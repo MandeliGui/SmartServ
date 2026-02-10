@@ -2,13 +2,13 @@
 
 use App\Enums\Persistence;
 
-use App\Livewire\Forms\OrdemServicoForm;
+use App\Livewire\Forms\ContratoForm;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 
 new class extends Component {
 
-    public OrdemServicoForm $form;
+    public ContratoForm $form;
 
     public Persistence $persistence;
 
@@ -17,20 +17,18 @@ new class extends Component {
     {
         $this->form->remove();
 
-        $this->dispatch(OrdemServicoForm::EVENT_PERSISTED, persistence: Persistence::REMOVE->value);
+        $this->dispatch(ContratoForm::EVENT_PERSISTED, persistence: Persistence::REMOVE->value);
 
-        Flux::modal(OrdemServicoForm::MODAL_NAME_REMOVE)->close();
-        Flux::toast('Ordem de Serviço removido com sucesso!', variant: 'success');
+        Flux::modal(ContratoForm::MODAL_NAME_REMOVE)->close();
+        Flux::toast('Contrato removido com sucesso!', variant: 'success');
     }
 
-    #[On(OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE)]
+    #[On(ContratoForm::EVENT_NAME_SHOW_MODAL_REMOVE)]
     public function openModalRemove(string $modalName, int $id): void
     {
 
 
-        $this->form->reset();
-
-        $this->form->setOrdemServico($id);
+        $this->form->setContrato($id);
 
         $this->persistence = Persistence::REMOVE;
 
@@ -47,14 +45,10 @@ new class extends Component {
 
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">Remover ordem de servico?</flux:heading>
+                <flux:heading size="lg">Remover contrato?</flux:heading>
                 <flux:text class="mt-2">
-                    <p>Tem certeza que deseja remover a O.S:</p>
-                    <strong>Codigo: {{$this->form->codigo ?? null}} </strong>
-                    <br>
-                    <strong>Cliente: {{$this->form->nomeCliente ?? null}}</strong>
+                    <p>Tem certeza que deseja remover o contrato?</p>
 
-                    ?
 
                 </flux:text>
             </div>

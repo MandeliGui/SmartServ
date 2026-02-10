@@ -9,9 +9,11 @@ class AdicionarMateriaisForm extends Form
 {
     public const MODAL_NAME_SELECIONAR_MATERIAL            = 'modal-ordem-servico-selecionar-material';
     public const PATH_COMPONENT_FORM_SELECIONAR_MATERIAL   = 'forms.ordem-servico.selecionar-material';
+    public const PATH_COMPONENT_FORM_SELECIONAR_MATERIAL_CONTRATO   = 'forms.contratos.selecionar-material';
     public const EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL = 'show-modal-selecionar-material';
 
     public const EVENT_PERSISTED = 'adicionar-materiais-persisted';
+    public const EVENT_PERSISTED_CONTRATO = 'adicionar-materiais-persisted';
 
     public ?int    $id_material   = null;
     public ?string $codigo        = null;

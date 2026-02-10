@@ -50,7 +50,9 @@ $simple = ! $paginator instanceof \Illuminate\Contracts\Pagination\LengthAwarePa
     <div {{ $attributes->class('pt-3 border-t border-zinc-100 dark:border-zinc-700 flex justify-between items-center gap-3') }} data-flux-pagination>
         @if ($paginator->total() > 0)
             <div class="text-zinc-500 dark:text-zinc-400 text-xs font-medium whitespace-nowrap">
-                {!! __('Showing') !!} {{ $paginator->firstItem() }} {!! __('to') !!} {{ $paginator->lastItem() }} {!! __('of') !!} {{ $paginator->total() }} {!! __('results') !!}
+                {!! __('Resultados') !!} {{ $paginator->firstItem() }}
+                {!! __('–') !!} {{ $paginator->lastItem() }}
+                {!! __('de') !!} {{ $paginator->total() }}
             </div>
         @else
             <div></div>

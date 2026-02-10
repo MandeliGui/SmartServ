@@ -8,12 +8,12 @@ use Livewire\Volt\Volt;
 Route::redirect('/', 'login');
 
 Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+     ->middleware(['auth', 'verified'])
+     ->name('dashboard');
 
 Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+     ->middleware(['auth'])
+     ->name('profile');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('clientes')->group(function (): void {
@@ -104,6 +104,17 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Volt::route('/editar/{id}', 'pages.tenant.ordem-servico.create')
             ->name('ordem-servico.editar');
+    });
+
+    Route::prefix('contratos')->group(function (): void {
+        Volt::route('/', 'pages.tenant.contratos.search')
+            ->name('contratos');
+
+        Volt::route('/novo', 'pages.tenant.contratos.create')
+            ->name('contratos.novo');
+
+        Volt::route('/editar/{id}', 'pages.tenant.contratos.create')
+            ->name('contratos.editar');
     });
 
     Route::prefix('categoria-entrada-saida')->group(function (): void {
