@@ -19,10 +19,10 @@ class CategoriaEntradaSaidaService
         );
 
         return CategoriaEntradaSaidaModel::query()
-            ->when(!is_null($request->orderBy), function ($query) use ($request): void {
-                $query->orderBy($request->orderBy, $request->dir);
-            })
-            ->paginate(perPage: $request->limit, page: $request->offset);
+                                         ->when(!is_null($request->orderBy), function ($query) use ($request): void {
+                                             $query->orderBy($request->orderBy, $request->dir);
+                                         })
+                                         ->paginate(perPage: $request->limit, page: $request->offset);
     }
 
     public function findOne(mixed $id)
@@ -32,11 +32,17 @@ class CategoriaEntradaSaidaService
 
     public function create(array $data)
     {
-        return CategoriaEntradaSaidaModel::query()->create([
+        $nextId = CategoriaEntradaSaidaModel::max('id') + 1;
+        if ($nextId == 0) {
+            $nextId += 1;
+        }
+
+        return CategoriaEntradaSaidaModel::create([
+            'id'        => $nextId,
             'nome'      => $data['nome'],
             'tipo'      => $data['tipo'],
             'descricao' => $data['descricao'],
-            'user_id'   => auth()->user()->id,
+            'user_id'   => auth()->id(),
         ]);
     }
 

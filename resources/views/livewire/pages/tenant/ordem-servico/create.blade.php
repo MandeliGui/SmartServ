@@ -4,7 +4,8 @@ use App\Livewire\Forms\OrdemServicoForm;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.app')] class extends Component {
+new #[Layout('layouts.app')]
+class extends Component {
 
     public OrdemServicoForm $form;
 
@@ -27,6 +28,14 @@ new #[Layout('layouts.app')] class extends Component {
 
     <flux:modal name="{{\App\Livewire\Forms\AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO}}" class="min-w-[88rem]">
         <livewire:forms.ordem-servico.selecionar-servico/>
+    </flux:modal>
+
+    <flux:modal name="{{\App\Livewire\Forms\BancosForm::MODAL_NAME_CREATE}}" class="min-w-[22rem]">
+        <livewire:forms.bancos.create-update/>
+    </flux:modal>
+
+    <flux:modal name="{{\App\Livewire\Forms\FormaPagamentoForm::MODAL_NAME_CREATE}}" class="min-w-[22rem]">
+        <livewire:forms.forma-pagamento.create-update/>
     </flux:modal>
 
 </div>

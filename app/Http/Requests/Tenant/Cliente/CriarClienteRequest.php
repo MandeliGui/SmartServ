@@ -7,7 +7,6 @@ namespace App\Http\Requests\Tenant\Cliente;
 use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 use Validator;
-use App\Rules\UniqueRule;
 
 class CriarClienteRequest extends BaseValidationRequest
 {
@@ -50,59 +49,32 @@ class CriarClienteRequest extends BaseValidationRequest
         return [
             'nomeRazaoSocial'      => ['required', 'string', 'max:200'],
             'nomeFantasia'         => ['nullable', 'string', 'max:200'],
-            'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email')],
-            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj')],
+            'telefone'             => ['nullable', 'string', 'max:20'],
+            'email'                => ['nullable', 'email', 'max:200'],
+            'cpfCnpj'              => ['nullable', 'string', 'max:14', 'min:11'],
             'dataNascimento'       => ['nullable', 'date'],
             'idGrupo'              => ['nullable', 'integer', 'exists:tb_grupo_cliente,id_grupo'],
-            'endereco.cep'         => ['required', 'string', 'max:8'],
-            'endereco.rua'         => ['required', 'string', 'max:200'],
-            'endereco.numero'      => ['required', 'string', 'max:10'],
-            'endereco.bairro'      => ['required', 'string', 'max:100'],
+            'endereco.cep'         => ['nullable', 'string', 'max:8'],
+            'endereco.rua'         => ['nullable', 'string', 'max:200'],
+            'endereco.numero'      => ['nullable', 'string', 'max:10'],
+            'endereco.bairro'      => ['nullable', 'string', 'max:100'],
             'endereco.complemento' => ['nullable', 'string'],
-            'endereco.cidade'      => ['required', 'string'],
-            'endereco.uf'          => ['required', 'string'],
+            'endereco.cidade'      => ['nullable', 'string'],
+            'endereco.uf'          => ['nullable', 'string'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'nomeRazaoSocial.required'    => 'O campo :attribute social é obrigatório.',
-            'nomeRazaoSocial.string'      => 'O campo :attribute social deve ser uma string.',
-            'nomeRazaoSocial.max'         => 'O campo :attribute social deve ter no máximo 200 caracteres.',
-            'nomeFantasia.string'         => 'O campo :attribute deve ser uma string.',
-            'nomeFantasia.max'            => 'O campo :attribute deve ter no máximo 200 caracteres.',
-            'telefone.required'           => 'O campo :attribute é obrigatório.',
-            'telefone.string'             => 'O campo :attribute deve ser uma string.',
-            'telefone.max'                => 'O campo :attribute deve ter no máximo 20 caracteres.',
-            'email.email'                 => 'O campo :attribute deve ser um email válido.',
-            'email.max'                   => 'O campo :attribute deve ter no máximo 200 caracteres.',
-            'email.unique'                => 'O :attribute informado já está cadastrado.',
-            'cpfCnpj.string'              => 'O campo :attribute deve ser uma string.',
-            'cpfCnpj.max'                 => 'O campo :attribute deve ter no máximo 14 caracteres.',
-            'cpfCnpj.min'                 => 'O campo :attribute deve ter no mínimo 11 caracteres.',
-            'cpfCnpj.unique'              => 'O :attribute informado já está cadastrado.',
-            'dataNascimento.date'         => 'O campo :attribute deve ser uma data válida.',
-            'idGrupo.integer'             => 'O campo :attribute deve ser um número inteiro.',
-            'idGrupo.exists'              => 'O :attribute informado não existe.',
-            'endereco.cep.required'       => 'O campo :attribute é obrigatório.',
-            'endereco.cep.string'         => 'O campo :attribute deve ser uma string.',
-            'endereco.cep.max'            => 'O campo :attribute deve ter no máximo 8 caracteres.',
-            'endereco.rua.required'       => 'O campo :attribute é obrigatório.',
-            'endereco.rua.string'         => 'O campo :attribute deve ser uma string.',
-            'endereco.rua.max'            => 'O campo :attribute deve ter no máximo 200 caracteres.',
-            'endereco.numero.required'    => 'O campo :attribute é obrigatório.',
-            'endereco.numero.string'      => 'O campo :attribute deve ser uma string.',
-            'endereco.numero.max'         => 'O campo :attribute deve ter no máximo 10 caracteres.',
-            'endereco.bairro.required'    => 'O campo :attribute é obrigatório.',
-            'endereco.bairro.string'      => 'O campo :attribute deve ser uma string.',
-            'endereco.bairro.max'         => 'O campo :attribute deve ter no máximo 100 caracteres.',
-            'endereco.complemento.string' => 'O campo :attribute deve ser uma string.',
-            'endereco.cidade.required'    => 'O campo :attribute é obrigatório.',
-            'endereco.cidade.string'      => 'O campo :attribute deve ser uma string.',
-            'endereco.uf.required'        => 'O campo :attribute é obrigatório.',
-            'endereco.uf.string'          => 'O campo :attribute deve ser uma string.',
+            'required' => 'O campo :attribute é obrigatório.',
+            'string'   => 'O campo :attribute deve ser uma string.',
+            'max'      => 'O campo :attribute deve ter no máximo :max caracteres.',
+            'min'      => 'O campo :attribute deve ter no mínimo :min caracteres.',
+            'email'    => 'O campo :attribute deve ser um email válido.',
+            'date'     => 'O campo :attribute deve ser uma data válida.',
+            'integer'  => 'O campo :attribute deve ser um número inteiro.',
+            'exists'   => 'O valor selecionado para o campo :attribute é inválido.',
         ];
     }
 

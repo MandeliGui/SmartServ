@@ -27,8 +27,8 @@
 
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" wire:navigate>Home</flux:navlist.item>
-        <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes
-        </flux:navlist.item>
+        <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes</flux:navlist.item>
+        <flux:navlist.item icon="store" badge="" href="{{ route('fornecedores') }}" wire:navigate>Fornecedores</flux:navlist.item>
         <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}" wire:navigatey>Serviços</flux:navlist.item>
         <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}" wire:navigatey>Técnicos</flux:navlist.item>
         <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}" wire:navigatey>Formas Pagamento</flux:navlist.item>

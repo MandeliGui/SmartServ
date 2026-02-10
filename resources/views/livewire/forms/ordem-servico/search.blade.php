@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\StatusEntradaSaida;
 use App\Helpers\Helper;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
 use App\Livewire\Forms\OrdemServicoForm;
@@ -17,7 +18,7 @@ new class extends Component {
     public int    $limit   = 10;
     public int    $offset  = 0;
     public string $orderBy = 'codigo';
-    public string $dir     = 'asc';
+    public string $dir     = 'desc';
     public string $search  = '';
 
 
@@ -94,12 +95,12 @@ new class extends Component {
             $this->selectAll = false;
         }
 
-        $count = !empty($this->search) ? $this->atendente->total() : count($this->getAllIds());
+//        $count = !empty($this->search) ? $this->atendente->total() : count($this->getAllIds());
 
 
         return [
             'ordensServico' => $this->ordensServico,
-            'count'         => $count,
+//            'count'         => $count,
         ];
     }
 
@@ -120,6 +121,13 @@ new class extends Component {
 }; ?>
 <div>
 
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+
+        <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Pesquisar (Número OS, Cliente, Telefone)"/>
+    </div>
+    <br>
+
+
     <flux:button class="mb-4" variant="primary" href="{{route('ordem-servico.novo')}}" wire:navigate>
         + Nova Ordem de Servico
     </flux:button>
@@ -133,11 +141,12 @@ new class extends Component {
                 <flux:table.columns>
 
                     <flux:table.column>Numero</flux:table.column>
-                    <flux:table.column>Situacao</flux:table.column>
+                    <flux:table.column>Situação</flux:table.column>
                     <flux:table.column>Cliente</flux:table.column>
                     <flux:table.column>Telefone</flux:table.column>
                     <flux:table.column>Valor Total</flux:table.column>
                     <flux:table.column>Ações</flux:table.column>
+                    {{--                    <flux:table.column>Situação Pagamento</flux:table.column>--}}
 
 
                 </flux:table.columns>
@@ -184,28 +193,127 @@ new class extends Component {
 
 
                             <flux:table.cell class=" ">
-                                <flux:button icon="document" variant="primary" color="rose" size="xs"
-                                             href="{{ route('ordem-servico.pdf', $ordemServico->id) }}" target="_blank">
-                                    Gerar PDF
-                                </flux:button>
-                                <flux:button variant="outline" icon="pencil" size="xs"
-                                             href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate>
-                                    Visualizar
-                                </flux:button>
-                                {{--                                <flux:modal.trigger name="delete-cliente" >--}}
-                                <flux:button icon="trash" variant="danger" size="xs" wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
-                                                                                    '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
-                                                                                    {
-                                                                                        modalName: '{{ \App\Livewire\Forms\OrdemServicoForm::MODAL_NAME_REMOVE }}',
-                                                                                        id: '{{ $ordemServico->id }}'
-                                                                                    }
-                                                                                )">
-                                    Excluir
-                                </flux:button>
+                                <div class="flex gap-1">
 
+                                    <flux:button.group>
+                                        <flux:button icon="document" variant="primary" color="rose" size="xs"
+                                                     href="{{ route('ordem-servico.pdf', $ordemServico->id) }}" target="_blank"
+                                                     @click.stop>
+                                            Gerar PDF
+                                        </flux:button>
+
+                                        <flux:dropdown>
+                                            <flux:button icon="chevron-down" variant="primary" color="rose" size="xs"
+                                                         @click.stop></flux:button>
+
+                                            <flux:menu>
+                                                <flux:menu.item icon="document"
+                                                                @click.stop
+                                                                href="{{ route('ordem_servico.pdf', $ordemServico->id, false) }}" target="_blank"
+                                                >Gerar sem valor
+                                                </flux:menu.item>
+                                            </flux:menu>
+                                        </flux:dropdown>
+
+
+                                    </flux:button.group>
+                                    <flux:button variant="outline" icon="pencil" size="xs"
+                                                 href="{{route('ordem-servico.editar', $ordemServico->id)}}" wire:navigate
+                                                 @click.stop>
+                                        Visualizar
+                                    </flux:button>
+                                    @if($ordemServico->entradasSaidas->count() > 0)
+                                        <flux:button :class="'opacity-50 cursor-not-allowed'" icon="trash" variant="danger" size="xs" tooltip="Não é possível excluir uma ordem de serviço que possui entradas/saídas vinculadas." @click.stop aria-disabled="true">
+
+                                            Excluir
+                                        </flux:button>
+                                    @else
+                                        <flux:button icon="trash" variant="danger" size="xs"
+                                                     wire:click.stop="$dispatchTo(
+                                         '{{ \App\Livewire\Forms\OrdemServicoForm::PATH_COMPONENT_FORM_REMOVE }}',
+                                         '{{ \App\Livewire\Forms\OrdemServicoForm::EVENT_NAME_SHOW_MODAL_REMOVE }}',
+                                         {
+                                             modalName: '{{ \App\Livewire\Forms\OrdemServicoForm::MODAL_NAME_REMOVE }}',
+                                             id: '{{ $ordemServico->id }}'
+                                         }
+                                     )">
+                                            Excluir
+                                        </flux:button>
+                                    @endif
+
+
+                                </div>
                                 {{--                                </flux:modal.trigger>--}}
                             </flux:table.cell>
+
+                            @if($ordemServico->status == \App\Enums\StatusOrdemServico::FINALIZADO->value)
+                                @php
+
+                                    $entradasSaidas = $ordemServico->entradasSaidas;
+                                    $ordemServicoPaga = $entradasSaidas->sum('valorPago')  >= $ordemServico->valorTotal;
+
+                                    $textColor = $ordemServicoPaga ? "text-green-400" : "text-amber-400";
+
+
+                                @endphp
+                                <flux:table.cell class="">
+                                    <flux:tooltip>
+                                        <flux:button size="sm" variant="ghost">
+                                            @if(!$ordemServicoPaga)
+                                                <flux:icon.clock/>
+                                            @else
+                                                <flux:icon.check-circle/>
+                                            @endif
+                                        </flux:button>
+
+                                        <flux:tooltip.content class="max-w-[40rem] space-y-2">
+                                            <div class="flex justify-between">
+                                                <flux:text class="{{$textColor}}">{{$ordemServicoPaga ? "Paga" : "Pendente"}}</flux:text>
+
+                                                @if($entradasSaidas->count() > 1)
+
+                                                    <flux:text class="text-neutral-100">
+                                                        {{ $entradasSaidas->where('status', StatusEntradaSaida::PAGO)->count() }}
+                                                        de
+                                                        {{ $entradasSaidas->count() }}
+                                                    </flux:text>
+                                                @endif
+
+                                            </div>
+
+                                            <flux:separator/>
+                                            <flux:table>
+                                                <flux:table.columns>
+
+                                                    <flux:table.column>Data Vencimento</flux:table.column>
+                                                    <flux:table.column>Situação</flux:table.column>
+                                                    <flux:table.column>Data Pagamento</flux:table.column>
+
+                                                </flux:table.columns>
+
+                                                @foreach($entradasSaidas as $item)
+
+                                                    <flux:table.rows>
+
+
+                                                        <flux:table.row>
+                                                            <flux:table.cell>{{Helper::formatarDataPtBr($item->data_vencimento)}}</flux:table.cell>
+                                                            <flux:table.cell>
+                                                                <flux:text class="{{StatusEntradaSaida::colors($item->status)['text']}}">{{ Str::ucfirst(StatusEntradaSaida::label($item->status))}} </flux:text>
+                                                            </flux:table.cell>
+                                                            <flux:table.cell>{{Helper::formatarDataPtBr($item->data_pagamento)}}</flux:table.cell>
+                                                        </flux:table.row>
+
+
+                                                    </flux:table.rows>
+                                                @endforeach
+
+                                            </flux:table>
+
+                                        </flux:tooltip.content>
+                                    </flux:tooltip>
+                                </flux:table.cell>
+                            @endif
 
                         </flux:table.row>
                     @endforeach

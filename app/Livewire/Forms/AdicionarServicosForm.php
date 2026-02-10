@@ -14,20 +14,22 @@ class AdicionarServicosForm extends Form
 
     public const EVENT_PERSISTED = 'adicionar-servico-persisted';
 
-    public ?int    $id_servico = null;
-    public ?string $codigo     = null;
-    public ?string $quantidade = null;
-    public ?string $valorUnitario = null;
-    public ?string $valorTotal = null;
-    public ?int $idServicoSelecionado = null;
+    public ?int    $id_servico           = null;
+    public ?string $codigo               = null;
+    public ?string $quantidade           = null;
+    public ?string $descricao            = null;
+    public ?string $valorUnitario        = null;
+    public ?string $valorTotal           = null;
+    public ?int    $idServicoSelecionado = null;
 
     private function attributes(): array
     {
         return [
-            "id_servico" => "Id",
-            "codigo"     => "Servico",
-            "quantidade" => "Quantidade",
-            "valorUnitario" => "Valor Unitário",
+            "id_servico"           => "Id",
+            "codigo"               => "Servico",
+            "quantidade"           => "Quantidade",
+            "descricao"            => "Descrição",
+            "valorUnitario"        => "Valor Unitário",
             "idServicoSelecionado" => "Id do Serviço Selecionado",
         ];
     }

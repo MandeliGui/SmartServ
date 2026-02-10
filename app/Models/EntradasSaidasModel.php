@@ -20,6 +20,7 @@ class EntradasSaidasModel extends BaseModel
         'forma_pagamento_id',
         'ordem_servico_id',
         'banco_id',
+        'id_fornecedor',
         'removido',
         'user_id',
     ];

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Tenant\Api\OrdemServicoController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -134,7 +135,20 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->name('bancos');
 
     });
-    Route::get('/ordem-servico/{id}/pdf', [\App\Http\Controllers\Tenant\Api\OrdemServicoController::class, 'gerarPdf'])->name('ordem-servico.pdf');
+
+    Route::prefix('fornecedores')->group(function (): void {;
+        Volt::route('/', 'pages.tenant.fornecedores.search')
+            ->name('fornecedores');
+
+        Volt::route('/novo', 'pages.tenant.fornecedores.create')
+            ->name('fornecedores.novo');
+
+        Volt::route('/editar/{id}', 'pages.tenant.fornecedores.create')
+            ->name('fornecedores.editar');
+    });
+
+    Route::get('/ordem-servico/{id}/pdf', [OrdemServicoController::class, 'gerarPdf'])->name('ordem-servico.pdf');
+    Route::get('/ordem_servico/{id}/pdf', [OrdemServicoController::class, 'gerarPdfSemValor'])->name('ordem_servico.pdf');
 });
 
 

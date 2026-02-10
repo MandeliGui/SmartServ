@@ -17,6 +17,7 @@ new class extends Component {
     public mixed $categoriaEntradaSaida = [];
     public mixed $bancos                = [];
     public mixed $formasPagamento       = [];
+    public mixed $fornecedor            = null;
 
 
     public function save(): void
@@ -47,9 +48,13 @@ new class extends Component {
 
         $this->form->data_pagamento  = \Carbon\Carbon::now()->format('Y-m-d');
         $this->categoriaEntradaSaida = \App\Models\CategoriaEntradaSaidaModel::query()
-            ->where('id', $this->form->categoria_id)
-            ->where('tipo', $this->form->tipo)
-            ->get();
+                                                                             ->where('id', $this->form->categoria_id)
+                                                                             ->where('tipo', $this->form->tipo)
+                                                                             ->get();
+        if (!empty($this->form->id_fornecedor)) {
+
+            $this->fornecedor = \App\Models\FornecedoresModel::query()->find($this->form->id_fornecedor);
+        }
 
 
         Flux::modal($modalName)->show();
@@ -70,8 +75,26 @@ new class extends Component {
 
     <form wire:submit.prevent="save">
 
+        <div class="mt-4">
 
+            @if(!empty($this->fornecedor))
+
+                <flux:select variant="listbox" label="Fornecedor"
+                             :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"
+                >
+                    <flux:select.option
+                        value="{{ \App\Enums\TipoEntradaSaida::ENTRADA->value }}"
+                        :selected="true"
+                    >
+                        {{$this->fornecedor->nome_fantasia ?? $this->fornecedor->razao_social ?? 'N/A'}}
+                    </flux:select.option>
+
+                </flux:select>
+
+            @endif
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+
 
             <flux:select variant="listbox" placeholder="Selecione o tipo" label="Tipo*" wire:model="form.tipo"
                          name="tipo" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"
@@ -104,11 +127,10 @@ new class extends Component {
             </flux:select>
 
 
-            <flux:date-picker wire:model="date" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE">
+            <flux:date-picker wire:model="form.data_vencimento" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE">
 
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de Vencimento*"
-                                            wire:model="form.data_vencimento"
 
 
                     />
@@ -116,7 +138,7 @@ new class extends Component {
 
             </flux:date-picker>
             <flux:input label="Valor*" type="text"
-                        wire:model="form.valor_original"  :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"/>
+                        wire:model="form.valor_original" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"/>
 
             <flux:select variant="listbox" placeholder="Selecione a forma de pagamento" label="Forma Pagamento*"
                          wire:model="form.forma_pagamento_id"
@@ -148,11 +170,11 @@ new class extends Component {
             </flux:select>
 
 
-            <flux:date-picker wire:model="date">
+            <flux:date-picker wire:model="form.data_pagamento">
 
                 <x-slot name="trigger">
                     <flux:date-picker.input label="Data de pagamento*"
-                                            wire:model="form.data_pagamento"
+
                                             name="data_pagamento"
 
 

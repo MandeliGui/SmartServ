@@ -10,8 +10,18 @@ class OrdemServicoController extends Controller
 {
     public function gerarPdf($id)
     {
+
         $ordemServico = OrdemServicoModel::findOrFail($id);
-        $pdf = \PDF::loadView('livewire.pages.tenant.ordem-servico.pdf', ['ordemServico' => $ordemServico]);
-        return $pdf->stream('ordem-servico-'.$id.'.pdf');
+        $pdf          = \PDF::loadView('livewire.pages.tenant.ordem-servico.pdf', ['ordemServico' => $ordemServico, 'mostrarValores' => true]);
+        return $pdf->stream('ordem-servico-' . $id . '.pdf');
+    }
+
+    public function gerarPdfSemValor($id)
+    {
+
+
+        $ordemServico = OrdemServicoModel::findOrFail($id);
+        $pdf          = \PDF::loadView('livewire.pages.tenant.ordem-servico.pdf', ['ordemServico' => $ordemServico, 'mostrarValores' => false]);
+        return $pdf->stream('ordem-servico-' . $id . '.pdf');
     }
 }

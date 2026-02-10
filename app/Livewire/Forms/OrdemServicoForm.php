@@ -57,10 +57,11 @@ class OrdemServicoForm extends Form
 
     public mixed $clientes           = [];
     public mixed $condicoesPagamento = null;
-    public ?int $quantidadeParcela = null;
-    public ?int $bancoId;
-    public ?int $formaPagamentoId;
-    public mixed $dataVencimento = [];
+    public ?int  $quantidadeParcela  = null;
+    public ?int  $bancoId;
+    public ?int  $formaPagamentoId;
+    public mixed $dataVencimento     = [];
+    public mixed $parcelas           = [];
 
 
     private function attributes(): array
@@ -86,6 +87,7 @@ class OrdemServicoForm extends Form
 
     public function create()
     {
+
         $data = OrdemServicoRequest::create($this->all(), $this->attributes())->validated();
 
 
@@ -121,6 +123,7 @@ class OrdemServicoForm extends Form
     {
 
         $data = OrdemServicoRequest::editarMaterial($material, $this->attributes())->validated();
+
         $ordemServico = (new OrdemServicoService())->editarMaterial($data);
 
         $this->setOrdemServico($this->id);
@@ -177,9 +180,7 @@ class OrdemServicoForm extends Form
     {
 
 
-            $data = OrdemServicoRequest::finalizarOrdemServico($data, $this->attributes())->validated();
-
-
+        $data = OrdemServicoRequest::finalizarOrdemServico($data, $this->attributes())->validated();
 
 
         $ordemServico = (new OrdemServicoService())->finalizarOrdemServico($data);
@@ -207,7 +208,7 @@ class OrdemServicoForm extends Form
 
     public function reabrirOrdemServico()
     {
-        $data = OrdemServicoRequest::reabrirOrdemServico(['id' => $this->id], $this->attributes())->validated();
+        $data         = OrdemServicoRequest::reabrirOrdemServico(['id' => $this->id], $this->attributes())->validated();
         $ordemServico = (new OrdemServicoService())->reabrirOrdemServico($data);
         $this->setOrdemServico($this->id);
         Flux::toast('Ordem de servico reaberta com sucesso!', variant: 'success');
@@ -220,17 +221,17 @@ class OrdemServicoForm extends Form
         $ordemServico = (new OrdemServicoService())->findOne($id);
 
 
-        $this->id = $ordemServico->id;
-        $this->codigo = $ordemServico->codigo;
-        $this->tipo = $ordemServico->tipo;
+        $this->id           = $ordemServico->id;
+        $this->codigo       = $ordemServico->codigo;
+        $this->tipo         = $ordemServico->tipo;
         $this->dataAbertura = $ordemServico->dataAbertura;
-        $this->dataEntrega = $ordemServico->dataEntrega;
-        $this->status = $ordemServico->status;
-        $this->valorTotal = $ordemServico->valorTotal;
-        $this->idCliente = $ordemServico->idCliente;
-        $this->nomeCliente = $ordemServico->cliente->pessoa->nomeFantasia ?: $ordemServico->cliente->pessoa->nomeRazaoSocial;
-        $this->idTecnico = $ordemServico->idTecnico;
-        $this->idAtendente = $ordemServico->idAtendente;
+        $this->dataEntrega  = $ordemServico->dataEntrega;
+        $this->status       = $ordemServico->status;
+        $this->valorTotal   = $ordemServico->valorTotal;
+        $this->idCliente    = $ordemServico->idCliente;
+        $this->nomeCliente  = $ordemServico->cliente->pessoa->nomeFantasia ?: $ordemServico->cliente->pessoa->nomeRazaoSocial;
+        $this->idTecnico    = $ordemServico->idTecnico;
+        $this->idAtendente  = $ordemServico->idAtendente;
 
 
         $this->materiais = $ordemServico->materiais()->get()->map(function ($material) {
@@ -239,6 +240,7 @@ class OrdemServicoForm extends Form
                 'id'            => $material->pivot->id,
                 'codigo'        => $material->codigo,
                 'nome'          => $material->nome,
+                'descricao'     => $material->pivot->descricao,
                 'valorUnitario' => $material->pivot->valorUnitario,
                 'quantidade'    => $material->pivot->quantidade,
                 'valorTotal'    => $material->pivot->valorTotal,
@@ -250,6 +252,7 @@ class OrdemServicoForm extends Form
                 'id'            => $servico->pivot->id,
                 'codigo'        => $servico->codigo,
                 'nome'          => $servico->nome,
+                'descricao'     => $servico->pivot->descricao,
                 'valorUnitario' => $servico->pivot->valorUnitario,
                 'quantidade'    => $servico->pivot->quantidade,
                 'valorTotal'    => $servico->pivot->valorTotal,

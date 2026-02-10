@@ -8,6 +8,7 @@ use App\Livewire\Forms\EntradasSaidasForm;
 use App\Models\EntradasSaidasModel;
 use App\Services\Tenant\EntradaSaidaService;
 use App\Services\Tenant\FormaPagamentoService;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 use Livewire\WithoutUrlPagination;
@@ -96,14 +97,23 @@ new class extends Component {
         }
 
         $bancos = \App\Models\BancosModel::query()->get();
+        $collection = $this->entradaSaida instanceof \Illuminate\Pagination\AbstractPaginator
+            ? $this->entradaSaida->getCollection()
+            : collect($this->entradaSaida);
 
 
+        $entradaSaidaPago = $collection
+            ->whereNotNull('data_pagamento')
+            ->sortBy('data_pagamento')
+            ->values();
         $count = !empty($this->search) ? $this->entradaSaida->total() : count($this->getAllIds());
 
         return [
             'entradaSaidaPendente' => $this->entradaSaida->where('data_pagamento', null),
-            'entradaSaidaPago'     => $this->entradaSaida->where('data_pagamento', '!=', null),
-            'saldoBancario'        => $this->entradaSaida->map(fn($item) => $item->banco->saldo)->sum(),
+            'entradaSaidaPago'     => $entradaSaidaPago,
+            'saldoBancario' => \App\Models\BancosModel::when($this->idBanco, function (Builder $query) {
+                return $query->where('id', $this->idBanco);
+            })->sum('saldo_inicial'),
             'bancos'               => $bancos,
             'count'                => $count,
         ];
@@ -157,13 +167,13 @@ new class extends Component {
                             <flux:table.columns>
 
                                 <flux:table.column>Ações</flux:table.column>
-                                <flux:table.column>Data Vencimento</flux:table.column>
+                                <flux:table.column>Data Pagamento</flux:table.column>
                                 <flux:table.column>Tipo</flux:table.column>
                                 <flux:table.column>Descricao</flux:table.column>
                                 <flux:table.column>Categoria</flux:table.column>
                                 <flux:table.column>Valor</flux:table.column>
                                 <flux:table.column>Valor Pago</flux:table.column>
-                                <flux:table.column>Data Pagamento</flux:table.column>
+                                <flux:table.column>Data Vencimento</flux:table.column>
                                 <flux:table.column>Saldo</flux:table.column>
 
 
@@ -178,6 +188,7 @@ new class extends Component {
 
 
                                 @foreach ($entradaSaidaPago as $item)
+
                                     <flux:table.row :key="$item->id">
                                         <flux:table.cell
                                             class="whitespace-nowrap">
@@ -190,7 +201,7 @@ new class extends Component {
 
                                         </flux:table.cell>
                                         <flux:table.cell class=" items-center gap-3">
-                                            {{ Helper::formatarDataPtBr($item->data_vencimento) }}
+                                            {{ Helper::formatarDataPtBr($item->data_pagamento)}}
                                         </flux:table.cell>
 
                                         <flux:table.cell>
@@ -211,7 +222,7 @@ new class extends Component {
                                         <flux:table.cell class="  items-center gap-3">
                                             <flux:text
                                                 class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
-                                                R$ {{Helper::formatarValorMonetarioPtBr($item->valor_original)}}</flux:text>
+                                                R$ {{Helper::formatarValorMonetarioPtBr((float)$item->valor_original ?? 0)}}</flux:text>
                                         </flux:table.cell>
 
                                         <flux:table.cell class="items-center gap-3">
@@ -219,14 +230,14 @@ new class extends Component {
                                                 class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
                                                 R$ {{ Helper::formatarValorMonetarioPtBr($item->valor_pago)}}</flux:text>
                                         </flux:table.cell>
-
                                         <flux:table.cell class=" items-center gap-3">
-                                            {{ Helper::formatarDataPtBr($item->data_pagamento)}}
+                                            {{ Helper::formatarDataPtBr($item->data_vencimento) }}
                                         </flux:table.cell>
+
 
                                         <flux:table.cell class=" items-center gap-3">
                                             {{--                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += $item->valor_pago) }}--}}
-                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_original : -$item->valor_original))  }}
+                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_pago : -$item->valor_pago))  }}
 
                                         </flux:table.cell>
 
@@ -371,11 +382,11 @@ new class extends Component {
                                             <flux:table.cell class=" items-center gap-3">
                                                 <flux:text
                                                     class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
-                                                    R$ {{ $item->valor_original ?? '0,00'}}</flux:text>
+                                                    R$ {{ $item->valor_original ? Helper::formatarValorMonetarioPtBr($item->valor_original) : '0,00'}}</flux:text>
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
-                                                R$ {{ $item->valor_pago ?? '0,00' }}
+                                                R$ {{ $item->valor_pago ? Helper::formatarValorMonetarioPtBr($item->valor_pago) : '0,00' }}
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">

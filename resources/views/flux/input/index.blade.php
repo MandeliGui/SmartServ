@@ -16,6 +16,7 @@
     'loading' => null,
     'type' => 'text',
     'mask' => null,
+    'isDecimal' => false,
     'size' => null,
     'icon' => null,
     'kbd' => null,
@@ -140,6 +141,7 @@ $classes = Flux::classes()
                 {{ $attributes->except('class')->class($type === 'file' ? '' : $classes) }}
                 @isset ($name) name="{{ $name }}" @endisset
                 @if ($mask) x-mask="{{ $mask }}" @endif
+                @if ($isDecimal) x-mask:dynamic="$money($input, ',', '.', 2)" @endif
                 @if ($invalid) aria-invalid="true" data-invalid @endif
                 @if (is_numeric($size)) size="{{ $size }}" @endif
                 data-flux-control

@@ -43,9 +43,9 @@ class EditarTecnicoRequest extends BaseValidationRequest
         return [
             "id"                   => ["required", "integer", "exists:tb_tecnicos,idTecnico"],
             'nome'                 => ['required', 'string', 'max:200'],
-            'telefone'             => ['required', 'string', 'max:20'],
-            'email'                => ['nullable', 'email', 'max:200', new UniqueRule('tb_pessoas', 'email', $this->data['id'])],
-            'cpf'                  => ['required', 'string', 'max:11', 'min:11', new UniqueRule('tb_pessoas', 'cpfCnpj', $this->data['id'])],
+            'telefone'             => ['nullable', 'string', 'max:20'],
+            'email'                => ['nullable', 'email', 'max:200'],
+            'cpf'                  => ['nullable', 'string', 'max:11'],
             'dataNascimento'       => ['nullable', 'date'],
             'endereco.cep'         => ['nullable', 'string', 'max:8'],
             'endereco.rua'         => ['nullable', 'string', 'max:200'],
@@ -60,33 +60,13 @@ class EditarTecnicoRequest extends BaseValidationRequest
     public function messages(): array
     {
         return [
-            "id.required"                 => ":attribute é obrigatório.",
-            "id.integer"                  => ":attribute deve ser um número inteiro.",
-            "id.exists"                   => "O :attribute informado não existe.",
-            'nome.required'               => ':attribute é obrigatório.',
-            'nome.string'                 => ':attribute deve ser uma string.',
-            'nome.max'                    => ':attribute deve ter no máximo 200 caracteres.',
-            'telefone.required'           => ':attribute é obrigatório.',
-            'telefone.string'             => ':attribute deve ser uma string.',
-            'telefone.max'                => ':attribute deve ter no máximo 20 caracteres.',
-            'email.email'                 => ':attribute deve ser um email válido.',
-            'email.max'                   => ':attribute deve ter no máximo 200 caracteres.',
-            'cpf.required'                => ':attribute é obrigatório.',
-            'cpf.string'                  => ':attribute deve ser uma string.',
-            'cpf.max'                     => ':attribute deve ter no máximo 11 caracteres.',
-            'cpf.min'                     => ':attribute deve ter no mínimo 11 caracteres.',
-            'dataNascimento.date'         => ':attribute deve ser uma data válida.',
-            'endereco.cep.string'         => ':attribute deve ser uma string.',
-            'endereco.cep.max'            => ':attribute deve ter no máximo 8 caracteres.',
-            'endereco.rua.string'         => ':attribute deve ser uma string.',
-            'endereco.rua.max'            => ':attribute deve ter no máximo 200 caracteres.',
-            'endereco.numero.string'      => ':attribute deve ser uma string.',
-            'endereco.numero.max'         => ':attribute deve ter no máximo 10 caracteres.',
-            'endereco.bairro.string'      => ':attribute deve ser uma string.',
-            'endereco.bairro.max'         => ':attribute deve ter no máximo 100 caracteres.',
-            'endereco.complemento.string' => ':attribute deve ser uma string.',
-            'endereco.cidade.string'      => ':attribute deve ser uma string.',
-            'endereco.uf.string'          => ':attribute deve ser uma string.',
+            'required' => 'O campo :attribute é obrigatório.',
+            'string'   => 'O campo :attribute deve ser uma string.',
+            'integer'  => 'O campo :attribute deve ser um número inteiro.',
+            'email'    => 'O campo :attribute deve ser um email válido.',
+            'max'      => 'O campo :attribute deve ter no máximo :max caracteres.',
+            'date'     => 'O campo :attribute deve ser uma data válida.',
+
         ];
     }
 

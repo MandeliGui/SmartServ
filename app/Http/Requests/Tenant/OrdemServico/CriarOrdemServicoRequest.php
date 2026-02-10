@@ -46,10 +46,12 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
             'idAtendente'               => ['nullable', 'integer', 'exists:tb_atendentes,idAtendente'],
             "materiais.*.idMaterial"    => ['nullable', 'integer', 'exists:tb_materiais,id'],
             "materiais.*.quantidade"    => ['nullable', 'integer', 'min:1'],
+            "materiais.*.descricao"     => ['nullable', 'string'],
             "materiais.*.valorUnitario" => ['nullable'],
             "materiais.*.valorTotal"    => ['nullable'],
             "servicos.*.idServico"      => ['nullable', 'integer', 'exists:tb_servicos,id'],
             "servicos.*.quantidade"     => ['nullable', 'integer', 'min:1'],
+            "servicos.*.descricao"      => ['nullable', 'string'],
             "servicos.*.valorUnitario"  => ['nullable'],
             "servicos.*.valorTotal"     => ['nullable'],
         ];
@@ -58,27 +60,13 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
     public function messages(): array
     {
         return [
-            'tipo.required'                      => ':attribute é obrigatório',
-            'dataAbertura.required'              => ':attribute é obrigatório',
-            'dataEntrega.date'                   => ':attribute deve ser uma data válida',
-            'status.required'                    => ':attribute é obrigatório',
-            'valorTotal.required'                => ':attribute é obrigatório',
-            'idCliente.required'                 => ':attribute é obrigatório',
-            'idCliente.exists'                   => ':attribute informado não existe',
-            'idTecnico.exists'                   => ':attribute informado não existe',
-            'idAtendente.exists'                 => ':attribute informado não existe',
-            'materiais.*.idMaterial.required'    => ':attribute é obrigatório',
-            'materiais.*.idMaterial.exists'      => ':attribute informado não existe',
-            'materiais.*.quantidade.required'    => ':attribute é obrigatório',
-            'materiais.*.quantidade.min'         => ':attribute deve ser maior que 0',
-            'materiais.*.valorUnitario.required' => ':attribute é obrigatório',
-            'materiais.*.valorTotal.required'    => ':attribute é obrigatório',
-            'servicos.*.idServico.required'      => ':attribute é obrigatório',
-            'servicos.*.idServico.exists'        => ':attribute informado não existe',
-            'servicos.*.quantidade.required'     => ':attribute é obrigatório',
-            'servicos.*.quantidade.min'          => ':attribute deve ser maior que 0',
-            'servicos.*.valorUnitario.required'  => ':attribute é obrigatório',
-            'servicos.*.valorTotal.required'     => ':attribute é obrigatório',
+            "required" => "O campo :attribute é obrigatório.",
+            "string"   => "O campo :attribute deve ser uma string.",
+            "date"     => "O campo :attribute deve ser uma data válida.",
+            "numeric"  => "O campo :attribute deve ser um número.",
+            "integer"  => "O campo :attribute deve ser um número inteiro.",
+            "exists"   => "O :attribute selecionado é inválido.",
+            "min"      => "O campo :attribute deve ter no mínimo :min.",
 
 
         ];
