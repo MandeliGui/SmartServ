@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string("id_cliente");
             $table->string("periodicidade");
+            $table->date('data_inicio_contrato');
             $table->string("valor");
             $table->string("status");
             $table->string("removido")->default(false);

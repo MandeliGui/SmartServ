@@ -45,11 +45,12 @@ class ContratoForm extends Form
     private function attributes(): array
     {
         return [
-            'id'            => 'ID',
-            'periodicidade' => 'Periodicidade',
-            'status'        => 'Status',
-            'valor'         => 'Valor',
-            'idCliente'     => 'Cliente',
+            'id'                 => 'ID',
+            'periodicidade'      => 'Periodicidade',
+            'status'             => 'Status',
+            'valor'              => 'Valor',
+            'idCliente'          => 'Cliente',
+            'dataInicioContrato' => 'Data de Início do Contrato',
 
         ];
     }
@@ -182,7 +183,7 @@ class ContratoForm extends Form
                 'nome'          => $material->nome,
                 'valorUnitario' => $material->pivot->valorUnitario,
                 'quantidade'    => $material->pivot->quantidade,
-                'descricao' => $material->pivot->descricao,
+                'descricao'     => $material->pivot->descricao,
                 'valorTotal'    => $material->pivot->valorTotal,
             ];
         })->toArray();
@@ -194,7 +195,7 @@ class ContratoForm extends Form
                 'nome'          => $servico->nome,
                 'valorUnitario' => $servico->pivot->valorUnitario,
                 'quantidade'    => $servico->pivot->quantidade,
-                'descricao' => $servico->pivot->descricao,
+                'descricao'     => $servico->pivot->descricao,
                 'valorTotal'    => $servico->pivot->valorTotal,
             ];
         })->toArray();

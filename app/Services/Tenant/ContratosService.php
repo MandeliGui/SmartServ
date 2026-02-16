@@ -50,10 +50,11 @@ class ContratosService
 
 
         $contrato = ContratosModel::query()->create([
-            'periodicidade' => $data['periodicidade'],
-            'valor'         => $valor,
-            'status'        => StatusContrato::ATIVO->value,
-            'id_cliente'    => $data['idCliente'],
+            'periodicidade'        => $data['periodicidade'],
+            'valor'                => $valor,
+            'status'               => StatusContrato::ATIVO->value,
+            'id_cliente'           => $data['idCliente'],
+            'data_inicio_contrato' => $data['dataInicioContrato'],
         ]);
 
         if (!empty($data['materiais'])) {
@@ -97,9 +98,10 @@ class ContratosService
             $contrato->servicos()->attach($data['servicos']);
         }
         $contrato->update([
-            'periodicidade' => $data['periodicidade'],
-            'valor'         => $valor,
-            'id_cliente'    => $data['idCliente'],
+            'periodicidade'        => $data['periodicidade'],
+            'valor'                => $valor,
+            'id_cliente'           => $data['idCliente'],
+            'data_inicio_contrato' => $data['dataInicioContrato'],
         ]);
 
         return $contrato;
@@ -189,34 +191,34 @@ class ContratosService
     {
         try {
 
-        $contrato = ContratosModel::query()
-                                  ->whereHas('servicos', function (Builder $query) use ($data) {
-                                      $query->where('tb_contrato_servicos.id', $data['id']);
-                                  })
-                                  ->first();
+            $contrato = ContratosModel::query()
+                                      ->whereHas('servicos', function (Builder $query) use ($data) {
+                                          $query->where('tb_contrato_servicos.id', $data['id']);
+                                      })
+                                      ->first();
 
-        if ($contrato) {
+            if ($contrato) {
 
-            $servicos = $contrato->servicos()
-                                 ->where('tb_contrato_servicos.id', $data['id'])->first();
+                $servicos = $contrato->servicos()
+                                     ->where('tb_contrato_servicos.id', $data['id'])->first();
 
-            $servicos->pivot->quantidade    = $data['quantidade'];
-            $servicos->pivot->valorUnitario = $data['valorUnitario'];
-            $servicos->pivot->valorTotal    = $data['valorTotal'];
-            $servicos->pivot->descricao     = $data['descricao'];
-            $servicos->pivot->save();
+                $servicos->pivot->quantidade    = $data['quantidade'];
+                $servicos->pivot->valorUnitario = $data['valorUnitario'];
+                $servicos->pivot->valorTotal    = $data['valorTotal'];
+                $servicos->pivot->descricao     = $data['descricao'];
+                $servicos->pivot->save();
 
-            $servicos        = $contrato->servicos()->get()->map(function ($servico) {
-                return $servico->pivot;
-            });
-            $materials       = $contrato->materiais()->get()->map(function ($material) {
-                return $material->pivot;
-            });
-            $contrato->valor = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
-            $contrato->save();
-            return true;
-        }
-        }catch (\Exception $e){
+                $servicos        = $contrato->servicos()->get()->map(function ($servico) {
+                    return $servico->pivot;
+                });
+                $materials       = $contrato->materiais()->get()->map(function ($material) {
+                    return $material->pivot;
+                });
+                $contrato->valor = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
+                $contrato->save();
+                return true;
+            }
+        } catch (\Exception $e) {
             dd($e);
         }
 

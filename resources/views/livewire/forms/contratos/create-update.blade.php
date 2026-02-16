@@ -108,6 +108,7 @@ new class extends Component {
 
         $this->id       = request()->route('id') ?? null;
         $this->form->id = request()->route('id') ?? null;
+        $this->form->dataInicioContrato = \Carbon\Carbon::now()->format('Y-m-d');
 
         $this->form->clientes = \App\Models\ClienteModel::query()->get();
 
@@ -125,7 +126,7 @@ new class extends Component {
 
 <div x-data>
     <form>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
 
             <div class="col-span-2">
 
@@ -161,6 +162,21 @@ new class extends Component {
                 @endforeach
 
             </flux:select>
+
+            <flux:date-picker
+                wire:model="form.dataInicioContrato">
+
+                <x-slot name="trigger">
+                    <flux:date-picker.input
+                        label='Data Inicio do Contrato*'
+
+                        name="dataInicioContrato"
+
+
+                    />
+                </x-slot>
+
+            </flux:date-picker>
         </div>
 
         <hr class="w-full h-px bg-accent my-4">

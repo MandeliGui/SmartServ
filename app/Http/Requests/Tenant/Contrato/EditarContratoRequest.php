@@ -4,6 +4,7 @@ namespace App\Http\Requests\Tenant\Contrato;
 
 use App\Enums\Periodicidade;
 use App\Http\Requests\BaseValidationRequest;
+use Carbon\Carbon;
 use Illuminate\Validation\Rules\Enum;
 
 class EditarContratoRequest extends BaseValidationRequest
@@ -18,20 +19,21 @@ class EditarContratoRequest extends BaseValidationRequest
     public function prepareForValidation(): void
     {
         $this->data = [
-            "id"            => data_get($this->data, "id"),
-            "idCliente"     => data_get($this->data, "idCliente"),
-            "periodicidade" => data_get($this->data, "periodicidade"),
-            "materiais"     => $this->data['materiais'],
-            "servicos"      => $this->data['servicos'],
+            "id"                 => data_get($this->data, "id"),
+            "idCliente"          => data_get($this->data, "idCliente"),
+            "periodicidade"      => data_get($this->data, "periodicidade"),
+            "materiais"          => $this->data['materiais'],
+            "servicos"           => $this->data['servicos'],
+            "dataInicioContrato" => data_get($this->data, "dataInicioContrato"),
         ];
     }
 
     public function rules(): array
     {
         return [
-            'id'            => ['required', 'integer', 'exists:tb_contratos,id'],
-            'idCliente'     => ['required', 'integer', 'exists:tb_cliente,idCliente'],
-            'periodicidade' => ['required', 'string', new Enum(Periodicidade::class)],
+            'id'                        => ['required', 'integer', 'exists:tb_contratos,id'],
+            'idCliente'                 => ['required', 'integer', 'exists:tb_cliente,idCliente'],
+            'periodicidade'             => ['required', 'string', new Enum(Periodicidade::class)],
             "materiais.*.idMaterial"    => ['nullable', 'integer', 'exists:tb_materiais,id'],
             "materiais.*.quantidade"    => ['nullable', 'integer', 'min:1'],
             "materiais.*.valorUnitario" => ['nullable'],
@@ -40,6 +42,8 @@ class EditarContratoRequest extends BaseValidationRequest
             "servicos.*.quantidade"     => ['nullable', 'integer', 'min:1'],
             "servicos.*.valorUnitario"  => ['nullable'],
             "servicos.*.valorTotal"     => ['nullable'],
+            'dataInicioContrato'        => ['required', 'date'],
+
         ];
     }
 
@@ -56,6 +60,7 @@ class EditarContratoRequest extends BaseValidationRequest
             'periodicidade.enum' => ':attribute deve ser um dos seguintes valores: ' . implode(', ', array_map(function ($c) {
                     return $c->value ?? $c->name;
                 }, Periodicidade::cases())),
+            'date'               => ':attribute deve ser uma data válida.',
         ];
 
 

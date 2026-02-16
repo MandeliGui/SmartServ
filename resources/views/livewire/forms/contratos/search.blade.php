@@ -125,6 +125,7 @@ new class extends Component {
 
                     <flux:table.column>Cliente</flux:table.column>
                     <flux:table.column>Situacao</flux:table.column>
+                    <flux:table.column>Data Inicio Contrato</flux:table.column>
                     <flux:table.column>Periodicidade</flux:table.column>
                     <flux:table.column>Telefone</flux:table.column>
                     <flux:table.column>Valor Total</flux:table.column>
@@ -149,6 +150,9 @@ new class extends Component {
                                     <flux:badge size="lg" color="red">Inativo</flux:badge>
 
                                 @endif
+                            </flux:table.cell>
+                            <flux:table.cell class="">
+                                {{ Helper::formatarDataPtBr($contrato->data_inicio_contrato) }}
                             </flux:table.cell>
                             <flux:table.cell class="">
 

@@ -13,6 +13,7 @@ class ContratosModel extends Model
         "periodicidade",
         "valor",
         "status",
+        "data_inicio_contrato",
         "removido",
     ];
 
