@@ -137,6 +137,7 @@ class ContratosService
             $materiais->pivot->quantidade    = $data['quantidade'];
             $materiais->pivot->valorUnitario = $data['valorUnitario'];
             $materiais->pivot->valorTotal    = $data['valorTotal'];
+            $materiais->pivot->descricao     = $data['descricao'];
             $materiais->pivot->save();
 
 
@@ -170,10 +171,10 @@ class ContratosService
                      ->wherePivot('id', $id)
                      ->detach();
 
-            $materiais            = $contrato->materiais()->get()->map(function ($material) {
+            $materiais       = $contrato->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $servicos             = $contrato->servicos()->get()->map(function ($servico) {
+            $servicos        = $contrato->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
             $contrato->valor = $materiais->sum('valorTotal') + $servicos->sum('valorTotal');
@@ -186,6 +187,8 @@ class ContratosService
 
     public function editarServico(array $data)
     {
+        try {
+
         $contrato = ContratosModel::query()
                                   ->whereHas('servicos', function (Builder $query) use ($data) {
                                       $query->where('tb_contrato_servicos.id', $data['id']);
@@ -200,17 +203,21 @@ class ContratosService
             $servicos->pivot->quantidade    = $data['quantidade'];
             $servicos->pivot->valorUnitario = $data['valorUnitario'];
             $servicos->pivot->valorTotal    = $data['valorTotal'];
+            $servicos->pivot->descricao     = $data['descricao'];
             $servicos->pivot->save();
 
-            $servicos             = $contrato->servicos()->get()->map(function ($servico) {
+            $servicos        = $contrato->servicos()->get()->map(function ($servico) {
                 return $servico->pivot;
             });
-            $materials            = $contrato->materiais()->get()->map(function ($material) {
+            $materials       = $contrato->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $contrato->valorTotal = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
+            $contrato->valor = $servicos->sum('valorTotal') + $materials->sum('valorTotal');
             $contrato->save();
             return true;
+        }
+        }catch (\Exception $e){
+            dd($e);
         }
 
         return false;
@@ -234,10 +241,10 @@ class ContratosService
                 return $servico->pivot;
             });
 
-            $materiais            = $contrato->materiais()->get()->map(function ($material) {
+            $materiais       = $contrato->materiais()->get()->map(function ($material) {
                 return $material->pivot;
             });
-            $contrato->valorTotal = $servicos->sum('valorTotal') + $materiais->sum('valorTotal');
+            $contrato->valor = $servicos->sum('valorTotal') + $materiais->sum('valorTotal');
             $contrato->save();
             return true;
         }

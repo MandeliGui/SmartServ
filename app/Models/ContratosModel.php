@@ -20,14 +20,14 @@ class ContratosModel extends Model
     public function materiais()
     {
         return $this->belongsToMany(MaterialModel::class, 'tb_contrato_materiais', 'idContrato', 'idMaterial')
-                    ->withPivot('id', 'idMaterial', 'quantidade', 'valorUnitario', 'valorTotal')
+                    ->withPivot('id', 'idMaterial', 'quantidade', 'descricao', 'valorUnitario', 'valorTotal')
                     ->withTimestamps();
     }
 
     public function servicos()
     {
         return $this->belongsToMany(ServicosModel::class, 'tb_contrato_servicos', 'idContrato', 'idServico')
-                    ->withPivot('id', 'idServico', 'quantidade', 'valorUnitario', 'valorTotal')
+                    ->withPivot('id', 'idServico', 'quantidade', 'descricao', 'valorUnitario', 'valorTotal')
                     ->withTimestamps();
     }
 

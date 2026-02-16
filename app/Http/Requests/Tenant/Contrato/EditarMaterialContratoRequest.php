@@ -22,6 +22,7 @@ class EditarMaterialContratoRequest extends BaseValidationRequest
             'quantidade'    => (int)$this->data['quantidade'],
             'valorUnitario' => Helper::formatarValorMonetarioDB((float)$this->data['valorUnitario']),
             'valorTotal'    => Helper::formatarValorMonetarioDB((float)$this->data['valorTotal']),
+            'descricao' => data_get($this->data, 'descricao'),
         ];
     }
 
@@ -32,6 +33,7 @@ class EditarMaterialContratoRequest extends BaseValidationRequest
             'quantidade'    => ['required', 'numeric'],
             'valorUnitario' => ['required', 'numeric'],
             'valorTotal'    => ['required', 'numeric'],
+            'descricao' => ['nullable', 'string']
         ];
     }
 

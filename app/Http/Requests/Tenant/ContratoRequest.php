@@ -11,8 +11,10 @@ use App\Http\Requests\BaseValidationRequest;
 use App\Http\Requests\Tenant\Contrato\CriarContratoRequest;
 use App\Http\Requests\Tenant\Contrato\EditarContratoRequest;
 use App\Http\Requests\Tenant\Contrato\EditarMaterialContratoRequest;
+use App\Http\Requests\Tenant\Contrato\EditarServicoContratoRequest;
 use App\Http\Requests\Tenant\Contrato\RemoverContratoRequest;
 use App\Http\Requests\Tenant\Contrato\RemoverMaterialContratoRequest;
+use App\Http\Requests\Tenant\Contrato\RemoverServicoContratoRequest;
 
 class ContratoRequest
 {
@@ -30,6 +32,8 @@ class ContratoRequest
             Persistence::REMOVE => new RemoverContratoRequest($this->data, $this->attributes),
             ContratoPersistence::EDITAR_MATERIAL => new EditarMaterialContratoRequest($this->data, $this->attributes),
             ContratoPersistence::REMOVER_MATERIAL => new RemoverMaterialContratoRequest($this->data, $this->attributes),
+            ContratoPersistence::EDITAR_SERVICO => new EditarServicoContratoRequest($this->data, $this->attributes),
+            ContratoPersistence::REMOVER_SERVICO => new RemoverServicoContratoRequest($this->data, $this->attributes),
 
         };
     }

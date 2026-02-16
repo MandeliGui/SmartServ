@@ -8,11 +8,15 @@ use Livewire\Form;
 
 class AdicionarServicosForm extends Form
 {
-    public const MODAL_NAME_SELECIONAR_SERVICO            = 'modal-ordem-servico-selecionar-servico';
-    public const PATH_COMPONENT_FORM_SELECIONAR_SERVICO   = 'forms.ordem-servico.selecionar-servico';
+    public const MODAL_NAME_SELECIONAR_SERVICO                    = 'modal-ordem-servico-selecionar-servico';
+    public const PATH_COMPONENT_FORM_SELECIONAR_SERVICO           = 'forms.ordem-servico.selecionar-servico';
+    public const PATH_COMPONENT_FORM_SELECIONAR_SERVICO_CONTRATO = 'forms.contratos.selecionar-servico';
+
     public const EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO = 'show-modal-selecionar-servico';
 
-    public const EVENT_PERSISTED = 'adicionar-servico-persisted';
+    public const EVENT_PERSISTED          = 'adicionar-servico-persisted';
+    public const EVENT_PERSISTED_CONTRATO = 'adicionar-servico-persisted-contrato';
+
 
     public ?int    $id_servico           = null;
     public ?string $codigo               = null;

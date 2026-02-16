@@ -65,7 +65,7 @@ new class extends Component {
 
     }
 
-    #[On(AdicionarServicosForm::EVENT_PERSISTED)]
+    #[On(AdicionarServicosForm::EVENT_PERSISTED_CONTRATO)]
     public function atualizarServicos($servicos, $persistence)
     {
         if ($persistence === Persistence::UPDATE->value) {
@@ -106,8 +106,8 @@ new class extends Component {
     {
 
 
-        $this->id                       = request()->route('id') ?? null;
-        $this->form->id                 = request()->route('id') ?? null;
+        $this->id       = request()->route('id') ?? null;
+        $this->form->id = request()->route('id') ?? null;
 
         $this->form->clientes = \App\Models\ClienteModel::query()->get();
 
@@ -127,26 +127,26 @@ new class extends Component {
     <form>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
 
-<div class="col-span-2">
+            <div class="col-span-2">
 
-            <flux:select label="Cliente*" variant="listbox"
-                         :searchable="true"
-                         wire:model="form.idCliente"
-                         placeholder="Selecione"
-                         name="idCliente"
-            >
+                <flux:select label="Cliente*" variant="listbox"
+                             :searchable="true"
+                             wire:model="form.idCliente"
+                             placeholder="Selecione"
+                             name="idCliente"
+                >
 
 
-                @foreach($form->clientes as $cliente)
+                    @foreach($form->clientes as $cliente)
 
-                    <flux:select.option value="{{$cliente->idCliente}}">
-                        {{$cliente->pessoa->nomeFantasia ?: $cliente->pessoa->nomeRazaoSocial}}
-                    </flux:select.option>
+                        <flux:select.option value="{{$cliente->idCliente}}">
+                            {{$cliente->pessoa->nomeFantasia ?: $cliente->pessoa->nomeRazaoSocial}}
+                        </flux:select.option>
 
-                @endforeach
-            </flux:select>
+                    @endforeach
+                </flux:select>
 
-</div>
+            </div>
 
             <flux:select label="Periodicidade*" variant="listbox"
                          wire:model="form.periodicidade"
@@ -263,6 +263,15 @@ new class extends Component {
                                             @endif
                                         </flux:table.row>
                                     @endforeach
+                                    @if(!empty($material['descricao']))
+                                        {{-- Linha da descrição --}}
+                                        <flux:table.row>
+                                            <flux:table.cell colspan="6">
+                                                <strong>Observação:</strong>
+                                                {{ $material['descricao']}}
+                                            </flux:table.cell>
+                                        </flux:table.row>
+                                    @endif
                                 </flux:table.rows>
 
 
@@ -315,7 +324,7 @@ new class extends Component {
                         <div class="flex justify-between items-center">
 
                             <flux:button variant="primary" wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
+                                                                                    '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO_CONTRATO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO }}'
@@ -355,7 +364,7 @@ new class extends Component {
                                                     <div>
 
                                                         <flux:button wire:click="$dispatchTo(
-                                                                                    '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO }}',
+                                                                                    '{{ \App\Livewire\Forms\AdicionarServicosForm::PATH_COMPONENT_FORM_SELECIONAR_SERVICO_CONTRATO }}',
                                                                                     '{{ \App\Livewire\Forms\AdicionarServicosForm::EVENT_NAME_SHOW_MODAL_SELECIONAR_SERVICO }}',
                                                                                     {
                                                                                         modalName: '{{ \App\Livewire\Forms\AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO }}',
@@ -385,6 +394,15 @@ new class extends Component {
                                         </flux:table.row>
                                     @endforeach
                                 </flux:table.rows>
+                                @if(!empty($servico['descricao']))
+                                    {{-- Linha da descrição --}}
+                                    <flux:table.row>
+                                        <flux:table.cell colspan="6">
+                                            <strong>Observação:</strong>
+                                            {{ $servico['descricao']}}
+                                        </flux:table.cell>
+                                    </flux:table.row>
+                                @endif
 
 
                             </flux:table>

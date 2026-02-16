@@ -13,7 +13,7 @@ class AdicionarMateriaisForm extends Form
     public const EVENT_NAME_SHOW_MODAL_SELECIONAR_MATERIAL = 'show-modal-selecionar-material';
 
     public const EVENT_PERSISTED = 'adicionar-materiais-persisted';
-    public const EVENT_PERSISTED_CONTRATO = 'adicionar-materiais-persisted';
+    public const EVENT_PERSISTED_CONTRATO = 'adicionar-materiais-persisted-contrato';
 
     public ?int    $id_material           = null;
     public ?string $codigo                = null;

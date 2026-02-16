@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreignId("idServico")->constrained("tb_servicos", 'id');
             $table->decimal("valorUnitario", 10, 2);
             $table->decimal("valorTotal", 10, 2);
+            $table->text("descricao")->nullable();
             $table->timestamps();
         });
     }

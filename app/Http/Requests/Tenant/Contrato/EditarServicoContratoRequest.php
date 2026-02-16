@@ -22,6 +22,7 @@ class EditarServicoContratoRequest extends BaseValidationRequest
             'quantidade'    => (int)$this->data['quantidade'],
             'valorUnitario' => Helper::formatarValorMonetarioDB((float)$this->data['valorUnitario']),
             'valorTotal'    => Helper::formatarValorMonetarioDB((float)$this->data['valorTotal']),
+            'descricao'     => data_get($this->data, 'descricao'),
         ];
     }
 
@@ -32,6 +33,7 @@ class EditarServicoContratoRequest extends BaseValidationRequest
             'quantidade'    => ['required', 'numeric'],
             'valorUnitario' => ['required', 'numeric'],
             'valorTotal'    => ['required', 'numeric'],
+            'descricao'     => ['nullable', 'string']
         ];
     }
 
@@ -47,6 +49,8 @@ class EditarServicoContratoRequest extends BaseValidationRequest
             'valorUnitario.numeric'  => ':attribute deve ser um número.',
             'valorTotal.required'    => ':attribute é obrigatório.',
             'valorTotal.numeric'     => ':attribute deve ser um número.',
+            'descricao.string'       => ':attribute deve ser uma string.',
+
         ];
     }
 
