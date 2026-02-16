@@ -26,6 +26,7 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
             'idCliente'    => $this->data['idCliente'],
             'idTecnico'    => $this->data['idTecnico'],
             'idAtendente'  => $this->data['idAtendente'],
+            'contratoId'   => $this->data['contratoId'] ?? null,
             "materiais"    => $this->data['materiais'],
             "servicos"     => $this->data['servicos'],
         ];
@@ -44,6 +45,7 @@ class CriarOrdemServicoRequest extends BaseValidationRequest
             'idCliente'                 => ['required', 'integer', 'exists:tb_cliente,idCliente'],
             'idTecnico'                 => ['nullable', 'integer', 'exists:tb_tecnicos,idTecnico'],
             'idAtendente'               => ['nullable', 'integer', 'exists:tb_atendentes,idAtendente'],
+            'contratoId'                => ['nullable', 'integer', 'exists:tb_contratos,id'],
             "materiais.*.idMaterial"    => ['nullable', 'integer', 'exists:tb_materiais,id'],
             "materiais.*.quantidade"    => ['nullable', 'integer', 'min:1'],
             "materiais.*.descricao"     => ['nullable', 'string'],

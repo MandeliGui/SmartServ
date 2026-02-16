@@ -37,8 +37,7 @@ new class extends Component {
             ])->validate();
 
         $servico = $this->form->getServicoById($this->form->id_servico);
-
-
+$quantidade = (int)$this->form->quantidade;
         $this->servicosAdicionados[] = [
             'id'            => null,
             'idServico'     => $this->form->id_servico,
@@ -46,8 +45,8 @@ new class extends Component {
             'quantidade'    => $this->form->quantidade,
             'descricao'     => $this->form->descricao,
             'nome'          => $servico->nome,
-            'valorUnitario' => $valorUnitario = $this->form->valorUnitario,
-            'valorTotal'    => $valorUnitario * $this->form->quantidade,
+            'valorUnitario' => $valorUnitario = (float)$this->form->valorUnitario,
+            'valorTotal'    => $valorUnitario * $quantidade,
         ];
 
 
@@ -82,7 +81,7 @@ new class extends Component {
         if ($this->persistence === Persistence::CREATE) {
             $this->contratoForm->servicos = $this->servicosAdicionados;
 
-            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::CREATE->value, servicos: $this->contratoForm->servicos);
+            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED_CONTRATO, persistence: Persistence::CREATE->value, servicos: $this->contratoForm->servicos);
 
             \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
             $this->servicosAdicionados    = [];
@@ -94,7 +93,7 @@ new class extends Component {
             $this->contratoForm->servicos = $this->servicosAdicionados;
 
 
-            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED, persistence: Persistence::UPDATE->value, servicos: $this->contratoForm->servicos);
+            $this->dispatch(AdicionarServicosForm::EVENT_PERSISTED_CONTRATO, persistence: Persistence::UPDATE->value, servicos: $this->contratoForm->servicos);
 
             \Flux::modal(AdicionarServicosForm::MODAL_NAME_SELECIONAR_SERVICO)->close();
             $this->servicosAdicionados    = [];

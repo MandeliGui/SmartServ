@@ -108,7 +108,6 @@ new class extends Component {
 
         $this->id       = request()->route('id') ?? null;
         $this->form->id = request()->route('id') ?? null;
-        $this->form->dataInicioContrato = \Carbon\Carbon::now()->format('Y-m-d');
 
         $this->form->clientes = \App\Models\ClienteModel::query()->get();
 

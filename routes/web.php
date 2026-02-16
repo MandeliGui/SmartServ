@@ -116,6 +116,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Volt::route('/editar/{id}', 'pages.tenant.contratos.create')
             ->name('contratos.editar');
+
+        Volt::route('/mes', 'pages.tenant.contratos.contratos-do-mes')
+            ->name('contratos.mes');
+
     });
 
     Route::prefix('categoria-entrada-saida')->group(function (): void {
@@ -136,7 +140,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     });
 
-    Route::prefix('fornecedores')->group(function (): void {;
+    Route::prefix('fornecedores')->group(function (): void {
+        ;
         Volt::route('/', 'pages.tenant.fornecedores.search')
             ->name('fornecedores');
 

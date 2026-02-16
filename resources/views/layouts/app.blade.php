@@ -29,18 +29,21 @@
         <flux:navlist.item icon="home" href="{{ route('dashboard') }}" wire:navigate>Home</flux:navlist.item>
         <flux:navlist.item icon="users" badge="" href="{{ route('clientes') }}" wire:navigate>Clientes</flux:navlist.item>
         <flux:navlist.item icon="store" badge="" href="{{ route('fornecedores') }}" wire:navigate>Fornecedores</flux:navlist.item>
-        <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}" wire:navigatey>Serviços</flux:navlist.item>
-        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}" wire:navigatey>Técnicos</flux:navlist.item>
-        <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}" wire:navigatey>Formas Pagamento</flux:navlist.item>
-        <flux:navlist.item icon="tag" href="{{ route('grupo-cliente') }}" wire:navigatey>Grupo Clientes</flux:navlist.item>
-        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}" wire:navigatey>Materiais</flux:navlist.item>
-        <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}" wire:navigatey>Atendentes</flux:navlist.item>
-        <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigatey>Ordem de Serviço</flux:navlist.item>
-        <flux:navlist.item icon="document" href="{{ route('contratos') }}" wire:navigatey>Contratos</flux:navlist.item>
-        {{--        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigatey>Usuários</flux:navlist.item>--}}
-        <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigatey>Cat. Entrada e Saída</flux:navlist.item>
-        <flux:navlist.item icon="arrows-up-down" href="{{ route('entradas-saidas') }}" wire:navigatey>Entrada e Saída</flux:navlist.item>
-        <flux:navlist.item icon="banknotes" href="{{ route('bancos') }}" wire:navigatey>Bancos</flux:navlist.item>
+        <flux:navlist.item icon="briefcase" href="{{ route('servicos') }}" wire:navigate>Serviços</flux:navlist.item>
+        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('tecnico') }}" wire:navigate>Técnicos</flux:navlist.item>
+        <flux:navlist.item icon="banknotes" href="{{ route('formas-pagamento') }}" wire:navigate>Formas Pagamento</flux:navlist.item>
+        <flux:navlist.item icon="tag" href="{{ route('grupo-cliente') }}" wire:navigate>Grupo Clientes</flux:navlist.item>
+        <flux:navlist.item icon="wrench-screwdriver" href="{{ route('materiais') }}" wire:navigate>Materiais</flux:navlist.item>
+        <flux:navlist.item icon="phone-x-mark" href="{{ route('atendentes') }}" wire:navigate>Atendentes</flux:navlist.item>
+        <flux:navlist.item icon="clipboard-document-list" href="{{ route('ordem-servico') }}" wire:navigate>Ordem de Serviço</flux:navlist.item>
+        <flux:navlist.group expandable heading="Contratos" class="grid">
+            <flux:navlist.item icon="document" href="{{ route('contratos') }}" wire:navigate>Todos os Contratos</flux:navlist.item>
+            <flux:navlist.item icon="calendar" href="{{ route('contratos.mes') }}" wire:navigate>Contratos do mês</flux:navlist.item>
+        </flux:navlist.group>
+        {{--        <flux:navlist.item icon="user-group" href="{{ route('usuarios') }}" wire:navigate>Usuários</flux:navlist.item>--}}
+        <flux:navlist.item icon="chart-bar-square" href="{{ route('categoria-entrada-saida') }}" wire:navigate>Cat. Entrada e Saída</flux:navlist.item>
+        <flux:navlist.item icon="arrows-up-down" href="{{ route('entradas-saidas') }}" wire:navigate>Entrada e Saída</flux:navlist.item>
+        <flux:navlist.item icon="banknotes" href="{{ route('bancos') }}" wire:navigate>Bancos</flux:navlist.item>
     </flux:navlist>
     <flux:spacer/>
 

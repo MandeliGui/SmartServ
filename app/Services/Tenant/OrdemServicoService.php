@@ -49,6 +49,7 @@ class OrdemServicoService
             'idCliente'    => $data['idCliente'],
             'idTecnico'    => $data['idTecnico'],
             'idAtendente'  => $data['idAtendente'],
+            'contratoId'   => $data['contratoId'] ?? null,
             'user_id'      => auth()->user()->id,
 
         ]);

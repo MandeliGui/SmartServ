@@ -36,4 +36,9 @@ class ContratosModel extends Model
     {
         return $this->belongsTo(ClienteModel::class, 'id_cliente', 'idCliente');
     }
+
+    public function ordemServico()
+    {
+        return $this->hasMany(OrdemServicoModel::class, 'contratoId', 'id');
+    }
 }

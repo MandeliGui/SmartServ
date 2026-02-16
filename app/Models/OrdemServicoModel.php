@@ -19,13 +19,13 @@ class OrdemServicoModel extends BaseModel
         'idCliente',
         'idTecnico',
         'idAtendente',
+        'contratoId',
         'user_id',
         'removido'
     ];
 
     public function scopeSearch($query, $search)
     {
-        ds()->queriesOn();
         return $query->where(function ($query) use ($search) {
             $query->where('codigo', 'LIKE', "%{$search}%")
                   ->orWhere('tipo', 'LIKE', "%{$search}%")
@@ -33,11 +33,10 @@ class OrdemServicoModel extends BaseModel
                   ->orWhere('valorTotal', 'LIKE', "%{$search}%")
                   ->orWhereHas('cliente.pessoa', function ($q2) use ($search) {
                       $q2->where('nomeFantasia', 'LIKE', "%{$search}%")
-                      ->orWhere('nomeRazaoSocial', 'LIKE', "%{$search}%")
-                      ->orWhere('telefone', 'LIKE', "%{$search}%");
+                         ->orWhere('nomeRazaoSocial', 'LIKE', "%{$search}%")
+                         ->orWhere('telefone', 'LIKE', "%{$search}%");
                   });
         });
-        ds()->queriesOff();
     }
 
     public function materiais()

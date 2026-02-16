@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Forms;
 
+use App\Enums\StatusOrdemServico;
+use App\Enums\TipoOrdemServico;
 use App\Http\Requests\Tenant\ContratoRequest;
 use App\Http\Requests\Tenant\OrdemServicoRequest;
 use App\Services\Tenant\ContratosService;
+use App\Services\Tenant\OrdemServicoService;
+use Carbon\Carbon;
 use Flux\Flux;
 use Livewire\Form;
 
@@ -168,11 +172,12 @@ class ContratoForm extends Form
         $contrato = (new ContratosService())->findOne($id);
 
 
-        $this->id            = $contrato->id;
-        $this->idCliente     = $contrato->id_cliente;
-        $this->periodicidade = $contrato->periodicidade;
-        $this->valor         = $contrato->valor;
-        $this->status        = $contrato->status;
+        $this->id                 = $contrato->id;
+        $this->idCliente          = $contrato->id_cliente;
+        $this->periodicidade      = $contrato->periodicidade;
+        $this->valor              = $contrato->valor;
+        $this->status             = $contrato->status;
+        $this->dataInicioContrato = $contrato->data_inicio_contrato;
 
 
         $this->materiais = $contrato->materiais()->get()->map(function ($material) {
@@ -201,6 +206,74 @@ class ContratoForm extends Form
         })->toArray();
 
 
+    }
+
+    public function gerarOrdensServico($contratos)
+    {
+        foreach ($contratos as $item) {
+            $ordemJaGerada = false;
+
+            try {
+
+                if ($item->ordemServico->isNotEmpty()) {
+
+                    $ultimoAtendimento = Carbon::parse($item->ordemServico->last()->dataAbertura)->format('Y-m');
+                    $dataAtual         = Carbon::now()->format('Y-m');
+
+                    if ($ultimoAtendimento === $dataAtual) {
+                        $ordemJaGerada = true;
+                    }
+                }
+                if (!$ordemJaGerada) {
+
+                    $ultimoCodigoOrdemServico = (int)(new \App\Models\OrdemServicoModel())->orderBy('id', 'desc')->first()->codigo + 1 ?? 1;
+                    $body                     = [
+                        "id"           => null,
+                        "codigo"       => "$ultimoCodigoOrdemServico",
+                        "tipo"         => TipoOrdemServico::ORDEM_SERVICO->value,
+                        "dataAbertura" => now()->format('Y-m-d'),
+                        "dataEntrega"  => null,
+                        "status"       => StatusOrdemServico::PENDENTE->value,
+                        "valorTotal"   => $item->valor,
+                        "idCliente"    => $item->id_cliente,
+                        "nomeCliente"  => null,
+                        "idTecnico"    => null,
+                        "idAtendente"  => null,
+                        "contratoId"   => $item->id,
+                        "materiais"    => $item->materiais->map(function ($material) {
+                            return [
+                                "id"            => null,
+                                "idMaterial"    => $material->id,
+                                "codigo"        => $material->codigo,
+                                "quantidade"    => $material->pivot->quantidade,
+                                "descricao"     => $material->pivot->descricao,
+                                "nome"          => $material->nome,
+                                "valorUnitario" => $material->pivot->valorUnitario,
+                                "valorTotal"    => $material->pivot->valorTotal,
+                            ];
+                        })->toArray(),
+                        "servicos"     => $item->servicos->map(function ($servico) {
+                            return [
+                                "id"            => null,
+                                "idServico"     => $servico->id,
+                                "codigo"        => $servico->codigo,
+                                "quantidade"    => $servico->pivot->quantidade,
+                                "descricao"     => $servico->pivot->descricao,
+                                "nome"          => $servico->nome,
+                                "valorUnitario" => $servico->pivot->valorUnitario,
+                                "valorTotal"    => $servico->pivot->valorTotal,
+                            ];
+                        })->toArray(),
+                    ];
+                    $data                     = OrdemServicoRequest::create($body)->validated();
+                    (new OrdemServicoService())->create($data);
+                }
+                Flux::toast('Ordens de serviço criadas com sucesso!', variant: 'success');
+
+            } catch (\Throwable $e) {
+                dd($e);
+            }
+        }
     }
 
 

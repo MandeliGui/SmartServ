@@ -2,10 +2,13 @@
 
 namespace App\Services\Tenant;
 
+use App\Enums\Periodicidade;
 use App\Enums\StatusContrato;
 use App\Http\Requests\Tenant\FilterPaginateRequest;
 use App\Models\ContratosModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContratosService
 {
@@ -26,6 +29,71 @@ class ContratosService
                                  $query->orderBy($request->orderBy, $request->dir);
                              })
                              ->paginate(perPage: $request->limit, page: $request->offset);
+    }
+
+    public function findContratosDoMes(FilterPaginateRequest $request): LengthAwarePaginator
+    {
+        $dataAtual = Carbon::now()->format('Y-m');
+
+        $todosContratos = ContratosModel::query()
+                                        ->where('status', StatusContrato::ATIVO->value)
+                                        ->get();
+
+        $contratosDoMes = [];
+
+        foreach ($todosContratos as $item) {
+
+            $existeOrdemServico = $item->ordemServico()->exists();
+
+
+            if (!$existeOrdemServico) {
+
+                $dataInicioContrato = Carbon::parse($item->data_inicio_contrato)->format('Y-m');
+
+                if ($dataInicioContrato === $dataAtual) {
+
+                    $contratosDoMes[] = $item;
+
+                } else {
+
+                    $dataInicioContrato = Carbon::parse($item->data_inicio_contrato)->addMonths(Periodicidade::getPeriodicidadeEmNumero($item->periodicidade))->format('Y-m');
+
+                    if ($dataInicioContrato === $dataAtual) {
+
+                        $contratosDoMes[] = $item;
+
+                    }
+                }
+            } else {
+                if($item->ordemServico())
+                $mesUltimoAtendimento = Carbon::parse($item->ordemServico()->first()->dataAbertura)->format('Y-m');
+
+                $proximaDataAtendimento = Carbon::parse($item->ordemServico()->first()->dataAbertura)->addMonthsNoOverflow(Periodicidade::getPeriodicidadeEmNumero($item->periodicidade))->format('Y-m');
+
+                while ($proximaDataAtendimento < $dataAtual) {
+                    $proximaDataAtendimento = Carbon::parse($proximaDataAtendimento)->addMonths(Periodicidade::getPeriodicidadeEmNumero($item->periodicidade))->format('Y-m');
+                }
+
+                if ($proximaDataAtendimento === $dataAtual) {
+
+
+                    $contratosDoMes[] = $item;
+
+                }
+
+            }
+        }
+        $collection = collect($contratosDoMes);
+        return new LengthAwarePaginator(
+            $collection->forPage($request->page, $request->limit),
+            $collection->count(),
+            $request->limit,
+            $request->page,
+            [
+                'path'  => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
     }
 
     public function findOne(mixed $id)
