@@ -155,7 +155,7 @@ new class extends Component {
                                 {{ Helper::formatarDataPtBr($contrato->data_inicio_contrato) }}
                             </flux:table.cell>
                             <flux:table.cell class="">
-                                {{ Helper::formatarDataPtBr($contrato->ordemServico->last()->dataAbertura) }}
+                                {{ Helper::formatarDataPtBr($contrato->ordemServico->last()?->dataAbertura) ?? 'Não foi realizado atendimento ainda' }}
                             </flux:table.cell>
                             <flux:table.cell class="">
 
@@ -202,11 +202,10 @@ new class extends Component {
                                 }
                             @endphp
                             <flux:table.cell class="">
-                               <flux:heading size="sm" class="{{ isset($ordemJaGerada) && $ordemJaGerada ? 'text-green-600' : 'text-yellow-600' }}">
-                                {{ isset($ordemJaGerada) && $ordemJaGerada ? 'Gerada' : 'Pendente' }}
-                               </flux:heading>
+                                <flux:heading size="sm" class="{{ isset($ordemJaGerada) && $ordemJaGerada ? 'text-green-600' : 'text-yellow-600' }}">
+                                    {{ isset($ordemJaGerada) && $ordemJaGerada ? 'Gerada' : 'Pendente' }}
+                                </flux:heading>
                             </flux:table.cell>
-
 
 
                         </flux:table.row>
