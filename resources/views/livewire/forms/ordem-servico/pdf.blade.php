@@ -138,9 +138,8 @@ new class extends Component {
         </div>
 
         <div class="dados">
-            {{--                        @dd($ordemServico->cliente->pessoa)--}}
-            {{--                        @dd(auth()->user())--}}
-            <strong>Cliente:</strong> {{$ordemServico->cliente->pessoa->nomeFantasia ?? $ordemServico->cliente->pessoa->nomeRazaoSocial}}<br>
+
+            <strong>Cliente:</strong> {{$ordemServico->cliente->pessoa->nomeFantasia ?: $ordemServico->cliente->pessoa->nomeRazaoSocial}}<br>
             <strong>Cpf/Cnpj:</strong> {{Helper::formatarCpfCnpj($ordemServico->cliente->pessoa->cpfCnpj)}}<br>
             <strong>Endereço:</strong> {{Helper::obterEnderecoPorExtenso($ordemServico->cliente->pessoa->endereco)}}<br>
             <strong>Telefone:</strong> {{Helper::formatarPhoneBR($ordemServico->cliente->pessoa->telefone)}}<br>

@@ -132,7 +132,7 @@ new class extends Component {
 
                 <flux:input x-mask:dynamic="$input.length <= 14 ? '999.999.999-99' : '99.999.999/9999-99'"
                             description="*Preencha com um cnpj para buscar dados automaticamente"
-                            label="Cpf/Cnpj*"
+                            label="Cpf/Cnpj"
                             placeholder="Cpf/Cnpj"
                             wire:model="form.cpfCnpj"
                             name="cpfCnpj"
@@ -144,19 +144,19 @@ new class extends Component {
 
                 @if(strlen($this->form->cpfCnpj) < 14)
                     <flux:input x-mask:dynamic="'999.999.999-99'"
-                                label="Cpf*"
+                                label="Cpf"
                                 placeholder="Cpf"
                                 wire:model="form.cpfCnpj"
                                 name="cpfCnpj"
-                                disabled
+
                     />
                 @else
                     <flux:input x-mask:dynamic="'99.999.999/9999-99'"
-                                label="Cnpj*"
+                                label="Cnpj"
                                 placeholder="Cnpj"
                                 wire:model="form.cpfCnpj"
                                 name="cpfCnpj"
-                                disabled
+
                     />
 
                 @endif
@@ -177,7 +177,7 @@ new class extends Component {
                         wire:target="buscarCnpj"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
-            <flux:input label="Telefone*" placeholder="(00) 00000-0000"
+            <flux:input label="Telefone" placeholder="(00) 00000-0000"
                         mask="(99) 99999-9999"
                         wire:model="form.telefone"
                         name="telefone"
@@ -220,7 +220,7 @@ new class extends Component {
         <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-            <flux:input label="CEP*" placeholder="00000-000"
+            <flux:input label="CEP" placeholder="00000-000"
                         mask="99999-999"
                         wire:model="form.endereco.cep"
                         name="endereco.cep"
@@ -229,13 +229,13 @@ new class extends Component {
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj,buscarCep"/>
 
-            <flux:input label="Rua*" placeholder="Digite a rua"
+            <flux:input label="Rua" placeholder="Digite a rua"
                         wire:model="form.endereco.rua"
                         name="endereco.rua"
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj,buscarCep"/>
 
-            <flux:input label="Número*" placeholder="Digite o número"
+            <flux:input label="Número" placeholder="Digite o número"
                         wire:model="form.endereco.numero"
                         name="endereco.numero"
                         wire:loading.attr="disabled"
@@ -248,19 +248,19 @@ new class extends Component {
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj,buscarCep"/>
 
-            <flux:input label="Bairro*" placeholder="Digite o bairro"
+            <flux:input label="Bairro" placeholder="Digite o bairro"
                         wire:model="form.endereco.bairro"
                         name="endereco.bairro"
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj,buscarCep"/>
 
-            <flux:input label="Cidade*" placeholder="Digite a cidade"
+            <flux:input label="Cidade" placeholder="Digite a cidade"
                         wire:model="form.endereco.cidade"
                         name="endereco.cidade"
                         wire:loading.attr="disabled"
                         wire:target="buscarCnpj,buscarCep"/>
 
-            <flux:select label="UF*" variant="listbox" searchable
+            <flux:select label="UF" variant="listbox" searchable
                          wire:model="form.endereco.uf"
                          placeholder="Selecione"
                          name="endereco.uf"
