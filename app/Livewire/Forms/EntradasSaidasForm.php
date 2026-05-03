@@ -3,9 +3,8 @@
 namespace App\Livewire\Forms;
 
 use App\Http\Requests\Tenant\EntradaSaidaRequest;
+use App\Helpers\Helper;
 use App\Services\Tenant\EntradaSaidaService;
-use App\Services\Tenant\FormaPagamentoService;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class EntradasSaidasForm extends Form
@@ -76,7 +75,7 @@ class EntradasSaidasForm extends Form
     {
         $data = EntradaSaidaRequest::update($this->all(), $this->attributes())->validated();
 
-        $servico = (new FormaPagamentoService())->update($data, $this->id);
+        $servico = (new EntradaSaidaService())->update($data, $this->id);
 
         $this->reset();
 
@@ -126,9 +125,9 @@ class EntradasSaidasForm extends Form
             $this->tipo               = $entradaSaida->tipo;
             $this->data_vencimento    = $entradaSaida->data_vencimento;
             $this->data_pagamento     = $entradaSaida->data_pagamento;
-            $this->valor_original     = $entradaSaida->valor_original;
-            $this->status             = $entradaSaida->status;
-            $this->valor_pago         = $entradaSaida->valor_pago;
+            $this->valor_original     = Helper::formatarValorMonetarioPtBr((float) $entradaSaida->valor_original);
+            $this->situacao           = $entradaSaida->status;
+            $this->valor_pago         = $entradaSaida->valor_pago !== null ? Helper::formatarValorMonetarioPtBr((float) $entradaSaida->valor_pago) : null;
             $this->quantidade_meses   = $entradaSaida->quantidade_meses;
             $this->descricao          = $entradaSaida->descricao;
             $this->categoria_id       = $entradaSaida->categoria_id;

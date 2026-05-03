@@ -196,11 +196,10 @@ new class extends Component {
         <hr class="w-full h-px bg-accent mt-2">
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
-            <div class="flex items-end">
-
-                <div class="flex-1">
-
-                    <flux:select label="Material*" variant="listbox" searchable
+            <flux:field>
+                <flux:label>Material*</flux:label>
+                <flux:input.group>
+                    <flux:select variant="listbox" searchable
                                  wire:model="form.id_material"
                                  placeholder="Selecione"
                                  name="material.codigo"
@@ -217,15 +216,17 @@ new class extends Component {
 
 
                     </flux:select>
-                </div>
-                <flux:button
-                    :disabled="$persistence === Persistence::UPDATE"
-                    icon="plus"
-                    variant="primary"
-                    wire:click="abrirModalMaterial"
-                    aria-label="Adicionar material"
-                />
-            </div>
+                    <flux:button
+                        type="button"
+                        :disabled="$persistence === Persistence::UPDATE"
+                        icon="plus"
+                        variant="primary"
+                        class="shrink-0"
+                        wire:click="abrirModalMaterial"
+                        aria-label="Adicionar material"
+                    />
+                </flux:input.group>
+            </flux:field>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
 
@@ -320,5 +321,4 @@ new class extends Component {
         <livewire:forms.materiais.create-update/>
     </flux:modal>
 </div>
-
 

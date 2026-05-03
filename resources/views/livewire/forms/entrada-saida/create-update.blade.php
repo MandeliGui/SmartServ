@@ -2,6 +2,8 @@
 
 use App\Enums\Persistence;
 use App\Enums\Tenant\PeriodicidadeEnum;
+use App\Livewire\Forms\BancosForm;
+use App\Livewire\Forms\CategoriasEntradaSaidaForm;
 use App\Livewire\Forms\EntradasSaidasForm;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
@@ -50,11 +52,6 @@ new class extends Component {
 
     }
 
-    public function updatedFormValor($value)
-    {
-        $this->form->valor = str_replace(['.', ','], ['', '.'], $value);
-    }
-
     #[On(EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_CREATE)]
     public function openModalCreate(string $modalName)
     {
@@ -69,6 +66,11 @@ new class extends Component {
     {
         $this->persistence = Persistence::UPDATE;
         $this->form->setEntradaSaida($id);
+        $this->isRecorrente = (int) ($this->form->quantidade_meses ?? 1) > 1;
+        $this->categoriaEntradaSaida = \App\Models\CategoriaEntradaSaidaModel::query()
+                                                                             ->where('tipo', $this->form->tipo)
+                                                                             ->where('removido', false)
+                                                                             ->get();
         Flux::modal($modalName)->show();
 
     }
@@ -112,6 +114,48 @@ new class extends Component {
 
     }
 
+    public function abrirModalCategoria(): void
+    {
+        Flux::modal(CategoriasEntradaSaidaForm::MODAL_NAME_CREATE)->show();
+    }
+
+    public function abrirModalBanco(): void
+    {
+        Flux::modal(BancosForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(CategoriasEntradaSaidaForm::EVENT_PERSISTED)]
+    public function categoriaAdicionada(string $persistence): void
+    {
+        if (empty($this->form->tipo)) {
+            return;
+        }
+
+        $this->categoriaEntradaSaida = \App\Models\CategoriaEntradaSaidaModel::query()
+                                                                             ->where('tipo', $this->form->tipo)
+                                                                             ->where('removido', false)
+                                                                             ->get();
+
+        if ($persistence === Persistence::CREATE->value) {
+            $ultimaCategoria = \App\Models\CategoriaEntradaSaidaModel::query()
+                                                                     ->where('tipo', $this->form->tipo)
+                                                                     ->latest('id')
+                                                                     ->first();
+
+            $this->form->categoria_id = $ultimaCategoria?->id;
+        }
+    }
+
+    #[On(BancosForm::EVENT_PERSISTED)]
+    public function bancoAdicionado(string $persistence): void
+    {
+        $this->bancos = \App\Models\BancosModel::query()->where('removido', false)->get();
+
+        if ($persistence === Persistence::CREATE->value) {
+            $this->form->banco_id = \App\Models\BancosModel::query()->latest('id')->value('id');
+        }
+    }
+
 };
 ?>
 
@@ -129,19 +173,32 @@ new class extends Component {
 
             </flux:select>
 
-            <flux:select variant="listbox" placeholder="Selecione a categoria" label="Categoria*"
-                         wire:model="form.categoria_id"
-                         name="categoria_id">
-                @if(count($categoriaEntradaSaida) > 0)
+            <flux:field>
+                <flux:label>Categoria*</flux:label>
+                <flux:input.group>
+                    <flux:select variant="listbox" placeholder="Selecione a categoria"
+                                 wire:model="form.categoria_id"
+                                 name="categoria_id">
+                        @if(count($categoriaEntradaSaida) > 0)
 
-                    @foreach($categoriaEntradaSaida as $categoria)
-                        <flux:select.option value="{{ $categoria->id }}">{{ $categoria->nome }}</flux:select.option>
-                    @endforeach
-                @else
-                    <flux:text class="m-2">Nenhuma categoria disponível</flux:text>
-                @endif
+                            @foreach($categoriaEntradaSaida as $categoria)
+                                <flux:select.option value="{{ $categoria->id }}">{{ $categoria->nome }}</flux:select.option>
+                            @endforeach
+                        @else
+                            <flux:text class="m-2">Nenhuma categoria disponível</flux:text>
+                        @endif
 
-            </flux:select>
+                    </flux:select>
+                    <flux:button
+                        type="button"
+                        icon="plus"
+                        variant="primary"
+                        class="shrink-0"
+                        wire:click="abrirModalCategoria"
+                        aria-label="Adicionar categoria"
+                    />
+                </flux:input.group>
+            </flux:field>
             @if(!empty($form->tipo) && $form->tipo == \App\Enums\TipoEntradaSaida::SAIDA->value)
                 <div class="col-span-2">
 
@@ -228,19 +285,32 @@ new class extends Component {
             </flux:field>
 
 
-            <flux:select variant="listbox" placeholder="Selecione o banco" label="Banco*"
-                         wire:model="form.banco_id"
-                         name="banco_id">
-                @if(count($bancos) > 0)
+            <flux:field>
+                <flux:label>Banco*</flux:label>
+                <flux:input.group>
+                    <flux:select variant="listbox" placeholder="Selecione o banco"
+                                 wire:model="form.banco_id"
+                                 name="banco_id">
+                        @if(count($bancos) > 0)
 
-                    @foreach($bancos as $banco)
-                        <flux:select.option value="{{ $banco->id }}">{{ $banco->nome }}</flux:select.option>
-                    @endforeach
-                @else
-                    <flux:text class="m-2">Nenhum banco disponível</flux:text>
-                @endif
+                            @foreach($bancos as $banco)
+                                <flux:select.option value="{{ $banco->id }}">{{ $banco->nome }}</flux:select.option>
+                            @endforeach
+                        @else
+                            <flux:text class="m-2">Nenhum banco disponível</flux:text>
+                        @endif
 
-            </flux:select>
+                    </flux:select>
+                    <flux:button
+                        type="button"
+                        icon="plus"
+                        variant="primary"
+                        class="shrink-0"
+                        wire:click="abrirModalBanco"
+                        aria-label="Adicionar banco"
+                    />
+                </flux:input.group>
+            </flux:field>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
@@ -299,4 +369,3 @@ new class extends Component {
 
     </form>
 </div>
-

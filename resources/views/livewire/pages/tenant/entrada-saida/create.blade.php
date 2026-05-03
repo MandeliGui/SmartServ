@@ -17,8 +17,15 @@ new #[Layout('layouts.app')] class extends Component {
 
         <livewire:forms.entrada-saida.create-update/>
 
-
     </x-card>
+
+    <flux:modal name="{{\App\Livewire\Forms\CategoriasEntradaSaidaForm::MODAL_NAME_CREATE}}">
+        <livewire:forms.categoria-entrada-saida.create-update/>
+    </flux:modal>
+
+    <flux:modal name="{{\App\Livewire\Forms\BancosForm::MODAL_NAME_CREATE}}">
+        <livewire:forms.bancos.create-update/>
+    </flux:modal>
 
     <div class="pt-6"></div>
 

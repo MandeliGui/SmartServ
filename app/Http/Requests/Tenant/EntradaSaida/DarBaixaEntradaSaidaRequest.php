@@ -20,7 +20,7 @@ class DarBaixaEntradaSaidaRequest extends BaseValidationRequest
         $this->data = [
             'id'                 => Helper::getIdByRequest($this->data, 'id'),
             'data_pagamento'     => data_get($this->data, 'data_pagamento'),
-            'valor_pago'         => data_get($this->data, 'valor_pago'),
+            'valor_pago'         => Helper::formatarDecimalDb(data_get($this->data, 'valor_pago')),
             'forma_pagamento_id' => data_get($this->data, 'forma_pagamento_id'),
             'banco_id'           => data_get($this->data, 'banco_id'),
         ];

@@ -71,6 +71,26 @@ class EntradaSaidaService
         return $servico;
     }
 
+    public function update(array $data, mixed $id)
+    {
+        $servico = EntradasSaidasModel::query()->where('id', $id);
+
+        $servico->update([
+            'tipo'               => $data['tipo'],
+            'data_vencimento'    => $data['data_vencimento'],
+            'valor_original'     => $data['valor_original'],
+            'data_pagamento'     => $data['data_pagamento'],
+            'valor_pago'         => $data['valor_pago'],
+            'forma_pagamento_id' => $data['forma_pagamento_id'],
+            'descricao'          => $data['descricao'],
+            'categoria_id'       => $data['categoria_id'],
+            'banco_id'           => $data['banco_id'],
+            'id_fornecedor'      => $data['id_fornecedor'],
+        ]);
+
+        return $servico;
+    }
+
     public function darBaixa(array $data)
     {
         $servico = EntradasSaidasModel::query()->where('id', $data['id']);

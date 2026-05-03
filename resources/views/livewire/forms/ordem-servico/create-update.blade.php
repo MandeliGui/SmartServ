@@ -796,15 +796,14 @@ new class extends Component {
 
                     <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" mask="99"/>
                     <div>
-
-                        <div class="flex items-end">
-                            <div class="flex-1">
-                                <flux:select label="Banco *"
-                                             wire:model="form.bancoId"
-                                             placeholder="Selecione"
-                                             variant="listbox"
-
-                                             :searchable="$bancos->count() > 10"
+                        <flux:field>
+                            <flux:label>Banco *</flux:label>
+                            <flux:input.group>
+                                <flux:select
+                                    wire:model="form.bancoId"
+                                    placeholder="Selecione"
+                                    variant="listbox"
+                                    :searchable="$bancos->count() > 10"
                                 >
 
                                     @foreach($bancos as $banco)
@@ -815,29 +814,29 @@ new class extends Component {
                                     @endforeach
 
                                 </flux:select>
-                            </div>
 
-                            <flux:button
-                                icon="plus"
-                                variant="primary"
-                                wire:click="abrirModalBanco"
-                                :disabled="$this->finalizadaOuCancelada()"
-                                aria-label="Adicionar cliente"
-                            />
-
-                        </div>
+                                <flux:button
+                                    type="button"
+                                    icon="plus"
+                                    variant="primary"
+                                    class="shrink-0"
+                                    wire:click="abrirModalBanco"
+                                    :disabled="$this->finalizadaOuCancelada()"
+                                    aria-label="Adicionar banco"
+                                />
+                            </flux:input.group>
+                        </flux:field>
                         <flux:error name="bancoId"/>
                     </div>
                     <div>
-
-                        <div class="flex items-end">
-                            <div class="flex-1">
-                                <flux:select label="Forma de pagamento *"
-                                             wire:model="form.formaPagamentoId"
-                                             placeholder="Selecione"
-                                             variant="listbox"
-
-                                             :searchable="$formasPagamento->count() > 10"
+                        <flux:field>
+                            <flux:label>Forma de pagamento *</flux:label>
+                            <flux:input.group>
+                                <flux:select
+                                    wire:model="form.formaPagamentoId"
+                                    placeholder="Selecione"
+                                    variant="listbox"
+                                    :searchable="$formasPagamento->count() > 10"
                                 >
 
                                     @foreach($formasPagamento as $forma)
@@ -848,15 +847,17 @@ new class extends Component {
                                     @endforeach
 
                                 </flux:select>
-                            </div>
-                            <flux:button
-                                icon="plus"
-                                variant="primary"
-                                wire:click="abrirModalFormapagamento"
-                                :disabled="$this->finalizadaOuCancelada()"
-                                aria-label="Adicionar cliente"
-                            />
-                        </div>
+                                <flux:button
+                                    type="button"
+                                    icon="plus"
+                                    variant="primary"
+                                    class="shrink-0"
+                                    wire:click="abrirModalFormapagamento"
+                                    :disabled="$this->finalizadaOuCancelada()"
+                                    aria-label="Adicionar forma de pagamento"
+                                />
+                            </flux:input.group>
+                        </flux:field>
                         <flux:error name="formaPagamentoId"/>
                     </div>
                 </div>
@@ -934,4 +935,3 @@ new class extends Component {
     </form>
 
 </div>
-

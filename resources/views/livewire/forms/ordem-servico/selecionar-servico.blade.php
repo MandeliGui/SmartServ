@@ -203,10 +203,10 @@ new class extends Component {
         <hr class="w-full h-px bg-accent">
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
-            <div class="flex items-end">
-
-                <div class="flex-1">
-                    <flux:select label="Servicos*" variant="listbox" searchable
+            <flux:field>
+                <flux:label>Servicos*</flux:label>
+                <flux:input.group>
+                    <flux:select variant="listbox" searchable
                                  wire:model="form.id_servico"
                                  placeholder="Selecione"
                                  name="id_servico"
@@ -224,15 +224,17 @@ new class extends Component {
 
 
                     </flux:select>
-                </div>
-                <flux:button
-                    :disabled="$persistence === Persistence::UPDATE"
-                    icon="plus"
-                    variant="primary"
-                    wire:click="abrirModalServico"
-                    aria-label="Adicionar serviço"
-                />
-            </div>
+                    <flux:button
+                        type="button"
+                        :disabled="$persistence === Persistence::UPDATE"
+                        icon="plus"
+                        variant="primary"
+                        class="shrink-0"
+                        wire:click="abrirModalServico"
+                        aria-label="Adicionar serviço"
+                    />
+                </flux:input.group>
+            </flux:field>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
 
@@ -318,4 +320,3 @@ new class extends Component {
         <livewire:forms.servicos.create-update/>
     </flux:modal>
 </div>
-

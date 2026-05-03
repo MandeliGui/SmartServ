@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Tenant\EntradaSaida;
 
 use App\Enums\Tenant\PeriodicidadeEnum;
+use App\Helpers\Helper;
 use App\Http\Requests\BaseValidationRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -21,11 +22,13 @@ class CriarEntradaSaidaRequest extends BaseValidationRequest
         $this->data = [
             'tipo'               => data_get($this->data, 'tipo'),
             'data_vencimento'    => data_get($this->data, 'data_vencimento'),
-            'valor_original'     => data_get($this->data, 'valor_original'),
+            'valor_original'     => Helper::formatarDecimalDb(data_get($this->data, 'valor_original')),
             'quantidade_meses'   => data_get($this->data, 'quantidade_meses'),
             'periodicidade'      => data_get($this->data, 'periodicidade'),
             'data_pagamento'     => data_get($this->data, 'data_pagamento'),
-            'valor_pago'         => data_get($this->data, 'valor_pago'),
+            'valor_pago'         => data_get($this->data, 'valor_pago') !== null && data_get($this->data, 'valor_pago') !== ''
+                ? Helper::formatarDecimalDb(data_get($this->data, 'valor_pago'))
+                : null,
             'forma_pagamento_id' => data_get($this->data, 'forma_pagamento_id'),
             'descricao'          => data_get($this->data, 'descricao'),
             'categoria_id'       => data_get($this->data, 'categoria_id'),

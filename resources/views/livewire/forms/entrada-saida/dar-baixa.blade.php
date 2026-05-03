@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Persistence;
+use App\Livewire\Forms\BancosForm;
 use App\Livewire\Forms\EntradasSaidasForm;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
@@ -36,11 +37,6 @@ new class extends Component {
 
     }
 
-    public function updatedFormValor($value)
-    {
-        $this->form->valor = str_replace(['.', ','], ['', '.'], $value);
-    }
-
     #[On(EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_DAR_BAIXA)]
     public function openModalDarBaixa(string $modalName, $id)
     {
@@ -63,8 +59,23 @@ new class extends Component {
 
     public function mount()
     {
-        $this->bancos          = \App\Models\BancosModel::query()->get();
-        $this->formasPagamento = \App\Models\FormaPagamentoModel::query()->get();
+        $this->bancos          = \App\Models\BancosModel::query()->where('removido', false)->get();
+        $this->formasPagamento = \App\Models\FormaPagamentoModel::query()->where('removido', false)->get();
+    }
+
+    public function abrirModalBanco(): void
+    {
+        Flux::modal(BancosForm::MODAL_NAME_CREATE)->show();
+    }
+
+    #[On(BancosForm::EVENT_PERSISTED)]
+    public function bancoAdicionado(string $persistence): void
+    {
+        $this->bancos = \App\Models\BancosModel::query()->where('removido', false)->get();
+
+        if ($persistence === Persistence::CREATE->value) {
+            $this->form->banco_id = \App\Models\BancosModel::query()->latest('id')->value('id');
+        }
     }
 
 };
@@ -155,19 +166,32 @@ new class extends Component {
 
             </flux:select>
 
-            <flux:select variant="listbox" placeholder="Selecione o banco" label="Banco*"
-                         wire:model="form.banco_id"
-                         name="banco_id">
-                @if(count($bancos) > 0)
+            <flux:field>
+                <flux:label>Banco*</flux:label>
+                <flux:input.group>
+                    <flux:select variant="listbox" placeholder="Selecione o banco"
+                                 wire:model="form.banco_id"
+                                 name="banco_id">
+                        @if(count($bancos) > 0)
 
-                    @foreach($bancos as $banco)
-                        <flux:select.option value="{{ $banco->id }}">{{ $banco->nome }}</flux:select.option>
-                    @endforeach
-                @else
-                    <flux:text class="m-2">Nenhum banco disponível</flux:text>
-                @endif
+                            @foreach($bancos as $banco)
+                                <flux:select.option value="{{ $banco->id }}">{{ $banco->nome }}</flux:select.option>
+                            @endforeach
+                        @else
+                            <flux:text class="m-2">Nenhum banco disponível</flux:text>
+                        @endif
 
-            </flux:select>
+                    </flux:select>
+                    <flux:button
+                        type="button"
+                        icon="plus"
+                        variant="primary"
+                        class="shrink-0"
+                        wire:click="abrirModalBanco"
+                        aria-label="Adicionar banco"
+                    />
+                </flux:input.group>
+            </flux:field>
 
 
             <flux:date-picker wire:model="form.data_pagamento">
@@ -185,7 +209,7 @@ new class extends Component {
 
 
             <flux:input label="Valor Pago*" type="text" wire:model="form.valor_pago" name="valor_pago"
-                        placeholder="R$ 0,00"/>
+                        placeholder="R$ 0,00" is-decimal="true"/>
 
 
         </div>
@@ -209,4 +233,3 @@ new class extends Component {
 
     </form>
 </div>
-
