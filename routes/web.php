@@ -6,7 +6,7 @@ use App\Http\Controllers\Tenant\Api\OrdemServicoController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::redirect('/', 'login');
+Route::view('/', 'landing')->name('welcome');
 
 Route::view('dashboard', 'dashboard')
      ->middleware(['auth', 'verified'])
