@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Services\Tenant;
 
@@ -11,11 +11,11 @@ use App\Models\PessoaModel;
 
 class ClienteService
 {
-    private readonly PessoaModel   $pessoa;
+    private readonly PessoaModel $pessoa;
 
     private readonly EnderecoModel $endereco;
 
-    private readonly ClienteModel  $cliente;
+    private readonly ClienteModel $cliente;
 
     public function __construct()
     {
@@ -40,11 +40,11 @@ class ClienteService
 //                $query->where("removido", "=", false);
 //            })
 //            ->search($request->search)
-            ->when(! is_null($request->orderBy), function ($query) use ($request): void {
+                            ->when(!is_null($request->orderBy), function ($query) use ($request): void {
                 $query->orderBy($request->orderBy, $request->dir);
             })
-            ->whereHas('cliente')
-            ->paginate(perPage: $request->limit, page: $request->offset);
+                            ->whereHas('cliente')
+                            ->paginate(perPage: $request->limit, page: $request->offset);
     }
 
     public function findOne(mixed $id)
@@ -54,10 +54,15 @@ class ClienteService
 
     public function create(array $data)
     {
-        $existePessoa = $this->pessoa::query()->where("cpfCnpj", $data["cpfCnpj"])->first();
+        if (!empty($data['cpfCnpj'])) {
+
+            $existePessoa = $this->pessoa::query()->where("cpfCnpj", $data["cpfCnpj"])->first();
+        }else{
+            $existePessoa = false;
+        }
 
 
-        if (! $existePessoa) {
+        if (!$existePessoa) {
 
             $endereco = $this->endereco::query()->create([
                 "cep"         => $data['endereco']["cep"],
