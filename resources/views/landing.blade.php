@@ -13,6 +13,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
 </head>
+@php
+    $whatsAppNumber = '5543998442622';
+    $whatsAppMessage = 'Olá, vi o SmartServ e quero entender como funciona para meu negócio';
+    $whatsAppUrl = 'https://wa.me/' . $whatsAppNumber . '?text=' . urlencode($whatsAppMessage);
+@endphp
 <body class="min-h-screen bg-stone-950 text-stone-100 antialiased">
 <div class="relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.26),_transparent_35%),radial-gradient(circle_at_80%_20%,_rgba(234,88,12,0.18),_transparent_28%),linear-gradient(180deg,_#1c1917_0%,_#0c0a09_100%)]"></div>
@@ -27,15 +32,15 @@
             </a>
 
             <div class="flex items-center gap-3">
-                <a href="https://wa.me/5543998442622"
+                <a href="{{ $whatsAppUrl }}"
                    target="_blank"
                    rel="noopener noreferrer"
                    class="hidden rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-stone-300 transition hover:border-white/20 hover:text-white sm:inline-flex">
-                    Entrar em contato
+                    Falar no WhatsApp
                 </a>
                 <a href="{{ route('login') }}"
                    class="inline-flex rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-400">
-                    Entrar
+                    Já sou cliente
                 </a>
             </div>
         </header>
@@ -48,26 +53,29 @@
                     </div>
 
                     <h1 class="mt-6 max-w-4xl text-5xl font-semibold leading-none text-white sm:text-6xl lg:text-7xl">
-                        Controle atendimentos, materiais, contratos e financeiro em um só sistema.
+                        Sistema de gestão para assistências técnicas e prestadores de serviço
                     </h1>
 
                     <p class="mt-6 max-w-2xl text-lg leading-8 text-stone-300">
-                        O SmartServ organiza o dia a dia da operação: cadastro de clientes, ordens de serviço,
-                        lançamentos financeiros, bancos, materiais e pagamentos sem planilhas espalhadas.
+                        O SmartServ ajuda você a controlar atendimentos, materiais, contratos e financeiro em um só lugar, sem depender de planilhas espalhadas.
+                    </p>
+
+                    <p class="mt-4 max-w-2xl text-sm font-medium leading-7 text-orange-100/85 sm:text-base">
+                        Indicado para assistências técnicas e prestadores de serviço que querem organizar atendimentos, materiais e financeiro.
                     </p>
 
                     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                        <a href="{{ route('login') }}"
-                           class="inline-flex items-center justify-center rounded-full bg-orange-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-orange-400">
-                            Acessar sistema
-                        </a>
-                        <a href="https://wa.me/5543998442622"
+                        <a href="{{ $whatsAppUrl }}"
                            target="_blank"
                            rel="noopener noreferrer"
-                           class="inline-flex items-center justify-center rounded-full border border-white/10 px-6 py-3 text-base font-semibold text-stone-200 transition hover:border-white/20 hover:text-white">
-                            Entrar em contato
+                           class="inline-flex items-center justify-center rounded-full bg-orange-500 px-6 py-3 text-base font-semibold text-white transition hover:bg-orange-400">
+                            Ver como funciona no WhatsApp
                         </a>
                     </div>
+
+                    <p class="mt-3 text-sm text-stone-400">
+                        Sem compromisso • Resposta rápida • Atendimento direto
+                    </p>
 
                     <div class="mt-8 max-w-xl rounded-[1.75rem] border border-orange-400/30 bg-gradient-to-r from-orange-500/20 to-orange-400/10 p-5 shadow-lg shadow-orange-950/20">
                         <div class="text-xs font-semibold uppercase tracking-[0.18em] text-orange-200">Oferta promocional</div>
@@ -75,9 +83,20 @@
                             <span class="text-4xl font-semibold leading-none text-white sm:text-5xl">R$ 75</span>
                             <span class="pb-1 text-sm font-medium text-orange-100/90 sm:text-base">por mês</span>
                         </div>
+                        <div class="mt-2 text-sm font-medium text-orange-100/90">
+                            Sem fidelidade • Comece quando quiser
+                        </div>
                         <p class="mt-3 text-sm leading-6 text-orange-50/85">
                             Valor promocional para começar a organizar operação, ordens de serviço, materiais e financeiro em um único sistema.
                         </p>
+                        <div class="mt-5">
+                            <a href="{{ $whatsAppUrl }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="inline-flex w-full items-center justify-center rounded-2xl bg-white px-6 py-4 text-base font-semibold text-orange-600 shadow-lg shadow-orange-950/20 transition hover:scale-[1.01] hover:bg-orange-50">
+                                Quero organizar minha operação
+                            </a>
+                        </div>
                     </div>
 
                     <div class="mt-10 grid gap-4 sm:grid-cols-3">
