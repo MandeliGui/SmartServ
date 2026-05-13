@@ -162,6 +162,15 @@ new class extends Component {
 <div x-data>
     <form wire:submit.prevent="save">
 
+        @if($this->persistence === \App\Enums\Persistence::UPDATE && !empty($this->form->ordem_servico_id))
+            <div class="flex items-start gap-3 rounded-lg border border-yellow-400 bg-yellow-50 dark:bg-yellow-950 dark:border-yellow-600 p-3 mb-4">
+                <flux:icon icon="exclamation-triangle" class="text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5" variant="mini"/>
+                <flux:text class="text-yellow-800 dark:text-yellow-300 text-sm">
+                    Este lançamento foi gerado automaticamente pela <strong>Ordem de Serviço #{{ $this->form->ordem_servico_id }}</strong>. Alterá-lo pode causar inconsistências no financeiro da OS. Prossiga com cautela.
+                </flux:text>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
 
 
@@ -229,7 +238,7 @@ new class extends Component {
             </flux:date-picker>
 
             <flux:input label="Valor*" type="text" wire:model="form.valor_original" name="valor_original"
-                        placeholder="R$ 0,00" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE" is-decimal="true"/>
+                        placeholder="R$ 0,00" is-decimal="true"/>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
 
@@ -263,6 +272,7 @@ new class extends Component {
             </div>
         @endif
 
+        @if($this->persistence !== \App\Enums\Persistence::UPDATE)
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
 
             <flux:field>
@@ -349,6 +359,7 @@ new class extends Component {
 
 
         </div>
+        @endif
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 my-4">
             <flux:textarea

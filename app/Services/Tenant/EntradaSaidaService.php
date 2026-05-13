@@ -21,6 +21,7 @@ class EntradaSaidaService
                                       $query->where('banco_id', $idBanco);
                                   })
                                   ->orderBy($request->orderBy)
+                                  ->orderBy('id')
                                   ->get();
     }
 

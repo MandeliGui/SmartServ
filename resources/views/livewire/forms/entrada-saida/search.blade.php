@@ -104,14 +104,17 @@ new class extends Component {
 
         $entradaSaidaPago = $collection
             ->whereNotNull('data_pagamento')
-            ->sortBy('data_pagamento')
+            ->sortBy([
+                ['data_pagamento', 'asc'],
+                ['id', 'asc'],
+            ])
             ->values();
         $count = !empty($this->search) ? $this->entradaSaida->total() : count($this->getAllIds());
 
         return [
             'entradaSaidaPendente' => $this->entradaSaida->where('data_pagamento', null),
             'entradaSaidaPago'     => $entradaSaidaPago,
-            'saldoBancario' => \App\Models\BancosModel::when($this->idBanco, function (Builder $query) {
+            'saldoBancario' => (float)\App\Models\BancosModel::when($this->idBanco, function (Builder $query) {
                 return $query->where('id', $this->idBanco);
             })->sum('saldo_inicial'),
             'bancos'               => $bancos,
@@ -195,10 +198,17 @@ new class extends Component {
                                             <flux:button variant="primary" color="red" icon="banknote-x" size="xs"
                                                          class="cursor-pointer"
                                                          wire:click="desfazerbaixa({{$item->id}})"
-                                                         tooltip="Defazer Baixa">
-
+                                                         tooltip="Desfazer Baixa">
                                             </flux:button>
-
+                                            <flux:button variant="primary" icon="pencil" size="xs"
+                                                         class="cursor-pointer"
+                                                         wire:click="$dispatchTo(
+                                                             '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
+                                                             '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
+                                                             { modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_UPDATE }}', id: {{ $item->id }} }
+                                                         )"
+                                                         tooltip="Editar">
+                                            </flux:button>
                                         </flux:table.cell>
                                         <flux:table.cell class=" items-center gap-3">
                                             {{ Helper::formatarDataPtBr($item->data_pagamento)}}
@@ -228,7 +238,7 @@ new class extends Component {
                                         <flux:table.cell class="items-center gap-3">
                                             <flux:text
                                                 class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
-                                                R$ {{ Helper::formatarValorMonetarioPtBr($item->valor_pago)}}</flux:text>
+                                                R$ {{ Helper::formatarValorMonetarioPtBr((float)$item->valor_pago)}}</flux:text>
                                         </flux:table.cell>
                                         <flux:table.cell class=" items-center gap-3">
                                             {{ Helper::formatarDataPtBr($item->data_vencimento) }}
@@ -237,7 +247,7 @@ new class extends Component {
 
                                         <flux:table.cell class=" items-center gap-3">
                                             {{--                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += $item->valor_pago) }}--}}
-                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_pago : -$item->valor_pago))  }}
+                                            R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? (float)$item->valor_pago : -(float)$item->valor_pago))  }}
 
                                         </flux:table.cell>
 
@@ -349,6 +359,15 @@ new class extends Component {
 
                                                 </flux:button>
                                                 {{--                                <flux:modal.trigger name="delete-cliente" >--}}
+                                                <flux:button variant="primary" icon="pencil" size="xs"
+                                                             class="cursor-pointer"
+                                                             wire:click="$dispatchTo(
+                                                                 '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_CREATE_AND_UPDATE }}',
+                                                                 '{{ \App\Livewire\Forms\EntradasSaidasForm::EVENT_NAME_SHOW_MODAL_UPDATE }}',
+                                                                 { modalName: '{{ \App\Livewire\Forms\EntradasSaidasForm::MODAL_NAME_UPDATE }}', id: {{ $item->id }} }
+                                                             )"
+                                                             tooltip="Editar">
+                                                </flux:button>
                                                 <flux:button icon="trash" variant="danger" size="xs"
                                                              class="cursor-pointer" wire:click="$dispatchTo(
                                                                                     '{{ \App\Livewire\Forms\EntradasSaidasForm::PATH_COMPONENT_FORM_REMOVE }}',
@@ -358,7 +377,6 @@ new class extends Component {
                                                                                         id: '{{ $item->id }}'
                                                                                     }
                                                                                 )" tooltip="Remover"></flux:button>
-                                                {{--                                </flux:modal.trigger>--}}
                                             </flux:table.cell>
                                             <flux:table.cell class=" items-center gap-3">
                                                 {{ Helper::formatarDataPtBr($item->data_vencimento) }}
@@ -382,11 +400,11 @@ new class extends Component {
                                             <flux:table.cell class=" items-center gap-3">
                                                 <flux:text
                                                     class="{{ $item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? 'text-green-700' : 'text-red-700' }}">
-                                                    R$ {{ $item->valor_original ? Helper::formatarValorMonetarioPtBr($item->valor_original) : '0,00'}}</flux:text>
+                                                    R$ {{ $item->valor_original ? Helper::formatarValorMonetarioPtBr((float)$item->valor_original) : '0,00'}}</flux:text>
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
-                                                R$ {{ $item->valor_pago ? Helper::formatarValorMonetarioPtBr($item->valor_pago) : '0,00' }}
+                                                R$ {{ $item->valor_pago ? Helper::formatarValorMonetarioPtBr((float)$item->valor_pago) : '0,00' }}
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
@@ -394,7 +412,7 @@ new class extends Component {
                                             </flux:table.cell>
 
                                             <flux:table.cell class=" items-center gap-3">
-                                                R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? $item->valor_original : -$item->valor_original))  }}
+                                                R$ {{ Helper::formatarValorMonetarioPtBr($saldoBancario += ($item->tipo === \App\Enums\TipoEntradaSaida::ENTRADA->value ? (float)$item->valor_original : -(float)$item->valor_original))  }}
                                             </flux:table.cell>
 
 

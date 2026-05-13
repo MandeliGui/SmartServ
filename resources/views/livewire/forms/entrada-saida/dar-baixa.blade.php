@@ -108,8 +108,7 @@ new class extends Component {
 
 
             <flux:select variant="listbox" placeholder="Selecione o tipo" label="Tipo*" wire:model="form.tipo"
-                         name="tipo" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE"
-                         wire:change="alterarCategoriaEntradaSaida">
+                         name="tipo" :disabled="$this->persistence == \App\Enums\Persistence::UPDATE">
                 <flux:select.option
                     value="{{ \App\Enums\TipoEntradaSaida::ENTRADA->value }}"
                     :selected="isset($this->form->tipo) && $this->form->tipo == \App\Enums\TipoEntradaSaida::ENTRADA->value"

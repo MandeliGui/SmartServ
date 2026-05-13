@@ -39,6 +39,7 @@ class EntradasSaidasForm extends Form
     public mixed $situacao         = 0;
     public mixed $periodicidade;
     public mixed $id_fornecedor;
+    public mixed $ordem_servico_id = null;
 
 
     private function attributes(): array

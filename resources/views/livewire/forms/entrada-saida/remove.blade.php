@@ -69,7 +69,7 @@ new class extends Component {
                         <span>
                             Valor:
                             <strong>
-                                R${{ \App\Helpers\Helper::formatarValorMonetarioPtBr($this->form->valor_original) }}
+                                R${{ \App\Helpers\Helper::formatarValorMonetarioPtBr((float)$this->form->valor_original) }}
                             </strong>
                         </span>
 
