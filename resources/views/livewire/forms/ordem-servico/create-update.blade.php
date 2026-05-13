@@ -243,7 +243,7 @@ new class extends Component {
 
         $ordemServico = $this->form->finalizarOrdemServico($this->form->all());
         }catch (Throwable $e){
-            dd($e);
+            throw $e;
         }
         Flux::toast('Ordem de serviço finalizada com sucesso!', variant: 'success');
         $this->redirect(route('ordem-servico'), navigate: true);
@@ -794,7 +794,7 @@ new class extends Component {
                     </flux:select>
 
 
-                    <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" mask="99"/>
+                    <flux:input label="Quantidade de parcelas *" wire:model.live="form.quantidadeParcela" name="quantidadeParcela" :disabled="$this->form->condicoesPagamento === \App\Enums\CondicoesPagamento::A_VISTA->value" type="number" min="1" max="99"/>
                     <div>
                         <flux:field>
                             <flux:label>Banco *</flux:label>

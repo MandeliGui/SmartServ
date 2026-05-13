@@ -64,7 +64,7 @@ class OrdemServicoForm extends Form
     public mixed $parcelas           = [];
 
 
-    private function attributes(): array
+    public function attributes(): array
     {
         return [
             "codigo"               => "codigo",
@@ -80,6 +80,10 @@ class OrdemServicoForm extends Form
             "materiais.quantidade" => "quantidade material",
             "servicos.id"          => "id Servico",
             "servicos.quantidade"  => "quantidade servico",
+            'bancoId'              => 'Banco',
+            'formaPagamentoId'     => 'Forma de pagamento',
+            'parcelas.*.dataVencimento' => 'Data de vencimento da parcela',
+            'parcelas.*.valor'          => 'Valor da parcela',
 
         ];
     }
